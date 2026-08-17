@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Snapchat — Global Reach</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+  :root{
+    --ghost-yellow:#FFFC00;
+    --void:#0A0A0A;
+    --panel:#141414;
+    --line:#262626;
+    --ink:#F5F5F0;
+    --ink-dim:#8A8A82;
+    --accent-low:#3A3900;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--void);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    overflow-x:hidden;}
+
+  .display{font-family:'Arial Black',Helvetica,sans-serif;font-weight:900;
+    letter-spacing:-0.02em;}
+
+  header{
+    padding:28px 24px 18px;
+    border-bottom:1px solid var(--line);
+    display:flex; align-items:baseline; justify-content:space-between;
+    flex-wrap:wrap; gap:8px;
+  }
+  .brand{display:flex; align-items:center; gap:10px;}
+  .ghost{width:28px;height:28px;flex-shrink:0;}
+  h1{font-size:20px;margin:0; text-transform:uppercase;}
+  .sub{color:var(--ink-dim); font-size:12px; letter-spacing:0.06em; text-transform:uppercase;}
+
+  .stage{position:relative; width:100%; height:62vh; min-height:380px;
+    background:radial-gradient(ellipse at 50% 40%, #161600 0%, var(--void) 70%);}
+  svg{width:100%; height:100%; display:block;}
+
+  .country{stroke:var(--void); stroke-width:0.6; cursor:pointer; transition:filter .15s;}
+  .country:hover{filter:brightness(1.35);}
+  .country-no-data{fill:#1d1d1d;}
+  .country-flagged{fill:#2a2a2a; stroke:var(--ghost-yellow); stroke-width:1; stroke-dasharray:2,2;}
+  .country-banned{fill:#3a1414; stroke:#c0392b; stroke-width:1;}
+
+  .tooltip{
+    position:absolute; pointer-events:none; background:var(--ghost-yellow);
+    color:var(--void); padding:8px 12px; border-radius:2px; font-size:13px;
+    font-weight:700; transform:translate(-50%,-130%); white-space:nowrap;
+    box-shadow:0 6px 18px rgba(0,0,0,.5); z-index:10; opacity:0; transition:opacity .1s;
+  }
+  .tooltip .t-sub{font-weight:400; font-size:11px; opacity:.75;}
+
+  .legend{display:flex; align-items:center; gap:10px; padding:10px 24px 4px;
+    font-size:11px; color:var(--ink-dim); letter-spacing:.04em; text-transform:uppercase;}
+  .legend-bar{height:8px; width:160px; border-radius:2px;
+    background:linear-gradient(90deg, #1d1d1d 0%, #4a4900 35%, #8a8500 65%, var(--ghost-yellow) 100%);}
+
+  .panel{padding:18px 24px 40px; max-width:920px; margin:0 auto;}
+  .rank-title{font-size:11px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--ink-dim); margin:28px 0 12px; display:flex; justify-content:space-between;}
+  .rows{border-top:1px solid var(--line);}
+  .row{display:grid; grid-template-columns:28px 1fr 90px 120px; align-items:center;
+    gap:12px; padding:10px 0; border-bottom:1px solid var(--line); font-size:14px;}
+  .row .idx{color:var(--ink-dim); font-size:12px;}
+  .row .name{font-weight:600;}
+  .row .pct{color:var(--ink-dim); font-size:12px; text-align:right;}
+  .row .bar-track{height:6px; background:#1d1d1d; border-radius:3px; overflow:hidden;}
+  .row .bar-fill{height:100%; background:var(--ghost-yellow); border-radius:3px;}
+
+  .stat-strip{display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--line); margin-top:8px; border:1px solid var(--line);}
+  .stat{background:var(--panel); padding:18px 16px;}
+  .stat .num{font-size:26px; font-weight:900;}
+  .stat .lbl{font-size:11px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:.05em; margin-top:4px;}
+
+  footer{padding:16px 24px 32px; color:var(--ink-dim); font-size:11px; max-width:920px; margin:0 auto; line-height:1.6;}
+
+  @media (max-width:560px){
+    .row{grid-template-columns:24px 1fr 70px 80px; font-size:13px;}
+    .stat-strip{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <svg class="ghost" viewBox="0 0 100 100"><path fill="#FFFC00" d="M50 5C30 5 22 22 22 38c0 4 0 8-2 11-3 5-9 6-9 10 0 3 4 5 8 6 1 4 1 7 4 8 2 1 6 0 8 2 3 3 2 8 8 10 4 1 7-2 11-2s7 3 11 2c6-2 5-7 8-10 2-2 6-1 8-2 3-1 3-4 4-8 4-1 8-3 8-6 0-4-6-5-9-10-2-3-2-7-2-11C78 22 70 5 50 5z"/></svg>
+    <h1 class="display">Reach Per Capita</h1>
+  </div>
+  <div class="sub">% of population using Snapchat · est. 2026</div>
+</header>
+
+<div class="stage">
+  <svg id="map" viewBox="0 0 960 500"></svg>
+  <div class="tooltip" id="tooltip"></div>
+</div>
+
+<div class="legend">
+  <span>Lower penetration</span>
+  <div class="legend-bar"></div>
+  <span>Higher penetration</span>
+  <span style="margin-left:18px; display:inline-flex; align-items:center; gap:6px;">
+    <span style="width:14px;height:10px;background:#2a2a2a;border:1px dashed var(--ghost-yellow);display:inline-block;"></span>
+    No reliable data
+  </span>
+  <span style="margin-left:18px; display:inline-flex; align-items:center; gap:6px;">
+    <span style="width:14px;height:10px;background:#3a1414;border:1px solid #c0392b;display:inline-block;"></span>
+    Blocked by government
+  </span>
+</div>
+
+<div class="panel">
+
+  <div class="stat-strip">
+    <div class="stat"><div class="num display">86.9%</div><div class="lbl">Saudi Arabia (highest)</div></div>
+    <div class="stat"><div class="num display">10%</div><div class="lbl">Worldwide average</div></div>
+    <div class="stat"><div class="num display">33.8%</div><div class="lbl">United States</div></div>
+  </div>
+
+  <div class="rank-title"><span>Top markets by penetration</span><span>% of population</span></div>
+  <div class="rows" id="rows"></div>
+</div>
+
+<footer>
+  Figures are estimated penetration rates (% of population using Snapchat monthly), compiled from Data Reportal, EMARKETER, and third-party trackers — not official Snap Inc. breakdowns. Penetration tells a very different story than raw user counts: small, wealthy, mobile-first markets like Saudi Arabia, Norway, and the UAE lead by share of population, even though India and the U.S. have far more total users. Russia and China are marked as blocked rather than no-data — both governments restrict or ban Snapchat outright (Russia's block took effect in late 2025). Countries with a dashed yellow outline, including Estonia, Bahrain, and most of Sub-Saharan Africa and Central Asia, have no published country-level figure; trackers typically fold them into regional buckets ("Other Central & Eastern Europe," etc.) rather than reporting them individually, so no real number exists to show rather than an invented one.
+</footer>
+
+<script>
+const bannedCountries = ["Russia", "China"]; // Snapchat officially blocked
+
+const noDataCountries = [
+  "Estonia","Afghanistan","Albania","Angola","Antarctica","Armenia","Azerbaijan",
+  "Bangladesh","Belarus","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina",
+  "Botswana","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon",
+  "Central African Republic","Chad","Costa Rica","Croatia","Cuba","Cyprus",
+  "Czech Republic","Democratic Republic of the Congo","Djibouti","Dominican Republic",
+  "East Timor","Ecuador","El Salvador","Equatorial Guinea","Eritrea","Ethiopia",
+  "Falkland Islands","Fiji","French Southern and Antarctic Lands","Gabon","Gambia",
+  "Georgia","Greenland","Guatemala","Guinea","Guinea Bissau","Guyana","Haiti",
+  "Honduras","Hungary","Iceland","Iran","Ivory Coast","Jamaica","Kazakhstan","Kosovo",
+  "Kyrgyzstan","Laos","Latvia","Lesotho","Liberia","Libya","Lithuania","Luxembourg",
+  "Macedonia","Madagascar","Malawi","Malaysia","Mali","Mauritania","Moldova","Mongolia",
+  "Montenegro","Mozambique","Myanmar","Namibia","Nepal","New Caledonia","Nicaragua",
+  "Niger","North Korea","Northern Cyprus","Panama","Papua New Guinea","Paraguay","Peru",
+  "Puerto Rico","Republic of Serbia","Republic of the Congo","Rwanda","Senegal",
+  "Sierra Leone","Slovakia","Slovenia","Solomon Islands","Somalia","Somaliland",
+  "South Korea","South Sudan","Sri Lanka","Sudan","Suriname","Swaziland","Syria",
+  "Taiwan","Tajikistan","Thailand","The Bahamas","Togo","Trinidad and Tobago",
+  "Turkmenistan","Uganda","Ukraine","United Republic of Tanzania","Uruguay",
+  "Uzbekistan","Vanuatu","Venezuela","West Bank","Western Sahara","Yemen","Zambia",
+  "Zimbabwe","Bahrain"
+];
+
+const snapData = {
+  "Saudi Arabia": 86.9, "Norway": 72.7, "Denmark": 53.5, "Sweden": 50.3,
+  "United Arab Emirates": 49.3, "Netherlands": 45.0,
+  "Ireland": 44.0, "Kuwait": 41.0, "Qatar": 38.0, "USA": 33.8,
+  "Oman": 36.0, "Jordan": 35.0, "England": 32.0, "France": 30.0,
+  "Canada": 29.0, "Israel": 28.0, "Australia": 27.0, "Belgium": 26.0,
+  "Finland": 25.0, "Switzerland": 24.0, "New Zealand": 23.5, "Lebanon": 23.0,
+  "Iraq": 22.0, "Austria": 16.5, "Germany": 18.0, "Tunisia": 17.0,
+  "Algeria": 16.0, "Turkey": 15.0, "Egypt": 15.0, "India": 14.0,
+  "Morocco": 14.0, "Pakistan": 13.5, "Poland": 13.0, "Greece": 12.5,
+  "Portugal": 12.0, "Spain": 11.5, "Mexico": 9.5, "Italy": 9.0,
+  "Chile": 9.0, "Romania": 8.5, "Ghana": 7.5, "Philippines": 7.5,
+  "Nigeria": 7.0, "Colombia": 6.5, "South Africa": 6.5, "Argentina": 6.0,
+  "Brazil": 5.5, "Kenya": 5.0, "Indonesia": 4.0, "Vietnam": 4.0,
+  "Japan": 1.2
+};
+
+const nameFix = {};
+
+const svg = d3.select("#map");
+const tooltip = d3.select("#tooltip");
+const projection = d3.geoNaturalEarth1().scale(170).translate([480,260]);
+const path = d3.geoPath().projection(projection);
+
+const maxVal = Math.max(...Object.values(snapData));
+const color = d3.scaleSqrt().domain([0, maxVal]).range(["#2a2900", "#FFFC00"]);
+
+fetch("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
+  .then(r => r.json())
+  .then(world => {
+    svg.selectAll("path")
+      .data(world.features)
+      .join("path")
+      .attr("d", path)
+      .attr("class", d => {
+        const n = d.properties.name;
+        if (snapData[n]) return "country";
+        if (bannedCountries.includes(n)) return "country country-banned";
+        if (noDataCountries.includes(n)) return "country country-flagged";
+        return "country country-no-data";
+      })
+      .attr("fill", d => {
+        const n = d.properties.name;
+        const v = snapData[n];
+        if (v) return color(v);
+        if (bannedCountries.includes(n)) return "#3a1414";
+        if (noDataCountries.includes(n)) return "#2a2a2a";
+        return "#1d1d1d";
+      })
+      .on("mousemove", (event, d) => {
+        const n = d.properties.name;
+        const v = snapData[n];
+        const banned = bannedCountries.includes(n);
+        const flagged = noDataCountries.includes(n);
+        const [x, y] = d3.pointer(event, svg.node().parentNode);
+        tooltip
+          .style("opacity", 1)
+          .style("left", x + "px")
+          .style("top", y + "px")
+          .html(n + (v
+            ? `<div class="t-sub">${v.toFixed(1)}% penetration</div>`
+            : banned
+              ? `<div class="t-sub">Snapchat blocked by government</div>`
+              : flagged
+                ? `<div class="t-sub">No reliable country-level data</div>`
+                : `<div class="t-sub">No data</div>`));
+      })
+      .on("mouseleave", () => tooltip.style("opacity", 0));
+  })
+  .catch(() => {
+    svg.append("text").attr("x", 480).attr("y", 250).attr("text-anchor","middle")
+      .attr("fill", "#8A8A82").attr("font-size","14")
+      .text("Map data unavailable — check connection");
+  });
+
+const rowsEl = document.getElementById("rows");
+const sorted = Object.entries(snapData).sort((a,b) => b[1]-a[1]).slice(0,12);
+sorted.forEach(([name, val], i) => {
+  const pct = (val / maxVal) * 100;
+  const row = document.createElement("div");
+  row.className = "row";
+  row.innerHTML = `
+    <div class="idx">${i+1}</div>
+    <div class="name">${name}</div>
+    <div class="pct">${val.toFixed(1)}%</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+  `;
+  rowsEl.appendChild(row);
+});
+</script>
+</body>
+</html>
