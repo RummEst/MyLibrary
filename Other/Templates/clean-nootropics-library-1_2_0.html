@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reference Ledger — Clean Example</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap');
+
+  :root{
+    --ink:#100d09;
+    --panel:#1a1610;
+    --panel-2:#221c14;
+    --line: #3a3122;
+    --parchment:#e9ddc4;
+    --parchment-dim:#9c9078;
+    --amber:#c98a3e;
+    --amber-bright:#e0a55c;
+    --sage:#7c9b7e;
+    --rust:#a24a3a;
+    --shadow: 0 8px 24px rgba(0,0,0,0.45);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at top left, #1c1710 0%, var(--ink) 55%),
+      var(--ink);
+    color:var(--parchment);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+    padding:0 0 80px 0;
+  }
+
+  /* faint paper grain */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    opacity:0.05;
+    background-image: repeating-linear-gradient(0deg, #fff 0px, transparent 1px, transparent 2px);
+    z-index:0;
+  }
+
+  header{
+    position:relative;
+    padding:56px 32px 36px;
+    border-bottom:1px solid var(--line);
+    background: linear-gradient(180deg, rgba(201,138,62,0.06), transparent);
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .version-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.08em;
+    text-transform:none;
+    color:var(--parchment-dim);
+    border:1px solid var(--line);
+    padding:3px 8px;
+    border-radius:3px;
+    background:var(--panel);
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:clamp(32px, 5vw, 54px);
+    margin:0 0 10px 0;
+    letter-spacing:-0.01em;
+    color:var(--parchment);
+  }
+  h1 em{
+    font-style:italic;
+    font-weight:400;
+    color:var(--amber-bright);
+  }
+  .subhead{
+    font-size:14.5px;
+    color:var(--parchment-dim);
+    max-width:640px;
+    line-height:1.6;
+  }
+  .stat-row{
+    display:flex;
+    gap:28px;
+    margin-top:26px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--parchment-dim);
+    flex-wrap:wrap;
+  }
+  .stat-row b{ color:var(--parchment); font-weight:600;}
+
+  main{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 32px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* controls */
+  .controls{
+    position:sticky;
+    top:0;
+    z-index:5;
+    background: rgba(16,13,9,0.92);
+    backdrop-filter: blur(6px);
+    padding:20px 0 16px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:6px;
+  }
+  .control-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--parchment-dim);
+    margin-bottom:10px;
+  }
+  .filter-label-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .toggle-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--parchment-dim);
+    padding:5px 11px;
+    border-radius:3px;
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+  .toggle-btn:hover{ border-color:var(--amber); color:var(--parchment); }
+  .pill-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:16px;
+    overflow:hidden;
+    max-height:600px;
+    transition: max-height .25s ease, opacity .2s ease, margin .2s ease;
+    opacity:1;
+  }
+  .pill-row.collapsed{
+    max-height:0;
+    opacity:0;
+    margin-bottom:0;
+  }
+  .pill{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    padding:6px 13px;
+    border-radius:3px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:var(--parchment-dim);
+    cursor:pointer;
+    transition: all .15s ease;
+    user-select:none;
+  }
+  .pill:hover{ border-color:var(--amber); color:var(--parchment);}
+  .pill.active{
+    background:var(--amber);
+    border-color:var(--amber);
+    color:#1a1207;
+    font-weight:600;
+  }
+  .sort-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  select{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    background:var(--panel);
+    color:var(--parchment);
+    border:1px solid var(--line);
+    padding:7px 10px;
+    border-radius:3px;
+    cursor:pointer;
+  }
+  .search-box{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    background:var(--panel);
+    color:var(--parchment);
+    border:1px solid var(--line);
+    padding:7px 12px;
+    border-radius:3px;
+    width:220px;
+    margin-left:auto;
+  }
+  .search-box::placeholder{ color:var(--parchment-dim); }
+  .search-box:focus, select:focus{ outline:1px solid var(--amber); }
+
+  .count-line{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--parchment-dim);
+    margin:14px 0 10px;
+  }
+
+  /* ledger list */
+  .ledger{
+    display:flex;
+    flex-direction:column;
+    border-top:1px solid var(--line);
+  }
+  .entry{
+    border-bottom:1px solid var(--line);
+    background:transparent;
+    transition: background .15s ease;
+    border-left:3px solid var(--cat-color, var(--line));
+  }
+  .entry:hover{ background: rgba(201,138,62,0.045); }
+
+  .entry-row{
+    display:grid;
+    grid-template-columns: 46px 42px 1fr 150px 130px 20px;
+    align-items:center;
+    gap:14px;
+    padding:15px 8px 15px 13px;
+    cursor:pointer;
+  }
+  .idx{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--parchment-dim);
+  }
+  .mol-box{
+    width:42px;
+    height:42px;
+    border-radius:4px;
+    border:1px solid var(--line);
+    background:#f4ecd8;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    flex-shrink:0;
+  }
+  .mol-box img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+  }
+  .mol-box.mol-empty{
+    background:var(--panel-2);
+    border-style:dashed;
+  }
+  .mol-box.mol-empty::after{
+    content:"—";
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--parchment-dim);
+  }
+  .mol-box-lg{
+    width:110px;
+    height:110px;
+    border-radius:6px;
+    border:1px solid var(--line);
+    background:#f4ecd8;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    flex-shrink:0;
+  }
+  .mol-box-lg img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+  }
+  .mol-box-lg.mol-empty{
+    background:var(--panel-2);
+    border-style:dashed;
+  }
+  .mol-box-lg.mol-empty::after{
+    content:"no structure found";
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.03em;
+    color:var(--parchment-dim);
+    text-align:center;
+    padding:0 8px;
+  }
+  .name-cell{
+    font-family:'Fraunces', serif;
+    font-size:17px;
+    font-weight:500;
+    color:var(--parchment);
+    letter-spacing:0.01em;
+    line-height:1.3;
+  }
+  .sub-cat{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--cat-color, var(--parchment-dim));
+    opacity:0.85;
+    margin-top:2px;
+    font-weight:500;
+  }
+  .entry:hover .name-cell{ color:var(--amber-bright); }
+  .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--cat-color, var(--sage));
+    border:1px solid var(--cat-color, var(--sage));
+    opacity:0.92;
+    padding:3px 8px;
+    border-radius:2px;
+    display:inline-block;
+    width:fit-content;
+  }
+  .pill.cat-dot::before{
+    content:"";
+    display:inline-block;
+    width:7px; height:7px;
+    border-radius:50%;
+    background:var(--cat-color, var(--parchment-dim));
+    margin-right:7px;
+    vertical-align:middle;
+  }
+  .pill.active.cat-dot::before{ background:#1a1207; }
+
+  .wiki-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:var(--ink);
+    background:var(--cat-color, var(--amber));
+    border:none;
+    padding:7px 14px;
+    border-radius:3px;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-weight:600;
+    transition:filter .15s ease;
+    height:fit-content;
+  }
+  .wiki-btn:hover{ filter:brightness(1.15); }
+  .wiki-btn::after{ content:"↗"; font-size:11px; }
+  .detail-meta-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:4px;
+  }
+  .pkpd-btn{
+    background:var(--panel-2);
+    color:var(--parchment);
+    border:1px solid var(--cat-color, var(--sage));
+  }
+  .pkpd-btn::after{ content:"⚕"; font-size:11px; }
+  .pkpd-btn:hover{ filter:brightness(1.25); }
+  .pkpd-btn[hidden]{ display:none !important; }
+  .pkpd-btn.loading{ opacity:0.55; cursor:progress; pointer-events:none; }
+  /* tiny tag bars — replaces the old stock indicator */
+  .bar1-compact{
+    display:flex;
+    flex-wrap:wrap;
+    gap:4px;
+    justify-content:flex-end;
+  }
+  .tiny-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9px;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:2px 6px;
+    border-radius:2px;
+    line-height:1.6;
+    white-space:nowrap;
+    border:1px solid var(--line);
+    color:var(--parchment-dim);
+  }
+  .tiny-tag.rarity-common{ border-color:var(--sage); color:var(--sage); }
+  .tiny-tag.rarity-rare{ border-color:var(--rust); color:var(--rust); }
+  .tiny-tag.rarity-na{ border-color:var(--line); color:var(--parchment-dim); }
+  .tiny-tag.form-tag{ border-color:var(--amber); color:var(--amber-bright); }
+  .tiny-tag.receptor-tag{ background:rgba(255,255,255,0.03); }
+  .tagbars-block{ flex:1 1 280px; min-width:0; padding-left:18px; }
+  .bar-row{ display:flex; flex-wrap:wrap; gap:6px; }
+  .bar-row.bar1-row{ margin-bottom:8px; }
+  .chevron{
+    font-size:12px;
+    color:var(--parchment-dim);
+    transition:transform .2s ease;
+    text-align:center;
+  }
+  .entry.open .chevron{ transform:rotate(90deg); color:var(--amber); }
+
+  .detail{
+    max-height:0;
+    overflow:hidden;
+    transition: max-height .28s ease;
+  }
+  .entry.open .detail{ max-height:640px; }
+  .detail-inner{
+    padding:0 20px 24px 60px;
+    display:flex;
+    gap:24px;
+    flex-wrap:wrap;
+    width:100%;
+    box-sizing:border-box;
+  }
+  .detail-text{
+    flex:1 1 280px;
+    min-width:0;
+    font-size:14px;
+    line-height:1.7;
+    color:#d8cbac;
+    border-left:2px solid var(--cat-color, var(--amber));
+    padding-left:18px;
+    overflow-wrap:break-word;
+    word-wrap:break-word;
+  }
+  .detail-side{
+    display:flex;
+    gap:16px;
+    flex:1 1 280px;
+    min-width:0;
+  }
+  .detail-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--parchment-dim);
+    line-height:2;
+    min-width:150px;
+    flex:1 1 150px;
+  }
+  .detail-meta div span{ color:var(--parchment); }
+
+  .submenu-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--parchment-dim);
+    margin:0 0 8px;
+  }
+  .effects-block{
+    flex:1 1 280px;
+    min-width:0;
+    padding-left:18px;
+  }
+  .effects-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+  }
+  .effect-chip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.02em;
+    padding:5px 10px;
+    border-radius:12px;
+    border:1px solid var(--cat-color, var(--line));
+    color:var(--parchment);
+    background:rgba(255,255,255,0.03);
+  }
+  .ratings-block{
+    flex:0 1 220px;
+    min-width:190px;
+    padding-left:18px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .rating-row{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+  .rating-label{
+    display:flex;
+    justify-content:space-between;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--parchment-dim);
+  }
+  .rating-label b{
+    color:var(--parchment);
+    font-weight:600;
+    letter-spacing:0;
+    text-transform:none;
+    font-size:10.5px;
+  }
+  .rating-track{
+    width:100%;
+    height:5px;
+    border-radius:3px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    overflow:hidden;
+  }
+  .rating-fill{
+    height:100%;
+    border-radius:3px;
+  }
+
+  /* PK/PD modal */
+  .pkpd-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(8,6,3,0.72);
+    backdrop-filter:blur(3px);
+    z-index:50;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:5vh 16px;
+    overflow-y:auto;
+  }
+  .pkpd-overlay[hidden]{ display:none; }
+  .pkpd-modal{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    max-width:760px;
+    width:100%;
+    box-shadow:var(--shadow);
+    margin-bottom:5vh;
+  }
+  .pkpd-modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:18px 22px;
+    border-bottom:1px solid var(--line);
+    position:sticky;
+    top:0;
+    background:var(--panel);
+    border-radius:8px 8px 0 0;
+  }
+  .pkpd-modal-title{
+    font-family:'Fraunces', serif;
+    font-size:20px;
+    font-weight:600;
+    color:var(--parchment);
+  }
+  .pkpd-modal-title span{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:4px;
+  }
+  .pkpd-modal-close{
+    font-family:'IBM Plex Mono', monospace;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--parchment-dim);
+    width:30px;
+    height:30px;
+    border-radius:4px;
+    cursor:pointer;
+    flex-shrink:0;
+    font-size:14px;
+    line-height:1;
+  }
+  .pkpd-modal-close:hover{ border-color:var(--amber); color:var(--parchment); }
+  .pkpd-modal-body{
+    padding:20px 22px;
+    max-height:64vh;
+    overflow-y:auto;
+    color:#d8cbac;
+    font-size:14px;
+    line-height:1.7;
+  }
+  .pkpd-modal-body .pkpd-loading,
+  .pkpd-modal-body .pkpd-error{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--parchment-dim);
+  }
+  .pkpd-section-block{
+    margin-bottom:26px;
+    padding-bottom:2px;
+  }
+  .pkpd-section-block:last-child{ margin-bottom:0; }
+  .wiki-content h2, .wiki-content h3, .wiki-content h4{
+    font-family:'Fraunces', serif;
+    color:var(--amber-bright);
+    font-weight:600;
+    margin:18px 0 8px;
+    line-height:1.3;
+  }
+  .wiki-content h2:first-child, .wiki-content h3:first-child, .wiki-content h4:first-child{ margin-top:0; }
+  .wiki-content p{ margin:0 0 12px; }
+  .wiki-content a{ color:var(--amber-bright); }
+  .wiki-content ul, .wiki-content ol{ margin:0 0 12px; padding-left:22px; }
+  .wiki-content li{ margin-bottom:4px; }
+  .wiki-content table{
+    border-collapse:collapse;
+    width:100%;
+    margin:12px 0 18px;
+    font-size:12.5px;
+  }
+  .wiki-content table caption{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--parchment-dim); margin-bottom:6px; text-align:left; }
+  .wiki-content th, .wiki-content td{
+    border:1px solid var(--line);
+    padding:6px 9px;
+    text-align:left;
+  }
+  .wiki-content th{ background:var(--panel-2); color:var(--parchment); }
+  .wiki-content sup{ font-size:9.5px; color:var(--parchment-dim); }
+  .wiki-content .mw-editsection{ display:none; }
+  .wiki-content .reference{ display:none; }
+  .wiki-content img{ max-width:100%; height:auto; }
+  .pkpd-modal-footer{
+    padding:14px 22px;
+    border-top:1px solid var(--line);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--parchment-dim);
+  }
+  .pkpd-modal-footer a{ color:var(--amber-bright); }
+
+  footer{
+    max-width:1080px;
+    margin:40px auto 0;
+    padding:24px 32px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--parchment-dim);
+    border-top:1px solid var(--line);
+    line-height:1.8;
+  }
+
+  @media (max-width: 860px) and (min-width: 641px){
+    .entry-row{ grid-template-columns: 40px 38px 1fr 120px 110px 20px; }
+  }
+
+  @media (max-width: 640px){
+    header{ padding:36px 18px 24px; }
+    main{ padding:0 14px; }
+    footer{ padding:20px 14px; }
+
+    .controls{ padding:16px 0 12px; }
+    .pill-row{ gap:6px; }
+    .pill{ font-size:10.5px; padding:5px 10px; }
+    .sort-row{ gap:8px; }
+    select{ font-size:11px; padding:6px 8px; }
+
+    .entry-row{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:6px 10px;
+      padding:14px 10px 14px 13px;
+    }
+    .idx{ order:1; }
+    .mol-box{ order:2; width:34px; height:34px; }
+    .name-cell{ order:3; flex:1 1 auto; font-size:16px; min-width:50%; }
+    .chevron{ order:4; margin-left:auto; }
+    .tag{ display:none; }
+    .bar1-compact{ order:5; margin-left:auto; justify-content:flex-end; }
+
+    .detail-inner{ padding:0 12px 20px 16px; gap:14px; }
+    .detail-text{ padding-left:14px; font-size:13.5px; flex:1 1 100%; }
+    .detail-side{ flex:1 1 100%; flex-wrap:wrap; }
+    .detail-meta{ flex:1 1 100%; min-width:0; }
+    .effects-block{ padding-left:14px; flex:1 1 100%; }
+    .ratings-block{ padding-left:14px; flex:1 1 100%; }
+    .mol-box-lg{ width:90px; height:90px; }
+    .wiki-btn{ font-size:10.5px; padding:6px 12px; }
+    .search-box{ width:100%; margin-left:0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow"><span>Personal Reference — Not Medical Advice</span><span class="version-tag" id="versionTag">v1.2.0</span></div>
+  <h1>The <em>Ledger</em></h1>
+  <div class="subhead">A minimal example ledger: mechanism class, availability, and a short note for each entry. Click any name to expand its notes.</div>
+  <div class="stat-row">
+    <span><b id="stat-total">—</b> entries</span>
+    <span><b id="stat-common">—</b> common tier</span>
+    <span><b id="stat-cats">—</b> mechanism classes</span>
+  </div>
+</header>
+
+<main>
+  <div class="controls">
+    <div class="filter-label-row">
+      <div class="control-label" style="margin-bottom:0;">Filter by class</div>
+      <button class="toggle-btn" id="toggleFilters">Hide filters</button>
+    </div>
+    <div class="pill-row" id="pillRow"></div>
+    <div class="sort-row">
+      <div class="control-label" style="margin-bottom:0;">Sort</div>
+      <select id="sortSelect">
+        <option value="name-asc">Name A→Z</option>
+        <option value="name-desc">Name Z→A</option>
+        <option value="tier-first">Common tier first</option>
+        <option value="category">Class, then name</option>
+      </select>
+      <input type="text" class="search-box" id="searchBox" placeholder="Search name…">
+    </div>
+  </div>
+
+  <div class="count-line" id="countLine"></div>
+  <div class="ledger" id="ledger"></div>
+</main>
+
+<div class="pkpd-overlay" id="pkpdOverlay" hidden>
+  <div class="pkpd-modal">
+    <div class="pkpd-modal-header">
+      <div class="pkpd-modal-title"><span>Pharmacology · PK/PD</span><span id="pkpdModalName"></span></div>
+      <button class="pkpd-modal-close" id="pkpdModalClose" aria-label="Close">✕</button>
+    </div>
+    <div class="pkpd-modal-body" id="pkpdModalBody"></div>
+    <div class="pkpd-modal-footer">Source: Wikipedia — <a id="pkpdModalSourceLink" href="#" target="_blank" rel="noopener noreferrer">view full article ↗</a></div>
+  </div>
+</div>
+
+<footer>
+  Clean example file. Original catalog data and pricing removed. Three sample entries and three mechanism classes only, tagged with the Bar 1 (rarity/form) and Bar 2 (receptor) system. Not medical advice.
+</footer>
+
+<script>
+const APP_VERSION = "1.2.0-clean";
+
+// Bar 1 — fixed 2 slots. Slot 1 (rarity): "N/A" | "Rare" | "Common"
+//         Slot 2 (form): "None" | "ex" | "oil" | "Both"
+const BAR1_SLOT1_OPTIONS = ["N/A", "Rare", "Common"];
+const BAR1_SLOT2_OPTIONS = ["None", "ex", "oil", "Both"];
+
+// Bar 2 — unlimited slots, drawn from this receptor/target vocabulary.
+const RECEPTORS = [
+  // Monoamine Transporters
+  "NET","DAT","SERT","OCT1","OCT2","OCT3","PMAT",
+  // 5-HT Receptors
+  "5-HT1A","5-HT1B","5-HT1D","5-HT1E","5-HT1F","5-HT2A","5-HT2B","5-HT2C","5-HT3","5-HT4","5-HT5A","5-HT5B","5-HT6","5-HT7",
+  // Dopamine Receptors
+  "D1","D2","D2L","D2S","D3","D4","D5",
+  // Adrenergic Receptors
+  "α1","α1A","α1B","α1D","α2","α2A","α2B","α2C","β1","β2","β3",
+  // Opioid Receptors
+  "Mu (MOR)","Delta (DOR)","Kappa (KOR)","Nociceptin (NOP)",
+  // Cannabinoid Receptors
+  "CB1","CB2","GPR55","GPR18","TRPV1",
+  // Muscarinic Receptors
+  "M1","M2","M3","M4","M5",
+  // Nicotinic Receptors
+  "α2*","α3β4","α4β2","α5-containing","α6β2*","α7","α9α10","Muscle-type (α1β1δε)",
+  // Glutamate (NMDA, AMPA, Kainate, mGluR)
+  "NMDA (GluN2A)","NMDA (GluN2B)","NMDA (GluN2C)","NMDA (GluN2D)","NMDA (GluN3A/B)","AMPA","Kainate",
+  "mGluR1","mGluR2","mGluR3","mGluR4","mGluR5","mGluR6","mGluR7","mGluR8",
+  // GABA Receptors
+  "GABA-A","GABA-B",
+  // Histamine Receptors
+  "H1","H2","H3","H4",
+  // Trace Amine-Associated Receptor
+  "TAAR1",
+  // Adenosine Receptors
+  "A1","A2A","A2B","A3",
+  // Sigma Receptors
+  "Sigma-1 (σ1)","Sigma-2 (σ2)",
+  // Glycine Receptor
+  "Glycine Receptor",
+  // Orexin Receptors
+  "OX1","OX2",
+  // Melatonin Receptors
+  "MT1","MT2",
+  // Imidazoline Receptors
+  "I1","I2",
+  // Oxytocin & Vasopressin Receptors
+  "OXTR","V1a","V1b","V2",
+  // CRF Receptors
+  "CRF1","CRF2",
+  // Neuropeptide Y Receptors
+  "Y1","Y2","Y5",
+  // Neurokinin & CCK Receptors
+  "NK1","CCK-A (CCK1)","CCK-B (CCK2)",
+  // Galanin Receptors
+  "GAL1","GAL2","GAL3",
+  // Ion Channels & Enzymes
+  "Nav1.1","Nav1.2","Nav1.5","Nav1.7","Nav1.8","Cav α2δ-1","Cav α2δ-2","Kv","KCNQ (Kv7)","hERG (Kv11.1)",
+  "TRPA1","TRPM8","FAAH","MAO-A","MAO-B","COMT","AChE","BuChE","VMAT2","PDE4","PDE5",
+];
+
+const DATA = [
+  {name:"Example Alpha", cat:"class-a", bar1:["Common","Both"], receptors:["NET","DAT","α2A"], note:"Sample entry A. Placeholder pharmacology note describing a generic mechanism of action for demonstration purposes only.", effects:["Focus","Alertness","Sample effect"], risk:20, research:40},
+  {name:"Example Beta", cat:"class-b", bar1:["Rare","oil"], receptors:["5-HT1A","5-HT2A","GABA-A"], note:"Sample entry B. Placeholder note for a second mechanism class. Used only to illustrate filtering, sorting, and detail expansion.", effects:["Mood","Calm","Sample effect"], risk:25, research:35},
+  {name:"Example Gamma", cat:"class-c", bar1:["N/A","None"], receptors:["NMDA (GluN2B)","AMPA"], note:"Sample entry C. Demonstrates the tag-bar system and expandable detail panel.", effects:["Memory","Support","Sample effect"], risk:30, research:25}
+];
+
+const CAT_LABELS = {
+  "class-a": "Class A",
+  "class-b": "Class B",
+  "class-c": "Class C"
+};
+
+const CAT_COLORS = {
+  "class-a": "#c98a3e",
+  "class-b": "#4f8fc4",
+  "class-c": "#7c9b7e"
+};
+
+let activeCat = "all";
+let sortMode = "name-asc";
+let searchTerm = "";
+let openIdx = null;
+
+// Strips salt/solution/spray/free-base suffixes and parenthetical or code-name
+// tails so both the Wikipedia link and the molecule lookup resolve against the
+// parent ("freebase") compound rather than a non-existent salt-specific title.
+function baseCompoundName(name){
+  let s = name;
+  s = s.replace(/\s*[–-]\s*(Solution|Spray)\s*$/i, '');
+  s = s.replace(/\s*\([^)]*\)\s*$/, '');
+  s = s.replace(/\s*[–-]\s*CRL-[\d,]+\s*$/i, '');
+  s = s.replace(/\s+(HCl|HCL|HBr|Sodium|Acetate|Phosphate|Succinate|Free\s*Base|FAA)\s*$/i, '');
+  return s.trim();
+}
+
+function wikiUrlFor(baseName){
+  const q = encodeURIComponent(baseName);
+  return `https://en.wikipedia.org/wiki/Special:Search?search=${q}&go=Go`;
+}
+
+function moleculeImgSrc(baseName){
+  return `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(baseName)}/PNG?record_type=2d&image_size=200x200`;
+}
+
+// ---- PK/PD lookup (Wikipedia) ----------------------------------------
+const WIKI_API = 'https://en.wikipedia.org/w/api.php';
+
+// Section titles are matched by keyword anywhere in the heading, not just
+// an exact "Pharmacology/Pharmacokinetics/Pharmacodynamics" prefix, since
+// real articles use varied headings (e.g. "Pharmacological effects",
+// "Biological effects", "Clinical pharmacology", "Mechanism of action").
+const PKPD_KEYWORDS = [
+  /pharmacokinet/i,
+  /pharmacodynam/i,
+  /pharmacolog/i,
+  /biological effects?/i,
+  /physiological effects?/i,
+  /mechanism of action/i
+];
+function isPkPdSectionTitle(title){
+  const t = decodeHtmlEntities((title || '').trim());
+  return PKPD_KEYWORDS.some(re => re.test(t));
+}
+function decodeHtmlEntities(s){
+  const ta = document.createElement('textarea');
+  ta.innerHTML = s;
+  return ta.value;
+}
+
+// keyed by entry name -> {title, sections:[{line,index}]}
+const pkpdCache = {};
+// entry names currently being checked, to avoid duplicate concurrent lookups
+const pkpdInFlight = new Set();
+
+// Thin fetch wrapper: retries transient network failures a couple of times
+// before giving up, so a single dropped connection doesn't kill the lookup.
+async function fetchJson(url, retries = 1){
+  let lastErr;
+  for(let attempt = 0; attempt <= retries; attempt++){
+    try{
+      const res = await fetch(url);
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    }catch(err){
+      lastErr = err;
+      if(attempt < retries) await new Promise(r => setTimeout(r, 350));
+    }
+  }
+  throw lastErr;
+}
+
+// Resolves the Wikipedia page for a compound in three tiers, from most to
+// least precise. Plain full-text search alone (tier 3) is what caused
+// "title mismatches" for short/odd names like "9-Me-BC" — it can rank an
+// unrelated article above the real one. Tiers 1–2 try to land on the exact
+// or near-exact title first, which is far more reliable for compound names.
+async function resolveWikiTitle(baseName){
+  // Tier 1: exact title lookup (resolves redirects too). Most compound
+  // names that exist on Wikipedia verbatim resolve correctly here.
+  try{
+    const url = `${WIKI_API}?action=query&titles=${encodeURIComponent(baseName)}&redirects=1&format=json&origin=*`;
+    const data = await fetchJson(url);
+    const pages = data && data.query && data.query.pages;
+    if(pages){
+      const page = Object.values(pages)[0];
+      if(page && page.pageid && !page.missing) return page.title;
+    }
+  }catch(err){ /* fall through to tier 2 */ }
+
+  // Tier 2: title near-match — still title-anchored (not full-text), so it
+  // catches formatting differences (spacing, punctuation) without the
+  // relevance-ranking issues of full-text search.
+  try{
+    const url = `${WIKI_API}?action=query&list=search&srsearch=${encodeURIComponent(baseName)}&srwhat=nearmatch&format=json&origin=*`;
+    const data = await fetchJson(url);
+    const hit = data && data.query && data.query.search && data.query.search[0];
+    if(hit) return hit.title;
+  }catch(err){ /* fall through to tier 3 */ }
+
+  // Tier 3: full-text search fallback — broadest, used only if the two
+  // title-anchored tiers above found nothing.
+  const url = `${WIKI_API}?action=query&list=search&srsearch=${encodeURIComponent(baseName)}&srlimit=1&format=json&origin=*`;
+  const data = await fetchJson(url);
+  const hit = data && data.query && data.query.search && data.query.search[0];
+  return hit ? hit.title : null;
+}
+
+async function fetchWikiSections(title){
+  const url = `${WIKI_API}?action=parse&page=${encodeURIComponent(title)}&prop=sections&format=json&origin=*`;
+  const data = await fetchJson(url);
+  if(data.error) return [];
+  return (data.parse && data.parse.sections) || [];
+}
+
+async function fetchSectionHtml(title, index){
+  const url = `${WIKI_API}?action=parse&page=${encodeURIComponent(title)}&section=${encodeURIComponent(index)}&prop=text&format=json&origin=*`;
+  const data = await fetchJson(url);
+  if(data.error) return '';
+  return (data.parse && data.parse.text && data.parse.text['*']) || '';
+}
+
+// Checks (and caches) whether the compound's wiki page has any
+// pharmacology/PK/PD-relevant section, then shows or hides the PK/PD
+// button for that entry accordingly.
+async function checkPkPdAvailability(entryName, baseName, btnEl){
+  if(pkpdCache[entryName]){
+    applyPkPdButtonState(btnEl, pkpdCache[entryName]);
+    return;
+  }
+  if(pkpdInFlight.has(entryName)) return;
+  pkpdInFlight.add(entryName);
+  btnEl.classList.add('loading');
+  try{
+    const title = await resolveWikiTitle(baseName);
+    let matches = [];
+    if(title){
+      const sections = await fetchWikiSections(title);
+      matches = sections.filter(s => isPkPdSectionTitle(s.line));
+    }
+    const result = { title, sections: matches };
+    pkpdCache[entryName] = result;
+    // entry may have been closed/re-rendered while the fetch was in flight —
+    // re-query the button for this entry before touching it.
+    const liveBtn = document.querySelector(`.pkpd-btn[data-name="${cssEscape(entryName)}"]`);
+    if(liveBtn) applyPkPdButtonState(liveBtn, result);
+  }catch(err){
+    // A real network/connectivity failure — not the same as "no matching
+    // page found", which is handled above as an empty result, not an error.
+    console.error('PK/PD lookup could not reach Wikipedia for', entryName, err);
+    pkpdCache[entryName] = { title:null, sections:[], error:true };
+    const liveBtn = document.querySelector(`.pkpd-btn[data-name="${cssEscape(entryName)}"]`);
+    if(liveBtn) liveBtn.classList.remove('loading');
+  }finally{
+    pkpdInFlight.delete(entryName);
+  }
+}
+
+function applyPkPdButtonState(btnEl, result){
+  btnEl.classList.remove('loading');
+  btnEl.dataset.wikiTitle = result.title || '';
+  if(result.sections && result.sections.length > 0){
+    btnEl.hidden = false;
+  }else{
+    btnEl.hidden = true;
+  }
+}
+
+// Strips edit-section links, references, and rewrites relative links/images
+// to absolute Wikipedia URLs so the fetched markup renders correctly outside
+// its original page context.
+// Headings that mark trailing citation/bibliography content rather than
+// actual pharmacology prose — if one of these shows up nested inside a
+// matched section (some articles nest a "Footnotes"/"References" subsection
+// under Pharmacology/Pharmacokinetics), drop it and everything after it up
+// to the next heading.
+const NON_CONTENT_HEADING_RE = /^(references?|footnotes?|notes|citations?|external links|further reading|bibliography|sources)$/i;
+
+function stripReferenceBlocks(wrapper){
+  // Reference-list containers that can end up embedded in a section's
+  // markup even without a heading of their own.
+  wrapper.querySelectorAll('.reflist, ol.references, .mw-cite-backlink, .mw-references-wrap').forEach(el => el.remove());
+
+  wrapper.querySelectorAll('h2, h3, h4, h5, h6').forEach(h=>{
+    const text = decodeHtmlEntities(h.textContent || '').trim();
+    if(!NON_CONTENT_HEADING_RE.test(text)) return;
+    const toRemove = [h];
+    let sibling = h.nextSibling;
+    while(sibling){
+      const next = sibling.nextSibling;
+      if(sibling.nodeType === 1 && /^H[2-6]$/.test(sibling.tagName)) break;
+      toRemove.push(sibling);
+      sibling = next;
+    }
+    toRemove.forEach(n => n.remove());
+  });
+}
+
+function sanitizeWikiHtml(html){
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = html;
+  wrapper.querySelectorAll('.mw-editsection').forEach(el => el.remove());
+  // Citation markers ("[1]", "[citation needed]", etc.) — remove the nodes
+  // outright rather than just CSS-hiding them, since Wikipedia varies the
+  // exact markup (sup.reference, sup wrapping a #cite_note link, or the
+  // standalone "citation needed" template span).
+  wrapper.querySelectorAll('sup.reference, sup.noprint, .reference').forEach(el => el.remove());
+  wrapper.querySelectorAll('sup').forEach(sup=>{
+    if(sup.querySelector('a[href^="#cite_note"]')) sup.remove();
+  });
+  // Drop any embedded "References"/"Footnotes"/etc. subsections or
+  // reference-list containers that made it into a matched section.
+  stripReferenceBlocks(wrapper);
+  wrapper.querySelectorAll('a[href^="#"]').forEach(a=> a.removeAttribute('href'));
+  wrapper.querySelectorAll('a[href^="/wiki/"]').forEach(a=>{
+    a.setAttribute('href', 'https://en.wikipedia.org' + a.getAttribute('href'));
+    a.setAttribute('target', '_blank');
+    a.setAttribute('rel', 'noopener noreferrer');
+  });
+  wrapper.querySelectorAll('img').forEach(img=>{
+    const src = img.getAttribute('src');
+    if(src && src.startsWith('//')) img.setAttribute('src', 'https:' + src);
+    const srcset = img.getAttribute('srcset');
+    if(srcset) img.setAttribute('srcset', srcset.replace(/(^|,\s*)\/\//g, '$1https://'));
+  });
+  return wrapper.innerHTML;
+}
+
+async function openPkPdModal(entryName, baseName){
+  const overlay = document.getElementById('pkpdOverlay');
+  const body = document.getElementById('pkpdModalBody');
+  const nameEl = document.getElementById('pkpdModalName');
+  const sourceLink = document.getElementById('pkpdModalSourceLink');
+
+  nameEl.textContent = entryName;
+  overlay.hidden = false;
+  document.body.style.overflow = 'hidden';
+
+  const cached = pkpdCache[entryName];
+  if(!cached || !cached.sections || cached.sections.length === 0){
+    body.innerHTML = `<div class="pkpd-error">No pharmacology/PK-PD sections found.</div>`;
+    return;
+  }
+
+  sourceLink.href = wikiUrlFor(baseName);
+  body.innerHTML = `<div class="pkpd-loading">Loading literature…</div>`;
+
+  try{
+    const parts = await Promise.all(cached.sections.map(async s=>{
+      const html = await fetchSectionHtml(cached.title, s.index);
+      return `<div class="pkpd-section-block wiki-content">${sanitizeWikiHtml(html)}</div>`;
+    }));
+    // if the user closed/reopened for a different entry while loading, bail
+    if(document.getElementById('pkpdModalName').textContent !== entryName) return;
+    body.innerHTML = parts.join('') || `<div class="pkpd-error">No pharmacology/PK-PD sections found.</div>`;
+  }catch(err){
+    console.error('Failed to load PK/PD sections', err);
+    body.innerHTML = `<div class="pkpd-error">Couldn't load this literature right now. Try the full article link below.</div>`;
+  }
+}
+
+function closePkPdModal(){
+  document.getElementById('pkpdOverlay').hidden = true;
+  document.body.style.overflow = '';
+}
+
+// value 0-100. goodHigh=true -> high value renders green (used for "research");
+// goodHigh=false -> high value renders red (used for "health risk").
+function ratingColor(value, goodHigh){
+  const v = goodHigh ? value : 100 - value;
+  if(v < 34) return "#a24a3a";
+  if(v < 67) return "#c98a3e";
+  return "#7c9b7e";
+}
+
+function buildPills(){
+  const row = document.getElementById('pillRow');
+  const cats = ["all", ...Object.keys(CAT_LABELS).filter(c => DATA.some(d=>d.cat===c))];
+  row.innerHTML = cats.map(c => {
+    const label = c === "all" ? "All" : CAT_LABELS[c];
+    const count = c === "all" ? DATA.length : DATA.filter(d=>d.cat===c).length;
+    const dotClass = c === "all" ? "" : " cat-dot";
+    const style = c === "all" ? "" : ` style="--cat-color:${CAT_COLORS[c]}"`;
+    return `<div class="pill${c===activeCat?' active':''}${dotClass}" data-cat="${c}"${style}>${label} · ${count}</div>`;
+  }).join('');
+  row.querySelectorAll('.pill').forEach(p=>{
+    p.addEventListener('click', ()=>{ activeCat = p.dataset.cat; openIdx=null; buildPills(); render(); });
+  });
+}
+
+function tierRank(v){
+  return v === "Common" ? 2 : v === "Rare" ? 1 : 0; // N/A -> 0
+}
+
+function slot1Class(v){
+  if(v === "Common") return "rarity-common";
+  if(v === "Rare") return "rarity-rare";
+  return "rarity-na";
+}
+
+function tinyTag(text, extraClass){
+  return `<span class="tiny-tag ${extraClass}">${text}</span>`;
+}
+
+function getFiltered(){
+  let arr = DATA.filter(d => (activeCat==="all" || d.cat===activeCat) &&
+    d.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  switch(sortMode){
+    case "name-asc": arr.sort((a,b)=>a.name.localeCompare(b.name)); break;
+    case "name-desc": arr.sort((a,b)=>b.name.localeCompare(a.name)); break;
+    case "tier-first": arr.sort((a,b)=> (tierRank(b.bar1[0]) - tierRank(a.bar1[0])) || a.name.localeCompare(b.name)); break;
+    case "category": arr.sort((a,b)=> CAT_LABELS[a.cat].localeCompare(CAT_LABELS[b.cat]) || a.name.localeCompare(b.name)); break;
+  }
+  return arr;
+}
+
+function render(){
+  const arr = getFiltered();
+  document.getElementById('countLine').textContent = `Showing ${arr.length} of ${DATA.length} entries`;
+  const ledger = document.getElementById('ledger');
+  ledger.innerHTML = arr.map((d, i) => {
+    const base = baseCompoundName(d.name);
+    const wikiQuery = encodeURIComponent(base);
+    const wikiUrl = wikiUrlFor(base);
+    const molSrc = moleculeImgSrc(base);
+    const effects = (d.effects || []).slice(0, 5);
+    const riskColor = ratingColor(d.risk, false);
+    const researchColor = ratingColor(d.research, true);
+    return `
+    <div class="entry${openIdx===d.name?' open':''}" data-name="${d.name}" style="--cat-color:${CAT_COLORS[d.cat]}">
+      <div class="entry-row">
+        <div class="idx">${String(i+1).padStart(2,'0')}</div>
+        <div class="mol-box" data-mol><img src="${molSrc}" alt="" loading="lazy" onerror="this.parentElement.classList.add('mol-empty');this.remove();"></div>
+        <div class="name-cell">${d.name}<span class="sub-cat">${CAT_LABELS[d.cat]}</span></div>
+        <div class="tag">${CAT_LABELS[d.cat]}</div>
+        <div class="bar1-compact">
+          ${tinyTag(d.bar1[0], slot1Class(d.bar1[0]))}
+          ${tinyTag(d.bar1[1], 'form-tag')}
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="detail">
+        <div class="detail-inner">
+          <div class="detail-text">${d.note}</div>
+          <div class="detail-side">
+            <div class="mol-box-lg" data-mol><img src="${molSrc}" alt="${base} molecule" loading="lazy" onerror="this.parentElement.classList.add('mol-empty');this.remove();"></div>
+            <div class="detail-meta">
+              <div>Class: <span>${CAT_LABELS[d.cat]}</span></div>
+              <div class="detail-meta-actions">
+                <a class="wiki-btn" href="${wikiUrl}" data-title="${wikiQuery}" target="_blank" rel="noopener noreferrer" onclick="return openWiki(event, this)">Wiki</a>
+                <button class="wiki-btn pkpd-btn" type="button" data-name="${d.name}" data-base="${base}" data-wiki-title="" hidden>PK/PD</button>
+              </div>
+            </div>
+          </div>
+          <div class="tagbars-block">
+            <div class="submenu-label">Tags</div>
+            <div class="bar-row bar1-row">
+              ${tinyTag(d.bar1[0], slot1Class(d.bar1[0]))}
+              ${tinyTag(d.bar1[1], 'form-tag')}
+            </div>
+            <div class="bar-row bar2-row">
+              ${(d.receptors||[]).map(r=>tinyTag(r, 'receptor-tag')).join('')}
+            </div>
+          </div>
+          <div class="effects-block">
+            <div class="submenu-label">Effects</div>
+            <div class="effects-row">
+              ${effects.map(e=>`<span class="effect-chip">${e}</span>`).join('')}
+            </div>
+          </div>
+          <div class="ratings-block">
+            <div class="submenu-label">Ratings</div>
+            <div class="rating-row">
+              <div class="rating-label"><b>Health risk</b><span>${d.risk}/100</span></div>
+              <div class="rating-track"><div class="rating-fill" style="width:${d.risk}%; background:${riskColor};"></div></div>
+            </div>
+            <div class="rating-row">
+              <div class="rating-label"><b>Research depth</b><span>${d.research}/100</span></div>
+              <div class="rating-track"><div class="rating-fill" style="width:${d.research}%; background:${researchColor};"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;}).join('');
+
+  ledger.querySelectorAll('.entry').forEach(el=>{
+    el.querySelector('.entry-row').addEventListener('click', ()=>{
+      const n = el.dataset.name;
+      openIdx = (openIdx === n) ? null : n;
+      render();
+    });
+  });
+
+  ledger.querySelectorAll('.pkpd-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      openPkPdModal(btn.dataset.name, btn.dataset.base);
+    });
+  });
+
+  // Every time a nootropic submenu is opened, check its wiki page for
+  // Pharmacology/Pharmacokinetics/Pharmacodynamics sections and reveal the
+  // PK/PD button only if at least one such section was found.
+  if(openIdx){
+    const openBtn = ledger.querySelector(`.entry[data-name="${cssEscape(openIdx)}"] .pkpd-btn`);
+    if(openBtn) checkPkPdAvailability(openIdx, openBtn.dataset.base, openBtn);
+  }
+}
+
+function cssEscape(s){
+  return (window.CSS && CSS.escape) ? CSS.escape(s) : s.replace(/["\\]/g, '\\$&');
+}
+
+function updateStats(){
+  document.getElementById('stat-total').textContent = DATA.length;
+  document.getElementById('stat-common').textContent = DATA.filter(d=>d.bar1[0]==="Common").length;
+  document.getElementById('stat-cats').textContent = new Set(DATA.map(d=>d.cat)).size;
+}
+
+function openWiki(e, el){
+  e.stopPropagation();
+  e.preventDefault();
+
+  const title = el.dataset.title;
+  const webUrl = el.getAttribute('href');
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const isAndroid = /android/i.test(ua);
+
+  if(isAndroid){
+    // Android intent URL: tries the Wikipedia app, falls back to the browser automatically
+    // if the app isn't installed (handled natively by S.browser_fallback_url).
+    const intentUrl = `intent://en.wikipedia.org/wiki/${title}#Intent;scheme=https;package=org.wikipedia;S.browser_fallback_url=${encodeURIComponent(webUrl)};end`;
+    window.location.href = intentUrl;
+    return false;
+  }
+
+  if(isIOS){
+    // iOS Wikipedia app custom URL scheme. If the app isn't installed, or the page
+    // doesn't hide within ~1.2s, fall back to opening the normal web link.
+    let handedOff = false;
+    const onHide = () => { handedOff = true; };
+    document.addEventListener('visibilitychange', onHide);
+    window.location.href = `wikipedia://en.wikipedia.org/wiki/${title}`;
+    setTimeout(()=>{
+      document.removeEventListener('visibilitychange', onHide);
+      if(!handedOff){ window.open(webUrl, '_blank', 'noopener,noreferrer'); }
+    }, 1200);
+    return false;
+  }
+
+  // Desktop / anything else: normal browser tab
+  window.open(webUrl, '_blank', 'noopener,noreferrer');
+  return false;
+}
+
+document.getElementById('toggleFilters').addEventListener('click', (e)=>{
+  const row = document.getElementById('pillRow');
+  const collapsed = row.classList.toggle('collapsed');
+  e.target.textContent = collapsed ? 'Show filters' : 'Hide filters';
+});
+
+document.getElementById('sortSelect').addEventListener('change', (e)=>{ sortMode = e.target.value; render(); });
+document.getElementById('searchBox').addEventListener('input', (e)=>{ searchTerm = e.target.value; render(); });
+
+document.getElementById('pkpdModalClose').addEventListener('click', closePkPdModal);
+document.getElementById('pkpdOverlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'pkpdOverlay') closePkPdModal();
+});
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape' && !document.getElementById('pkpdOverlay').hidden) closePkPdModal();
+});
+
+document.getElementById('versionTag').textContent = `v${APP_VERSION}`;
+
+updateStats();
+buildPills();
+render();
+</script>
+</body>
+</html>
