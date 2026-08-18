@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risperidone — Substance Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Linux+Libertine:ital,wght@0,400;0,600;1,400&family=Linux+Biolinum:wght@400;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+--bg: #f8f9fa; --bg2: #ffffff; --border: #a2a9b1; --border-light: #e0e4e8;
+--text: #202122; --text2: #54595d; --text3: #72777d;
+--link: #3366cc; --link-hover: #6a4ead;
+--warn-bg: #fef6e7; --warn-border: #f0a500;
+--danger-bg: #fee7e6; --danger-border: #d33;
+--info-bg: #eaf3fb; --info-border: #3680b0;
+--tip-bg: #e5f5e0; --tip-border: #2d6a2d;
+--box-bg: #f8f9fa; --cat-bg: #eaf0fb; --cat-border: #a2b8d8;
+--infobox-bg: #f8f9fa; --infobox-head: #cee0f2;
+--tag-pa: #e8f0fe; --tag-ant: #fce8e8; --tag-inh: #f0e8fe; --tag-mod: #e8feee;
+--positive: #1a7a1a; --neutral: #7a5c00; --negative: #8b0000; --both: #00457c;
+--placeholder: #b0b6bd;
+--font-body: 'Linux Libertine', Georgia, serif;
+--font-ui: 'Linux Biolinum', 'Segoe UI', sans-serif;
+--font-mono: 'Source Code Pro', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.75; }
+.page-wrap { display: flex; max-width: 1280px; margin: 0 auto; }
+.sidebar { width: 220px; min-width: 220px; background: var(--bg2); border-right: 1px solid var(--border-light); position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 16px 0; font-family: var(--font-ui); font-size: 13px; }
+.sidebar-logo { padding: 0 12px 12px; border-bottom: 1px solid var(--border-light); margin-bottom: 10px; }
+.sidebar-logo .logo-name { font-size: 15px; font-weight: 600; color: #3a3a3a; }
+.sidebar-logo .logo-sub { font-size: 11px; color: var(--text3); }
+.toc-section { padding: 4px 12px; }
+.toc-section h4 { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin-bottom: 4px; }
+.toc-section a { display: block; padding: 2px 0 2px 8px; color: var(--link); text-decoration: none; font-size: 12.5px; border-left: 2px solid transparent; line-height: 1.4; }
+.toc-section a:hover { border-left-color: var(--link); background: var(--info-bg); }
+.toc-section a.sub { padding-left: 18px; font-size: 12px; color: var(--text2); }
+.toc-divider { border: none; border-top: 1px solid var(--border-light); margin: 8px 12px; }
+.content { flex: 1; min-width: 0; padding: 24px 32px 80px; }
+h1.page-title { font-family: var(--font-body); font-size: 2.1em; font-weight: 600; border-bottom: 2px solid var(--border); padding-bottom: 6px; margin-bottom: 4px; color: var(--text); }
+.page-subtitle { font-size: 13px; color: var(--text3); font-family: var(--font-ui); margin-bottom: 18px; }
+.page-subtitle a { color: var(--link); text-decoration: none; }
+h2 { font-family: var(--font-body); font-size: 1.5em; font-weight: 600; border-bottom: 1px solid var(--border-light); padding-bottom: 3px; margin: 32px 0 12px; color: #1a1a1a; }
+h3 { font-family: var(--font-body); font-size: 1.18em; font-weight: 600; margin: 20px 0 8px; color: #2a2a2a; }
+h4 { font-family: var(--font-ui); font-size: 0.95em; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--text2); margin: 14px 0 4px; }
+p { margin-bottom: 10px; }
+a { color: var(--link); }
+a:hover { color: var(--link-hover); }
+sup { font-size: 0.72em; }
+sup a { text-decoration: none; }
+.infobox { float: right; clear: right; width: 310px; margin: 0 0 16px 24px; background: var(--infobox-bg); border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-ui); font-size: 13px; }
+.infobox-head { background: var(--infobox-head); text-align: center; padding: 7px 10px; font-weight: 600; font-size: 14px; border-bottom: 1px solid var(--border); border-radius: 4px 4px 0 0; }
+.infobox-img { text-align: center; padding: 10px; border-bottom: 1px solid var(--border-light); background: #fff; }
+.mol-diagram-placeholder { width: 240px; height: 150px; margin: 0 auto; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border); border-radius: 4px; color: var(--placeholder); font-family: var(--font-ui); font-size: 12px; text-align: center; }
+.infobox table { width: 100%; border-collapse: collapse; }
+.infobox tr td { padding: 4px 9px; border-top: 1px solid var(--border-light); vertical-align: top; }
+.infobox tr td:first-child { font-weight: 500; color: var(--text2); width: 42%; }
+.infobox tr td:last-child { color: var(--text); }
+.infobox-section-head { background: var(--infobox-head); text-align: center; font-weight: 600; padding: 4px 8px; font-size: 12px; }
+.clearfix::after { content: ""; display: table; clear: both; }
+.alert { border-radius: 4px; padding: 10px 14px; margin: 14px 0; font-size: 14px; font-family: var(--font-ui); display: flex; gap: 10px; align-items: flex-start; border-left: 4px solid; }
+.alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.alert-warn { background: var(--warn-bg); border-color: var(--warn-border); }
+.alert-danger { background: var(--danger-bg); border-color: var(--danger-border); }
+.alert-info { background: var(--info-bg); border-color: var(--info-border); }
+.alert-tip { background: var(--tip-bg); border-color: var(--tip-border); }
+.dose-table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 13.5px; margin: 10px 0; }
+.dose-table th { background: var(--infobox-head); padding: 7px 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.dose-table td { padding: 7px 12px; border: 1px solid var(--border-light); vertical-align: middle; }
+.dose-table tr.thresh { background: #f0f8e8; }
+.dose-table tr.light { background: #e8f8e0; }
+.dose-table tr.common { background: #fffde8; }
+.dose-table tr.strong { background: #fef0d8; }
+.dose-table tr.heavy { background: #fee8e8; }
+.dur-table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 13.5px; margin: 10px 0; }
+.dur-table th { background: var(--infobox-head); padding: 7px 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.dur-table td { padding: 7px 12px; border: 1px solid var(--border-light); }
+.effects-group { margin: 14px 0; }
+.effects-group h4 { font-size: 13px; font-family: var(--font-ui); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.effects-group h4.positive { color: var(--positive); }
+.effects-group h4.neutral { color: var(--neutral); }
+.effects-group h4.negative { color: var(--negative); }
+.effects-group h4.both { color: var(--both); }
+.effects-group ul { list-style: none; padding: 0; margin: 0; }
+.effects-group li { padding: 3px 0 3px 18px; position: relative; font-size: 14.5px; border-bottom: 1px solid var(--border-light); }
+.effects-group li:last-child { border-bottom: none; }
+.effects-group li::before { content: "•"; position: absolute; left: 5px; }
+.eff-positive li::before { color: var(--positive); }
+.eff-neutral li::before { color: var(--neutral); }
+.eff-negative li::before { color: var(--negative); }
+.eff-both li::before { color: var(--both); }
+.eff-note { font-size: 12px; color: var(--text3); font-style: italic; margin-left: 4px; }
+.pharm-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--font-ui); margin: 10px 0; }
+.pharm-table th { background: var(--infobox-head); padding: 7px 10px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.pharm-table td { padding: 6px 10px; border: 1px solid var(--border-light); vertical-align: top; }
+.pharm-table tr:hover td { background: var(--info-bg); }
+.pharm-tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+.pa { background: var(--tag-pa); color: #1a3ca8; }
+.ant { background: var(--tag-ant); color: #8b0000; }
+.mod { background: var(--tag-mod); color: #1a5c1a; }
+.inh { background: var(--tag-inh); color: #5c1a8b; }
+.ki-val { font-family: var(--font-mono); font-weight: 500; }
+.int-table { width: 100%; border-collapse: collapse; font-size: 13.5px; font-family: var(--font-ui); margin: 10px 0; }
+.int-table th { background: var(--infobox-head); padding: 7px 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.int-table td { padding: 7px 12px; border: 1px solid var(--border-light); vertical-align: top; }
+.sev-danger { background: #fee; color: #900; font-weight: 600; font-size: 12px; padding: 2px 7px; border-radius: 3px; }
+.sev-caution { background: #fff3cd; color: #856404; font-weight: 600; font-size: 12px; padding: 2px 7px; border-radius: 3px; }
+.sev-safe { background: #d4edda; color: #155724; font-weight: 600; font-size: 12px; padding: 2px 7px; border-radius: 3px; }
+.metab-flow { background: #fff; border: 1px dashed var(--border); border-radius: 6px; padding: 20px; margin: 12px 0; font-family: var(--font-ui); text-align: center; color: var(--text2); font-size: 13px; }
+.legal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin: 12px 0; }
+.legal-item { background: #fff; border: 1px solid var(--border-light); border-radius: 5px; padding: 8px 10px; font-family: var(--font-ui); font-size: 12.5px; }
+.legal-item .country { font-weight: 600; color: var(--text); }
+.legal-item .status { color: var(--text2); }
+.legal-rx { border-left: 3px solid #2196f3; }
+.legal-cont { border-left: 3px solid #f44336; }
+.legal-unsched { border-left: 3px solid #9e9e9e; }
+.refs { font-size: 12.5px; font-family: var(--font-ui); color: var(--text2); }
+.refs ol { padding-left: 20px; }
+.refs li { margin-bottom: 3px; }
+.category-bar { background: var(--cat-bg); border: 1px solid var(--cat-border); border-radius: 4px; padding: 8px 12px; margin-top: 32px; font-family: var(--font-ui); font-size: 13px; }
+.category-bar span { font-weight: 600; margin-right: 6px; }
+.category-bar a { color: var(--link); text-decoration: none; margin-right: 10px; }
+.comp-table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-family: var(--font-ui); }
+.comp-table th { background: var(--infobox-head); padding: 6px 10px; font-weight: 600; border: 1px solid var(--border); text-align: left; }
+.comp-table td { padding: 5px 10px; border: 1px solid var(--border-light); }
+.comp-table tr:hover td { background: #f0f4ff; }
+.tick { color: #2a7; } .cross { color: #c33; } .partial { color: #a86; }
+@media (max-width: 860px) {
+.sidebar { display: none; }
+.infobox { float: none; width: 100%; margin: 0 0 16px 0; }
+.content { padding: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<nav class="sidebar" aria-label="Table of contents">
+<div class="sidebar-logo">
+<div class="logo-name">⚗ Substance Wiki</div>
+<div class="logo-sub">Risperidone</div>
+</div>
+<div class="toc-section">
+<h4>Contents</h4>
+<a href="#summary">Summary</a>
+<a href="#history">History &amp; development</a>
+<a href="#chemistry">Chemistry</a>
+<a href="#pharmacology">Pharmacology</a>
+<a href="#dosage">Dosage</a>
+<a href="#duration">Duration</a>
+<a href="#effects">Effects</a>
+<a class="sub" href="#eff-physical">Physical effects</a>
+<a class="sub" href="#eff-cognitive">Cognitive / psychiatric effects</a>
+<a href="#tolerance">Tolerance &amp; withdrawal</a>
+<a href="#toxicity">Toxicity &amp; harm</a>
+<a href="#interactions">Interactions</a>
+<a href="#metabolites">Metabolites &amp; PK</a>
+<a href="#comparison">Comparison</a>
+<a href="#legal">Legal status</a>
+<a href="#references">References</a>
+</div>
+<hr class="toc-divider">
+<div class="toc-section">
+<h4>Related</h4>
+<a href="#">Paliperidone (9-OH-risperidone)</a>
+<a href="#">Olanzapine</a>
+<a href="#">Aripiprazole</a>
+<a href="#">Atypical antipsychotics</a>
+</div>
+</nav>
+
+<main class="content">
+<h1 class="page-title">Risperidone</h1>
+<p class="page-subtitle">
+Substance Wiki ·
+<a href="#">Benzisoxazole derivative</a> ·
+<a href="#">Atypical (2nd-generation) antipsychotic</a> ·
+<a href="#">Rx-only, psychiatric</a>
+</p>
+
+<div class="clearfix">
+<aside class="infobox" aria-label="Substance summary">
+<div class="infobox-head">Risperidone</div>
+<div class="infobox-img">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Risperidone.svg/640px-Risperidone.svg.png" 
+     alt="Chemical structure of risperidone" 
+     style="max-width:100%; height:auto; display:block; margin:0 auto; background:#fff; padding:4px;"
+     onerror="this.onerror=null; this.src='https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid=5073&t=l';">
+<div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:monospace;">C₂₃H₂₇FN₄O₂</div>
+</div>
+<table>
+<tr><td>Brand names</td><td>Risperdal, Risperdal Consta (LAI), Rispolept</td></tr>
+<tr><td>Class</td><td>Benzisoxazole derivative</td></tr>
+<tr><td>Psychoactive class</td><td>Atypical antipsychotic (SDA — serotonin-dopamine antagonist)</td></tr>
+<tr><td>CAS number</td><td>106266-06-2</td></tr>
+<tr><td>Mol. formula</td><td>C₂₃H₂₇FN₄O₂</td></tr>
+<tr><td>Mol. weight</td><td>410.49 g/mol</td></tr>
+<tr><td>Routes</td><td>Oral (tablet, ODT, solution); IM depot (long-acting injectable, 2-week or 1-month formulations)</td></tr>
+<tr><td>Bioavailability</td><td>~70% oral (absolute); unaffected by food</td></tr>
+<tr><td>Protein binding</td><td>~90% (parent); ~77% (9-OH metabolite)</td></tr>
+<tr><td>Metabolism</td><td>Hepatic, CYP2D6 (major) → 9-hydroxyrisperidone (paliperidone, active); minor CYP3A4</td></tr>
+<tr><td>Half-life</td><td>~3 h (EM, CYP2D6 extensive metabolizers) to ~20 h (PM, poor metabolizers); active moiety (parent + metabolite) ~20 h</td></tr>
+<tr><td>Onset</td><td>Oral: ~1–2 h to peak plasma; clinical antipsychotic effect builds over 1–2 weeks</td></tr>
+<tr><td>Developed by / origin</td><td>Janssen Pharmaceutica (Paul Janssen's group), synthesized in the 1980s</td></tr>
+<tr><td>Approved / scheduled</td><td>FDA approved 1993 (US); widely approved internationally through the 1990s</td></tr>
+<tr><td>Legal status</td><td>Prescription-only medicine essentially worldwide; not a controlled substance</td></tr>
+</table>
+<div class="infobox-section-head" style="margin-top:4px;">Typical oral dosage (schizophrenia, adult)</div>
+<table>
+<tr class="thresh"><td>Starting</td><td>1–2 mg/day</td></tr>
+<tr class="light"><td>Low maintenance</td><td>2–3 mg/day</td></tr>
+<tr class="common"><td>Common maintenance</td><td>4–6 mg/day</td></tr>
+<tr class="strong"><td>Upper range</td><td>6–8 mg/day</td></tr>
+<tr class="heavy"><td>Max labeled</td><td>16 mg/day (rarely used; EPS risk rises sharply above ~6 mg)</td></tr>
+</table>
+<div class="infobox-section-head" style="margin-top:4px;">Duration (oral)</div>
+<table>
+<tr><td>Onset (plasma)</td><td>~1 h</td></tr>
+<tr><td>Peak (plasma)</td><td>~1–2 h (parent); ~3–17 h active moiety, metabolizer-dependent</td></tr>
+<tr><td>Duration (clinical)</td><td>Continuous dosing; symptom control accrues over weeks</td></tr>
+<tr><td>After-effects</td><td>Sedation/orthostasis can linger hours after dose; full washout ~4–5 half-lives (days)</td></tr>
+</table>
+</aside>
+
+<section id="summary">
+<p>Risperidone is a benzisoxazole-derivative atypical (second-generation) antipsychotic developed by Janssen Pharmaceutica and approved by the FDA in 1993. It is used primarily to treat schizophrenia, bipolar mania, and irritability associated with autism spectrum disorder, and — at low doses — is used off-label for treatment-resistant depression augmentation, Tourette's, and severe behavioral disturbance in dementia (with a boxed warning against the latter use due to mortality risk in elderly patients with dementia-related psychosis).</p>
+<p>Its defining mechanism is combined high-affinity <b>5-HT₂A antagonism</b> and <b>D₂ antagonism</b>, with 5-HT₂A affinity exceeding D₂ affinity — the prototypical "serotonin-dopamine antagonist" (SDA) profile that distinguishes second-generation from first-generation (purely D₂-blocking) antipsychotics. This ratio is thought to underlie its comparatively lower extrapyramidal symptom (EPS) burden at low-to-moderate doses relative to typical antipsychotics like haloperidol, though risperidone loses this advantage at higher doses because D₂ occupancy climbs steeply and the EPS-sparing margin narrows more than with other second-generation agents (e.g. quetiapine, clozapine).</p>
+<p>Pharmacokinetically, risperidone is unusual in that its active moiety includes both itself and its major metabolite, 9-hydroxyrisperidone (paliperidone) — itself marketed separately as an antipsychotic. Because CYP2D6 activity varies genetically, parent-drug half-life ranges roughly sixfold between extensive and poor metabolizers, but the combined active-moiety half-life is comparatively stable (~20 h), which is why the drug is usually dosed once or twice daily despite the parent compound's short half-life in most people.</p>
+<div class="alert alert-warn">
+<span class="alert-icon">⚠️</span>
+<div><b>Disclaimer:</b> This page is a personal reference summary for education purposes and is not medical advice. Risperidone is a prescription medicine; dosing, monitoring, and discontinuation should be directed by a prescriber, and information here should not be used to self-initiate, adjust, or stop treatment.</div>
+</div>
+</section>
+
+<section id="history">
+<h2>History and development</h2>
+<p>Risperidone was synthesized in the mid-1980s by a Janssen Pharmaceutica research team building on the company's earlier butyrophenone/benzisoxazole antipsychotic work, with the explicit design goal of combining potent 5-HT₂A blockade with D₂ blockade to reduce EPS relative to first-generation antipsychotics such as haloperidol (also a Janssen compound).</p>
+<p>It received FDA approval for schizophrenia in December 1993, becoming one of the first widely adopted "second-generation" antipsychotics after clozapine (which carries agranulocytosis risk and requires blood monitoring). Approval was later extended to bipolar mania (2003) and to irritability in autism spectrum disorder in children (2006) — the first drug approved for that indication.</p>
+<p>A long-acting injectable (LAI) microsphere formulation, Risperdal Consta, was approved in 2003, administered every two weeks, and later followed by once-monthly LAI formulations of its active metabolite paliperidone (Invega Sustenna). Risperidone went off-patent in 2008 and is now widely available as a low-cost generic, making it one of the most commonly prescribed antipsychotics globally.</p>
+</section>
+
+<section id="chemistry">
+<h2>Chemistry</h2>
+<p>Risperidone belongs to the benzisoxazole (specifically benzisoxazole-piperidine) structural class. Its structure links a 6-fluorobenzisoxazole moiety to a piperidine ring, which is in turn connected via an ethyl bridge to a tetrahydropyridopyrimidinone ring system. This hybrid scaffold — distinct from the phenothiazines and butyrophenones of first-generation antipsychotics — was purpose-built to achieve balanced serotonergic/dopaminergic antagonism.</p>
+<p>Its major active metabolite, 9-hydroxyrisperidone (paliperidone), differs only by hydroxylation at the 9-position of the benzisoxazole-derived ring system and retains a nearly identical receptor-binding profile to the parent compound, which is why parent drug and metabolite are treated pharmacologically as a combined "active moiety."</p>
+</section>
+
+<section id="pharmacology">
+<h2>Pharmacology</h2>
+<p>Risperidone acts as a high-affinity antagonist at 5-HT₂A and D₂ receptors, with 5-HT₂A affinity somewhat higher than D₂ affinity — the ratio classically used to define "atypicality" in the serotonin-dopamine antagonist model. It also has strong affinity for α1- and α2-adrenergic receptors and H1 histamine receptors, contributing to orthostatic hypotension, sedation, and weight gain, and negligible-to-low affinity for muscarinic (M1) receptors, which is why it produces relatively little anticholinergic burden compared to olanzapine or clozapine.</p>
+<table class="pharm-table">
+<thead><tr><th>Target</th><th>Action</th><th>Affinity (Ki, approx.)</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>5-HT₂A</td><td><span class="pharm-tag ant">Antagonist</span></td><td class="ki-val">~0.15–0.5 nM</td><td>Primary driver of the SDA/atypical profile; contributes to negative-symptom and mood effects</td></tr>
+<tr><td>D₂</td><td><span class="pharm-tag ant">Antagonist</span></td><td class="ki-val">~3–5 nM</td><td>Antipsychotic efficacy; EPS/prolactin elevation rise sharply above ~75–80% striatal occupancy</td></tr>
+<tr><td>D3</td><td><span class="pharm-tag ant">Antagonist</span></td><td class="ki-val">~5–10 nM</td><td>Similar affinity to D2</td></tr>
+<tr><td>α1-adrenergic</td><td><span class="pharm-tag ant">Antagonist</span></td><td class="ki-val">~0.7–3 nM</td><td>Orthostatic hypotension, dizziness, reflex tachycardia</td></tr>
+<tr><td>α2-adrenergic</td><td><span class="pharm-tag ant">Antagonist</span></td><td class="ki-val">~5–10 nM</td><td>Possible modest contribution to antidepressant augmentation effect</td></tr>
+<tr><td>H1 (histamine)</td><td><span class="pharm-tag ant">Antagonist</span></td><td class="ki-val">~10–20 nM</td><td>Sedation, appetite stimulation/weight gain</td></tr>
+<tr><td>5-HT₇</td><td><span class="pharm-tag ant">Antagonist</span></td><td class="ki-val">~1–5 nM</td><td>Proposed contributor to mood/cognitive effects; less well characterized clinically</td></tr>
+<tr><td>5-HT₁A</td><td><span class="pharm-tag pa">Partial agonist / weak</span></td><td class="ki-val">Low affinity</td><td>Minor contribution relative to other 2nd-gen agents (e.g. aripiprazole)</td></tr>
+<tr><td>M1 (muscarinic)</td><td>Negligible</td><td class="ki-val">&gt;10,000 nM</td><td>Explains low anticholinergic side-effect burden</td></tr>
+</tbody>
+</table>
+<h3>Unique kinetic properties</h3>
+<p>Risperidone is metabolized almost entirely to 9-hydroxyrisperidone (paliperidone) via CYP2D6, an enzyme with well-characterized genetic polymorphism. In CYP2D6 poor metabolizers (~5–10% of the population, more in some ethnic groups), parent-drug clearance is markedly reduced, prolonging parent half-life from ~3 h to ~20 h; conversely, because paliperidone itself is renally eliminated and pharmacologically near-equivalent to the parent, the combined active-moiety exposure is far less sensitive to CYP2D6 genotype than parent-drug levels alone would suggest — a key reason plasma-level interpretation for risperidone should always consider the parent + metabolite sum rather than parent alone.</p>
+</section>
+
+<section id="dosage">
+<h2>Dosage</h2>
+<div class="alert alert-info">
+<span class="alert-icon">ℹ️</span>
+<div>Figures below reflect labeled adult oral dosing ranges for schizophrenia/bipolar mania per prescribing information; actual dosing is individualized by a prescriber and titrated against response and tolerability, not self-adjusted.</div>
+</div>
+<table class="dose-table">
+<thead><tr><th>Indication</th><th>Starting</th><th>Typical range</th><th>Practical ceiling</th><th>Labeled max</th></tr></thead>
+<tbody>
+<tr>
+<td>Schizophrenia (adult)</td>
+<td class="thresh">1–2 mg/day</td>
+<td class="light">2–4 mg/day</td>
+<td class="common">4–6 mg/day</td>
+<td class="heavy">16 mg/day</td>
+</tr>
+<tr>
+<td>Bipolar mania</td>
+<td class="thresh">2–3 mg/day</td>
+<td class="light">1–6 mg/day</td>
+<td class="common">6 mg/day</td>
+<td class="heavy">6 mg/day (labeled ceiling for this indication)</td>
+</tr>
+<tr>
+<td>Autism-associated irritability (pediatric)</td>
+<td class="thresh">0.25–0.5 mg/day</td>
+<td class="light">0.5–1.5 mg/day</td>
+<td class="common">Weight-based, up to ~3 mg/day</td>
+<td class="heavy">Per weight-based labeling</td>
+</tr>
+</tbody>
+</table>
+<h3>Dose modifications</h3>
+<p>Lower starting doses and slower titration are recommended in hepatic or renal impairment, in the elderly (particularly dementia-related psychosis, which carries a boxed mortality warning and is not an approved indication), and when co-administered with strong CYP2D6 inhibitors (e.g. paroxetine, fluoxetine, bupropion) or CYP3A4 inducers/inhibitors, since these substantially shift active-moiety exposure. The EPS/prolactin side-effect burden rises disproportionately above ~6 mg/day because D₂ occupancy approaches the ~80% threshold associated with motor side effects, so incremental efficacy gains above that range are often outweighed by tolerability costs.</p>
+</section>
+
+<section id="duration">
+<h2>Duration and timeline</h2>
+<table class="dur-table">
+<thead><tr><th>Route/formulation</th><th>Onset</th><th>Peak (plasma)</th><th>Clinical effect</th><th>After-effects</th></tr></thead>
+<tbody>
+<tr>
+<td>Oral tablet/solution</td>
+<td>~1 h</td>
+<td>~1 h (parent), ~3–17 h (active moiety, metabolizer-dependent)</td>
+<td>Sedation/anxiolysis within days; antipsychotic effect builds over 1–4 weeks</td>
+<td>Sedation/orthostasis can persist several hours post-dose</td>
+</tr>
+<tr>
+<td>IM long-acting (biweekly microsphere)</td>
+<td>Delayed (~3 weeks to reach therapeutic release)</td>
+<td>~4–6 weeks to steady state</td>
+<td>Oral overlap required for ~3 weeks after first injection</td>
+<td>Detectable drug for weeks after final injection</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section id="effects">
+<h2>Effects</h2>
+<div class="alert alert-info">
+<span class="alert-icon">ℹ️</span>
+<div>Compiled from clinical trial and post-marketing adverse-event data (prescribing information, meta-analyses of second-generation antipsychotics). Individual tolerability varies substantially, and risperidone's side-effect profile is notably dose-dependent — it behaves closer to a "typical" antipsychotic in EPS/prolactin burden at higher doses.</div>
+</div>
+<section id="eff-physical">
+<h3>Physical effects</h3>
+<div class="effects-group eff-positive">
+<h4 class="positive">Therapeutic / desired</h4>
+<ul>
+<li>Reduction of positive psychotic symptoms (hallucinations, delusions)</li>
+<li>Reduction of manic symptoms in bipolar disorder</li>
+<li>Reduced irritability/aggression (autism, off-label uses)</li>
+</ul>
+</div>
+<div class="effects-group eff-neutral">
+<h4 class="neutral">Neutral / variable</h4>
+<ul>
+<li>Sedation — dose- and individual-dependent</li>
+<li>Appetite increase / weight gain — moderate relative to olanzapine/clozapine, more than aripiprazole/ziprasidone</li>
+</ul>
+</div>
+<div class="effects-group eff-negative">
+<h4 class="negative">Adverse / physical</h4>
+<ul>
+<li>Extrapyramidal symptoms (akathisia, dystonia, parkinsonism) — dose-dependent, more prominent above ~6 mg/day</li>
+<li>Hyperprolactinemia — more pronounced than most other 2nd-gen antipsychotics due to relatively poor blood-brain barrier penetration relative to pituitary D₂ blockade; can cause galactorrhea, gynecomastia, menstrual irregularity, sexual dysfunction</li>
+<li>Orthostatic hypotension, tachycardia (α1 blockade)</li>
+<li>Metabolic effects: weight gain, dyslipidemia, increased diabetes risk</li>
+<li>QTc prolongation (modest, dose-dependent)</li>
+<li>Tardive dyskinesia (risk with long-term use, lower than first-generation agents but not zero)</li>
+</ul>
+</div>
+</section>
+<section id="eff-cognitive">
+<h3>Cognitive and emotional effects</h3>
+<div class="effects-group eff-positive">
+<h4 class="positive">Therapeutic</h4>
+<ul>
+<li>Reduced psychotic disorganization and paranoia</li>
+<li>Mood stabilization in mania</li>
+<li>Some improvement in negative symptoms relative to first-generation agents (modest effect size)</li>
+</ul>
+</div>
+<div class="effects-group eff-neutral">
+<h4 class="neutral">Neutral / variable</h4>
+<ul>
+<li>Emotional blunting / apathy — reported by some patients, dose-dependent</li>
+</ul>
+</div>
+<div class="effects-group eff-negative">
+<h4 class="negative">Adverse / cognitive / psychological</h4>
+<ul>
+<li>Sedation, subjective slowing</li>
+<li>Akathisia-driven agitation/dysphoria (can be mistaken for anxiety or worsening psychiatric symptoms)</li>
+<li>Rarely, depressive symptoms attributed to dopaminergic blockade ("neuroleptic dysphoria")</li>
+</ul>
+</div>
+</section>
+</section>
+
+<section id="tolerance">
+<h2>Tolerance and discontinuation</h2>
+<h3>Tolerance</h3>
+<p>Therapeutic (antipsychotic) tolerance to risperidone's core effect is not typically described in the way it is for sedative or stimulant classes — efficacy is generally maintained with continued dosing, though some tolerance to sedative and orthostatic side effects develops over the first weeks of treatment. Cross-tolerance is not a major clinical consideration between antipsychotics in the way it is for e.g. opioids, since switching agents is usually done via cross-titration rather than direct substitution at fixed dose-equivalence.</p>
+<h3>Discontinuation / withdrawal</h3>
+<p>Abrupt discontinuation, particularly after prolonged use, can produce withdrawal/rebound phenomena including rebound psychosis (distinct from relapse of the underlying disorder), cholinergic rebound (nausea, diaphoresis, insomnia) if there was concurrent anticholinergic suppression, and withdrawal dyskinesias. Gradual tapering under medical supervision is standard practice, particularly for long-term users.</p>
+</section>
+
+<section id="toxicity">
+<h2>Toxicity and harm potential</h2>
+<h3>Acute toxicity</h3>
+<p>Risperidone has a comparatively wide therapeutic index relative to older antipsychotics; acute overdose (case reports up to several hundred mg) has been survived, though fatalities have occurred, especially in combination with other CNS depressants. Overdose features include exaggerated pharmacological effects: sedation, hypotension, tachycardia, EPS, QTc prolongation, and rarely seizures or arrhythmia.</p>
+<h3>Chronic toxicity</h3>
+<p>Long-term risks include metabolic syndrome (weight gain, dyslipidemia, insulin resistance), tardive dyskinesia, osteoporosis/fracture risk from chronic hyperprolactinemia, and cardiovascular risk from cumulative metabolic burden. Elderly patients with dementia-related psychosis treated with risperidone (and antipsychotics generally) carry a boxed warning for increased mortality, largely cardiovascular and infectious (e.g. pneumonia).</p>
+<h3>Abuse potential</h3>
+<p>Risperidone has essentially no recreational abuse potential or reinforcing/euphoric effect; it is not a controlled substance. Misuse is rare and generally not associated with dependence in the classical sense, though physiological adaptation (discussed above under withdrawal) does occur with chronic use.</p>
+<div class="alert alert-danger">
+<span class="alert-icon">🚑</span>
+<div><b>In an emergency:</b> Suspected overdose or a severe reaction (e.g. signs of neuroleptic malignant syndrome — high fever, severe muscle rigidity, altered mental status, autonomic instability) is a medical emergency; contact local emergency services or a poison control center immediately rather than trying to manage it without professional care.</div>
+</div>
+</section>
+
+<section id="interactions">
+<h2>Drug interactions</h2>
+<table class="int-table">
+<thead><tr><th>Substance / class</th><th>Risk</th><th>Mechanism / notes</th></tr></thead>
+<tbody>
+<tr>
+<td>Strong CYP2D6 inhibitors (paroxetine, fluoxetine, bupropion, quinidine)</td>
+<td><span class="sev-caution">CAUTION</span></td>
+<td>Reduce conversion to paliperidone, raising parent-drug (risperidone) plasma levels and increasing EPS/sedation risk; dose reduction often warranted</td>
+</tr>
+<tr>
+<td>Other CNS depressants (alcohol, benzodiazepines, opioids, sedating antihistamines)</td>
+<td><span class="sev-danger">HIGH RISK</span></td>
+<td>Additive CNS/respiratory depression and hypotension</td>
+</tr>
+<tr>
+<td>QT-prolonging drugs (certain antiarrhythmics, some antibiotics, other antipsychotics)</td>
+<td><span class="sev-caution">CAUTION</span></td>
+<td>Additive QTc prolongation and arrhythmia risk</td>
+</tr>
+<tr>
+<td>Antihypertensives</td>
+<td><span class="sev-caution">CAUTION</span></td>
+<td>Additive orthostatic hypotension via α1 blockade</td>
+</tr>
+<tr>
+<td>Dopamine agonists (e.g. levodopa)</td>
+<td><span class="sev-caution">CAUTION</span></td>
+<td>Pharmacodynamic antagonism — risperidone can blunt therapeutic effect and vice versa</td>
+</tr>
+<tr>
+<td>CYP3A4 inducers (carbamazepine, rifampin, St. John's Wort)</td>
+<td><span class="sev-caution">CAUTION</span></td>
+<td>Can lower active-moiety plasma levels via increased metabolism, risking reduced efficacy</td>
+</tr>
+<tr>
+<td>Most SSRIs at standard doses (non-2D6-inhibiting) and most non-sedating agents without QT/dopaminergic interaction</td>
+<td><span class="sev-safe">GENERALLY LOWER RISK</span></td>
+<td>Still requires individualized clinical judgment; "lower risk" is relative, not risk-free</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section id="metabolites">
+<h2>Pharmacokinetics and metabolites</h2>
+<div class="metab-flow">Risperidone → (CYP2D6, major; CYP3A4, minor) → 9-hydroxyrisperidone (paliperidone, pharmacologically active) → renal elimination (paliperidone is largely excreted unchanged renally)</div>
+<table class="dur-table">
+<thead><tr><th>Parameter</th><th>Parent (risperidone)</th><th>Metabolite (9-OH-risperidone / paliperidone)</th></tr></thead>
+<tbody>
+<tr><td>Half-life</td><td>~3 h (EM) to ~20 h (PM)</td><td>~21–30 h, relatively genotype-independent</td></tr>
+<tr><td>Protein binding</td><td>~90%</td><td>~77%</td></tr>
+<tr><td>Primary elimination</td><td colspan="2">Combined active moiety eliminated mainly renally (paliperidone largely unchanged); minor fecal excretion</td></tr>
+</tbody>
+</table>
+<h3>Clinical implications</h3>
+<ul style="padding-left:22px;margin:8px 0;">
+<li>Because the active moiety (parent + metabolite) has a more stable half-life than the parent alone, once- or twice-daily dosing works reasonably well despite the parent's short half-life in extensive metabolizers.</li>
+<li>CYP2D6 genotype/phenotype and interacting drugs meaningfully shift the parent:metabolite ratio without necessarily changing total active-moiety exposure — a common source of confusion when interpreting risperidone plasma levels.</li>
+<li>Renal impairment reduces paliperidone clearance disproportionately (since it's renally eliminated), warranting dose caution in renal disease independent of CYP2D6 status.</li>
+</ul>
+</section>
+
+<section id="comparison">
+<h2>Comparison with related substances</h2>
+<table class="comp-table">
+<thead><tr><th>Property</th><th>Risperidone</th><th>Olanzapine</th><th>Aripiprazole</th></tr></thead>
+<tbody>
+<tr><td>D₂ activity</td><td>Full antagonist</td><td>Full antagonist</td><td>Partial agonist</td></tr>
+<tr><td>EPS risk (dose-dependent)</td><td>Moderate–high above ~6 mg</td><td>Low–moderate</td><td>Low (akathisia is main motor effect)</td></tr>
+<tr><td>Prolactin elevation</td><td>High — most among 2nd-gen agents</td><td>Mild–moderate</td><td>Minimal / can lower prolactin</td></tr>
+<tr><td>Weight gain / metabolic risk</td><td>Moderate</td><td>High</td><td>Low</td></tr>
+<tr><td>Sedation</td><td>Moderate</td><td>High</td><td>Low</td></tr>
+<tr><td>LAI formulation available</td><td class="tick">Yes</td><td class="tick">Yes</td><td class="tick">Yes</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="legal">
+<h2>Legal status</h2>
+<p>Risperidone is a prescription-only medicine in essentially all jurisdictions and is not scheduled as a controlled substance anywhere, reflecting its lack of recreational abuse potential.</p>
+<div class="legal-grid">
+<div class="legal-item legal-rx"><div class="country">United States</div><div class="status">Prescription-only (Rx); FDA-approved, generic available</div></div>
+<div class="legal-item legal-rx"><div class="country">European Union / Estonia</div><div class="status">Prescription-only (Rx); EMA/national approval, generic available</div></div>
+<div class="legal-item legal-rx"><div class="country">United Kingdom</div><div class="status">Prescription-only medicine (POM)</div></div>
+</div>
+</section>
+
+<section id="references">
+<h2>References</h2>
+<div class="refs">
+<ol>
+<li>Janssen-Cilag / Janssen Pharmaceuticals. Risperdal (risperidone) prescribing information (FDA label).</li>
+<li>Roth, B.L. et al. PDSP Ki Database — receptor binding affinity data for risperidone and related antipsychotics.</li>
+<li>Leucht, S. et al. (2013). Comparative efficacy and tolerability of 15 antipsychotic drugs in schizophrenia: a multiple-treatments meta-analysis. Lancet.</li>
+<li>Spina, E. &amp; de Leon, J. (2007). Metabolic drug interactions with newer antipsychotics: a comparative review. Basic Clin Pharmacol Toxicol.</li>
+<li>Nyberg, S. et al. (1999). D2 and 5-HT2 receptor occupancy and clinical response to risperidone. Int J Neuropsychopharmacol.</li>
+</ol>
+</div>
+</section>
+</div>
+
+<div class="category-bar">
+<span>Categories:</span>
+<a href="#">Antipsychotics</a>
+<a href="#">Benzisoxazoles</a>
+<a href="#">CYP2D6 substrates</a>
+</div>
+</main>
+</div>
+</body>
+</html>

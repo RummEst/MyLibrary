@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aripiprazole — Substance Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Linux+Libertine:ital,wght@0,400;0,600;1,400&family=Linux+Biolinum:wght@400;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8f9fa;
+  --bg2: #ffffff;
+  --border: #a2a9b1;
+  --border-light: #e0e4e8;
+  --text: #202122;
+  --text2: #54595d;
+  --text3: #72777d;
+  --link: #3366cc;
+  --link-hover: #6a4ead;
+  --warn-bg: #fef6e7;
+  --warn-border: #f0a500;
+  --danger-bg: #fee7e6;
+  --danger-border: #d33;
+  --info-bg: #eaf3fb;
+  --info-border: #3680b0;
+  --tip-bg: #e5f5e0;
+  --tip-border: #2d6a2d;
+  --box-bg: #f8f9fa;
+  --cat-bg: #eaf0fb;
+  --cat-border: #a2b8d8;
+  --infobox-bg: #f8f9fa;
+  --infobox-head: #cee0f2;
+  --tag-pa: #e8f0fe;
+  --tag-ant: #fce8e8;
+  --tag-inh: #f0e8fe;
+  --tag-mod: #e8feee;
+  --positive: #1a7a1a;
+  --neutral: #7a5c00;
+  --negative: #8b0000;
+  --both: #00457c;
+  --placeholder: #b0b6bd;
+  --font-body: 'Linux Libertine', Georgia, serif;
+  --font-ui: 'Linux Biolinum', 'Segoe UI', sans-serif;
+  --font-mono: 'Source Code Pro', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.ph { color: var(--placeholder); font-style: italic; }
+[data-field] { color: var(--placeholder); font-style: italic; }
+
+.page-wrap { display: flex; max-width: 1280px; margin: 0 auto; }
+.sidebar {
+  width: 220px; min-width: 220px; background: var(--bg2);
+  border-right: 1px solid var(--border-light);
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  padding: 16px 0; font-family: var(--font-ui); font-size: 13px;
+}
+.sidebar-logo {
+  padding: 0 12px 12px;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 10px;
+}
+.sidebar-logo .logo-name { font-size: 15px; font-weight: 600; color: #3a3a3a; }
+.sidebar-logo .logo-sub  { font-size: 11px; color: var(--text3); }
+.toc-section { padding: 4px 12px; }
+.toc-section h4 { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin-bottom: 4px; }
+.toc-section a { display: block; padding: 2px 0 2px 8px; color: var(--link); text-decoration: none; font-size: 12.5px; border-left: 2px solid transparent; line-height: 1.4; }
+.toc-section a:hover { border-left-color: var(--link); background: var(--info-bg); }
+.toc-section a.sub { padding-left: 18px; font-size: 12px; color: var(--text2); }
+.toc-divider { border: none; border-top: 1px solid var(--border-light); margin: 8px 12px; }
+
+.content { flex: 1; min-width: 0; padding: 24px 32px 80px; }
+
+h1.page-title {
+  font-family: var(--font-body);
+  font-size: 2.1em;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+.page-subtitle { font-size: 13px; color: var(--text3); font-family: var(--font-ui); margin-bottom: 18px; }
+.page-subtitle a { color: var(--link); text-decoration: none; }
+
+h2 { font-family: var(--font-body); font-size: 1.5em; font-weight: 600; border-bottom: 1px solid var(--border-light); padding-bottom: 3px; margin: 32px 0 12px; color: #1a1a1a; }
+h3 { font-family: var(--font-body); font-size: 1.18em; font-weight: 600; margin: 20px 0 8px; color: #2a2a2a; }
+h4 { font-family: var(--font-ui); font-size: 0.95em; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--text2); margin: 14px 0 4px; }
+p  { margin-bottom: 10px; }
+a  { color: var(--link); }
+a:hover { color: var(--link-hover); }
+sup { font-size: 0.72em; }
+sup a { text-decoration: none; }
+
+.infobox {
+  float: right; clear: right;
+  width: 310px; margin: 0 0 16px 24px;
+  background: var(--infobox-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+}
+.infobox-head {
+  background: var(--infobox-head);
+  text-align: center;
+  padding: 7px 10px;
+  font-weight: 600;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+  border-radius: 4px 4px 0 0;
+}
+.infobox-img {
+  text-align: center;
+  padding: 10px;
+  border-bottom: 1px solid var(--border-light);
+  background: #fff;
+}
+.mol-diagram-placeholder {
+  width: 240px; height: 150px;
+  margin: 0 auto;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  color: var(--placeholder);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  text-align: center;
+}
+.infobox table { width: 100%; border-collapse: collapse; }
+.infobox tr td { padding: 4px 9px; border-top: 1px solid var(--border-light); vertical-align: top; }
+.infobox tr td:first-child { font-weight: 500; color: var(--text2); width: 42%; }
+.infobox tr td:last-child { color: var(--text); }
+.infobox-section-head { background: var(--infobox-head); text-align: center; font-weight: 600; padding: 4px 8px; font-size: 12px; }
+
+.clearfix::after { content: ""; display: table; clear: both; }
+
+.alert {
+  border-radius: 4px; padding: 10px 14px; margin: 14px 0;
+  font-size: 14px; font-family: var(--font-ui);
+  display: flex; gap: 10px; align-items: flex-start;
+  border-left: 4px solid;
+}
+.alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.alert-warn   { background: var(--warn-bg);   border-color: var(--warn-border); }
+.alert-danger { background: var(--danger-bg); border-color: var(--danger-border); }
+.alert-info   { background: var(--info-bg);   border-color: var(--info-border); }
+.alert-tip    { background: var(--tip-bg);    border-color: var(--tip-border); }
+
+.dose-table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 13.5px; margin: 10px 0; }
+.dose-table th { background: var(--infobox-head); padding: 7px 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.dose-table td { padding: 7px 12px; border: 1px solid var(--border-light); vertical-align: middle; }
+.dose-table tr.thresh { background: #f0f8e8; }
+.dose-table tr.light  { background: #e8f8e0; }
+.dose-table tr.common { background: #fffde8; }
+.dose-table tr.strong { background: #fef0d8; }
+.dose-table tr.heavy  { background: #fee8e8; }
+
+.dur-table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 13.5px; margin: 10px 0; }
+.dur-table th { background: var(--infobox-head); padding: 7px 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.dur-table td { padding: 7px 12px; border: 1px solid var(--border-light); }
+
+.effects-group { margin: 14px 0; }
+.effects-group h4 { font-size: 13px; font-family: var(--font-ui); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.effects-group h4.positive { color: var(--positive); }
+.effects-group h4.neutral  { color: var(--neutral); }
+.effects-group h4.negative { color: var(--negative); }
+.effects-group h4.both     { color: var(--both); }
+.effects-group ul { list-style: none; padding: 0; margin: 0; }
+.effects-group li { padding: 3px 0 3px 18px; position: relative; font-size: 14.5px; border-bottom: 1px solid var(--border-light); }
+.effects-group li:last-child { border-bottom: none; }
+.effects-group li::before { content: "•"; position: absolute; left: 5px; }
+.eff-positive li::before { color: var(--positive); }
+.eff-neutral  li::before { color: var(--neutral); }
+.eff-negative li::before { color: var(--negative); }
+.eff-both     li::before { color: var(--both); }
+.eff-note { font-size: 12px; color: var(--text3); font-style: italic; margin-left: 4px; }
+
+.pharm-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--font-ui); margin: 10px 0; }
+.pharm-table th { background: var(--infobox-head); padding: 7px 10px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.pharm-table td { padding: 6px 10px; border: 1px solid var(--border-light); vertical-align: top; }
+.pharm-table tr:hover td { background: var(--info-bg); }
+.pharm-tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+.pa  { background: var(--tag-pa);  color: #1a3ca8; }
+.ant { background: var(--tag-ant); color: #8b0000; }
+.mod { background: var(--tag-mod); color: #1a5c1a; }
+.inh { background: var(--tag-inh); color: #5c1a8b; }
+.ki-val { font-family: var(--font-mono); font-weight: 500; }
+
+.int-table { width: 100%; border-collapse: collapse; font-size: 13.5px; font-family: var(--font-ui); margin: 10px 0; }
+.int-table th { background: var(--infobox-head); padding: 7px 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.int-table td { padding: 7px 12px; border: 1px solid var(--border-light); vertical-align: top; }
+.sev-danger  { background: #fee; color: #900; font-weight: 600; font-size: 12px; padding: 2px 7px; border-radius: 3px; }
+.sev-caution { background: #fff3cd; color: #856404; font-weight: 600; font-size: 12px; padding: 2px 7px; border-radius: 3px; }
+.sev-safe    { background: #d4edda; color: #155724; font-weight: 600; font-size: 12px; padding: 2px 7px; border-radius: 3px; }
+
+.metab-flow {
+  background: #fff; border: 1px dashed var(--border);
+  border-radius: 6px; padding: 20px; margin: 12px 0;
+  font-family: var(--font-ui); text-align: center;
+  color: var(--text2); font-size: 13px;
+}
+
+.legal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin: 12px 0; }
+.legal-item { background: #fff; border: 1px solid var(--border-light); border-radius: 5px; padding: 8px 10px; font-family: var(--font-ui); font-size: 12.5px; }
+.legal-item .country { font-weight: 600; color: var(--text); }
+.legal-item .status  { color: var(--text2); }
+.legal-rx { border-left: 3px solid #2196f3; }
+.legal-cont { border-left: 3px solid #f44336; }
+.legal-unsched { border-left: 3px solid #9e9e9e; }
+
+.refs { font-size: 12.5px; font-family: var(--font-ui); color: var(--text2); }
+.refs ol { padding-left: 20px; }
+.refs li { margin-bottom: 3px; }
+
+.category-bar {
+  background: var(--cat-bg); border: 1px solid var(--cat-border);
+  border-radius: 4px; padding: 8px 12px; margin-top: 32px;
+  font-family: var(--font-ui); font-size: 13px;
+}
+.category-bar span { font-weight: 600; margin-right: 6px; }
+.category-bar a { color: var(--link); text-decoration: none; margin-right: 10px; }
+
+.comp-table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-family: var(--font-ui); }
+.comp-table th { background: var(--infobox-head); padding: 6px 10px; font-weight: 600; border: 1px solid var(--border); text-align: left; }
+.comp-table td { padding: 5px 10px; border: 1px solid var(--border-light); }
+.comp-table tr:hover td { background: #f0f4ff; }
+.tick { color: #2a7; } .cross { color: #c33; } .partial { color: #a86; }
+
+@media (max-width: 860px) {
+  .sidebar { display: none; }
+  .infobox { float: none; width: 100%; margin: 0 0 16px 0; }
+  .content { padding: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- SIDEBAR TOC -->
+<nav class="sidebar" aria-label="Table of contents">
+  <div class="sidebar-logo">
+    <div class="logo-name">⚗ Substance Wiki</div>
+    <div class="logo-sub">Reference / education only</div>
+  </div>
+  <div class="toc-section">
+    <h4>Contents</h4>
+    <a href="#summary">Summary</a>
+    <a href="#history">History &amp; culture</a>
+    <a href="#chemistry">Chemistry</a>
+    <a href="#pharmacology">Pharmacology</a>
+    <a href="#dosage">Dosage</a>
+    <a href="#duration">Duration</a>
+    <a href="#effects">Subjective effects</a>
+    <a class="sub" href="#eff-physical">Physical effects</a>
+    <a class="sub" href="#eff-cognitive">Cognitive effects</a>
+    <a href="#tolerance">Tolerance &amp; withdrawal</a>
+    <a href="#toxicity">Toxicity &amp; harm</a>
+    <a href="#interactions">Interactions</a>
+    <a href="#metabolites">Metabolites &amp; PK</a>
+    <a href="#comparison">Comparison</a>
+    <a href="#legal">Legal status</a>
+    <a href="#references">References</a>
+  </div>
+  <hr class="toc-divider">
+  <div class="toc-section">
+    <h4>Related</h4>
+    <a href="#">Brexpiprazole</a>
+    <a href="#">Cariprazine</a>
+    <a href="#">Quetiapine</a>
+    <a href="#">Atypical antipsychotics</a>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+<h1 class="page-title">Aripiprazole</h1>
+<p class="page-subtitle">
+  From Substance Wiki · 
+  <a href="#">Quinolinone / Phenylpiperazine</a> · 
+  <a href="#">Atypical antipsychotic (third-generation)</a> · 
+  <a href="#">Dopamine–serotonin system stabilizer</a>
+</p>
+
+<div class="clearfix">
+
+<!-- INFOBOX -->
+<aside class="infobox" aria-label="Substance summary">
+  <div class="infobox-head">Aripiprazole</div>
+  <div class="infobox-img">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Aripiprazole_chemical_structure.svg/640px-Aripiprazole_chemical_structure.svg.png" 
+         alt="Chemical structure of aripiprazole" 
+         style="max-width:100%; height:auto; display:block; margin:0 auto; background:#fff; padding:4px;"
+         onerror="this.onerror=null; this.src='https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid=60795&t=l';">
+    <div style="font-size:11px;color:var(--text2);margin-top:6px;font-family:monospace;">C<sub>23</sub>H<sub>27</sub>Cl<sub>2</sub>N<sub>3</sub>O<sub>2</sub></div>
+  </div>
+  <table>
+    <tr><td>Also known as</td><td>Abilify, Aristada, Abilify Maintena, Abilify Asimtufii, OPC-14597, OPC-31</td></tr>
+    <tr><td>Class</td><td>Quinolinone derivative / 2,3-dichlorophenylpiperazine</td></tr>
+    <tr><td>Psychoactive class</td><td>Atypical antipsychotic (third-generation)</td></tr>
+    <tr><td>CAS number</td><td>129722-12-9</td></tr>
+    <tr><td>Mol. formula</td><td>C<sub>23</sub>H<sub>27</sub>Cl<sub>2</sub>N<sub>3</sub>O<sub>2</sub></td></tr>
+    <tr><td>Mol. weight</td><td>448.39 g/mol</td></tr>
+    <tr><td>Routes</td><td>Oral (tablet, ODT, solution), IM (IR &amp; LAI)</td></tr>
+    <tr><td>Bioavailability</td><td>87% (oral tablet)</td></tr>
+    <tr><td>Protein binding</td><td>&gt;99%</td></tr>
+    <tr><td>Metabolism</td><td>Hepatic (CYP3A4, CYP2D6)</td></tr>
+    <tr><td>Half-life</td><td>75 h (parent); 94 h (dehydroaripiprazole)</td></tr>
+    <tr><td>Onset</td><td>Peak plasma 3–5 h (oral)</td></tr>
+    <tr><td>Developed by / origin</td><td>Otsuka Pharmaceutical (1988)</td></tr>
+    <tr><td>Approved / scheduled</td><td>FDA 15 Nov 2002 (schizophrenia)</td></tr>
+    <tr><td>Legal status</td><td>Prescription-only (Rx) worldwide; not controlled</td></tr>
+  </table>
+
+  <div class="infobox-section-head" style="margin-top:4px;">Dosage (oral adult)</div>
+  <table>
+    <tr class="thresh"><td>Threshold</td><td>~2 mg</td></tr>
+    <tr><td>Light</td><td>2–5 mg</td></tr>
+    <tr><td>Common</td><td>10–15 mg</td></tr>
+    <tr><td>Strong</td><td>20–30 mg</td></tr>
+    <tr><td>Heavy</td><td>&gt;30 mg (rarely beneficial)</td></tr>
+  </table>
+
+  <div class="infobox-section-head" style="margin-top:4px;">Duration</div>
+  <table>
+    <tr><td>Onset</td><td>1–3 h</td></tr>
+    <tr><td>Peak</td><td>3–5 h</td></tr>
+    <tr><td>Duration (total)</td><td>24+ h (steady-state ~14 days)</td></tr>
+    <tr><td>After-effects</td><td>Prolonged (half-life driven)</td></tr>
+  </table>
+</aside>
+
+<!-- SUMMARY -->
+<section id="summary">
+<p><b>Aripiprazole</b> is a third-generation atypical antipsychotic belonging to the quinolinone class. It was discovered in 1988 by Otsuka Pharmaceutical (code OPC-14597) and first approved by the FDA in November 2002 for schizophrenia under the brand name Abilify. It is also approved for acute manic/mixed episodes of bipolar I disorder, adjunctive treatment of major depressive disorder, irritability associated with autism spectrum disorder, and Tourette’s disorder.</p>
+
+<p>Its defining pharmacological feature is functionally selective partial agonism at dopamine D<sub>2</sub> and D<sub>3</sub> receptors combined with partial agonism at 5-HT<sub>1A</sub> and antagonism at 5-HT<sub>2A</sub> receptors. This profile allows it to stabilize dopaminergic tone — reducing activity where dopamine is excessive (e.g., mesolimbic pathway in psychosis) while supporting it where dopamine is deficient (e.g., mesocortical pathway). This mechanism underlies its efficacy against both positive and negative symptoms of schizophrenia with a relatively favorable metabolic and extrapyramidal side-effect profile compared with many older antipsychotics.</p>
+
+<p>Aripiprazole has high oral bioavailability (87%), is highly protein-bound (&gt;99%), and possesses a long elimination half-life (~75 h for the parent compound and ~94 h for the active metabolite dehydroaripiprazole). Steady-state is typically reached within 14 days. Long-acting injectable formulations (Abilify Maintena, Aristada, Abilify Asimtufii) are available for maintenance therapy.</p>
+
+<div class="alert alert-warn">
+  <span class="alert-icon">⚠️</span>
+  <div><b>Disclaimer:</b> This page is for educational and reference purposes only. Aripiprazole is a prescription medication. Effects vary by individual, dose, and clinical context. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider.</div>
+</div>
+</section>
+
+<!-- HISTORY -->
+<section id="history">
+<h2>History and culture</h2>
+<p>Aripiprazole was synthesized and patented by Otsuka Pharmaceutical in Japan in the late 1980s (US patent 4,734,416 filed 1979; key antipsychotic patent US 5,006,528 filed 1989). It was first described in the scientific literature in the mid-1990s. Early research identified its unique partial agonist activity at D<sub>2</sub> receptors, distinguishing it from both first-generation (full antagonists) and second-generation antipsychotics.</p>
+
+<p>In 1999 Otsuka partnered with Bristol-Myers Squibb for co-development and commercialization. The FDA approved aripiprazole tablets for schizophrenia on 15 November 2002. Subsequent approvals expanded the label: bipolar mania (2004), adjunctive MDD (2007), pediatric autism irritability (2009), and Tourette’s disorder. Long-acting injectable formulations followed (Abilify Maintena 2013, Aristada 2015, Abilify Asimtufii 2023). A digital medicine version (Abilify MyCite) with an embedded sensor was approved in 2017.</p>
+
+<p>Aripiprazole became one of the highest-selling antipsychotics globally, with peak annual sales exceeding US$7 billion before generic entry after patent expiry (US 2015). It is widely regarded as having introduced a paradigm shift toward dopamine system stabilizers rather than pure antagonists. In clinical practice it is frequently chosen for patients sensitive to metabolic side effects or requiring long-acting formulations.</p>
+</section>
+
+<!-- CHEMISTRY -->
+<section id="chemistry">
+<h2>Chemistry</h2>
+<p>Aripiprazole is an achiral quinolinone derivative chemically designated as 7-[4-[4-(2,3-dichlorophenyl)piperazin-1-yl]butoxy]-3,4-dihydro-1H-quinolin-2-one (also known as 7-[4-[4-(2,3-dichlorophenyl)-1-piperazinyl]butoxy]-3,4-dihydrocarbostyril). Molecular formula C<sub>23</sub>H<sub>27</sub>Cl<sub>2</sub>N<sub>3</sub>O<sub>2</sub>, molecular weight 448.39 g/mol. It contains a single hydrogen-bond donor and five acceptors; calculated LogP ≈ 4.55. Melting point range 138–150 °C.</p>
+
+<p>Structurally it consists of a 3,4-dihydroquinolin-2(1H)-one (carbostyril) core linked via a butoxy chain to a 1-(2,3-dichlorophenyl)piperazine moiety. It is chemically related to other arylpiperazine compounds such as cariprazine, nefazodone, trazodone and etoperidone. Multiple crystalline polymorphs (at least twelve) have been characterized; anhydrous and monohydrate forms are used in pharmaceutical products.</p>
+</section>
+
+<!-- PHARMACOLOGY -->
+<section id="pharmacology">
+<h2>Pharmacology</h2>
+<p>The primary mechanism of aripiprazole is believed to be a combination of partial agonism at dopamine D<sub>2</sub> and serotonin 5-HT<sub>1A</sub> receptors together with antagonism at 5-HT<sub>2A</sub> receptors. At therapeutic doses it occupies a high proportion of striatal D<sub>2</sub> receptors (often &gt;80–90%) yet produces relatively low rates of extrapyramidal symptoms because of its partial agonist (rather than pure antagonist) activity. Intrinsic activity at D<sub>2</sub> receptors is typically reported in the 25–60% range relative to dopamine, depending on the assay system; functional selectivity (biased agonism) has also been demonstrated.</p>
+
+<table class="pharm-table">
+  <thead><tr><th>Target</th><th>Action</th><th>Affinity (K<sub>i</sub>)</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Dopamine D<sub>2</sub></td><td><span class="pharm-tag pa">Partial agonist</span></td><td class="ki-val">0.34–3.3 nM</td><td>Core antipsychotic action; functionally selective</td></tr>
+    <tr><td>Dopamine D<sub>3</sub></td><td><span class="pharm-tag pa">Partial agonist</span></td><td class="ki-val">0.8–5.4 nM</td><td>High affinity; may contribute to negative-symptom efficacy</td></tr>
+    <tr><td>5-HT<sub>1A</sub></td><td><span class="pharm-tag pa">Partial agonist</span></td><td class="ki-val">1.7–5.6 nM</td><td>Anxiolytic / antidepressant contribution</td></tr>
+    <tr><td>5-HT<sub>2A</sub></td><td><span class="pharm-tag ant">Antagonist</span></td><td class="ki-val">3.4–8.7 nM</td><td>Atypical profile; reduces EPS risk</td></tr>
+    <tr><td>5-HT<sub>2B</sub></td><td><span class="pharm-tag ant">Inverse agonist</span></td><td class="ki-val">0.11–0.4 nM</td><td>Very high affinity</td></tr>
+    <tr><td>5-HT<sub>2C</sub></td><td><span class="pharm-tag pa">Partial agonist</span></td><td class="ki-val">15–22 nM</td><td>May influence weight / appetite</td></tr>
+    <tr><td>5-HT<sub>7</sub></td><td><span class="pharm-tag ant">Antagonist / PA</span></td><td class="ki-val">9.6–39 nM</td><td>—</td></tr>
+    <tr><td>α<sub>1A</sub>-adrenergic</td><td><span class="pharm-tag ant">Antagonist</span></td><td class="ki-val">25–57 nM</td><td>Orthostatic hypotension potential</td></tr>
+    <tr><td>Histamine H<sub>1</sub></td><td><span class="pharm-tag ant">Antagonist</span></td><td class="ki-val">27–61 nM</td><td>Sedation / weight contribution (modest)</td></tr>
+    <tr><td>Dopamine D<sub>4</sub></td><td><span class="pharm-tag pa">Partial agonist</span></td><td class="ki-val">44–510 nM</td><td>Moderate affinity</td></tr>
+    <tr><td>SERT</td><td><span class="pharm-tag inh">Inhibitor</span></td><td class="ki-val">~98–1080 nM</td><td>Weak</td></tr>
+    <tr><td>Muscarinic</td><td>—</td><td class="ki-val">&gt;1000 nM</td><td>Negligible affinity (low anticholinergic burden)</td></tr>
+  </tbody>
+</table>
+
+<h3>Unique kinetic properties</h3>
+<p>Aripiprazole exhibits “flip-flop” pharmacokinetics in long-acting injectable formulations, where absorption rate from the injection depot becomes rate-limiting. Oral absorption is largely unaffected by food. Accumulation is predictable; steady-state concentrations of both parent and active metabolite are reached within approximately 14 days of once-daily dosing.</p>
+</section>
+
+<!-- DOSAGE -->
+<section id="dosage">
+<h2>Dosage</h2>
+<p>All doses below refer to oral immediate-release formulations unless otherwise noted. Dosing should always follow current prescribing information and clinical judgment.</p>
+
+<table class="dose-table">
+  <thead><tr><th>Indication</th><th>Initial</th><th>Target / usual</th><th>Maximum</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Schizophrenia (adult)</td>
+      <td>10–15 mg/day</td>
+      <td>10–15 mg/day</td>
+      <td>30 mg/day</td>
+      <td>Doses &gt;15 mg rarely more effective</td>
+    </tr>
+    <tr>
+      <td>Schizophrenia (adolescent 13–17)</td>
+      <td>2 mg/day</td>
+      <td>10 mg/day</td>
+      <td>30 mg/day</td>
+      <td>Titrate over several days</td>
+    </tr>
+    <tr>
+      <td>Bipolar mania (adult, monotherapy)</td>
+      <td>15 mg/day</td>
+      <td>15 mg/day</td>
+      <td>30 mg/day</td>
+      <td>May increase after ≥2 weeks</td>
+    </tr>
+    <tr>
+      <td>Bipolar mania (adult, adjunct)</td>
+      <td>10–15 mg/day</td>
+      <td>15 mg/day</td>
+      <td>30 mg/day</td>
+      <td>With lithium or valproate</td>
+    </tr>
+    <tr>
+      <td>Adjunct MDD (adult)</td>
+      <td>2–5 mg/day</td>
+      <td>5–10 mg/day</td>
+      <td>15 mg/day</td>
+      <td>Increase by ≤5 mg at ≥1-week intervals</td>
+    </tr>
+    <tr>
+      <td>ASD irritability (6–17 y)</td>
+      <td>2 mg/day</td>
+      <td>5–10 mg/day</td>
+      <td>15 mg/day</td>
+      <td>Titrate weekly</td>
+    </tr>
+    <tr>
+      <td>Tourette’s (6–18 y)</td>
+      <td>2 mg/day</td>
+      <td>5–10 mg/day (&lt;50 kg) or 10–20 mg (≥50 kg)</td>
+      <td>10 or 20 mg</td>
+      <td>Weight-based</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Dose modifications</h3>
+<p>Reduce dose by approximately 50% in known CYP2D6 poor metabolizers or when co-administered with strong CYP2D6 or CYP3A4 inhibitors. Further reduction may be required when both pathways are inhibited. Dose increase may be needed with strong CYP3A4 inducers. No routine adjustment required for mild–moderate renal or hepatic impairment; use caution in severe impairment.</p>
+</section>
+
+<!-- DURATION -->
+<section id="duration">
+<h2>Duration and timeline</h2>
+<table class="dur-table">
+  <thead><tr><th>Route</th><th>Onset</th><th>Peak</th><th>Duration</th><th>After-effects / notes</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Oral tablet / solution</td>
+      <td>1–3 h</td>
+      <td>3–5 h</td>
+      <td>≥24 h</td>
+      <td>Steady-state ~14 days; long half-life</td>
+    </tr>
+    <tr>
+      <td>Oral ODT</td>
+      <td>Similar to tablet</td>
+      <td>3–5 h</td>
+      <td>≥24 h</td>
+      <td>Bioequivalent</td>
+    </tr>
+    <tr>
+      <td>IM short-acting</td>
+      <td>~1–2 h</td>
+      <td>1–3 h</td>
+      <td>~24 h</td>
+      <td>Agitation indication (discontinued in some markets)</td>
+    </tr>
+    <tr>
+      <td>LAI (Maintena, Aristada, etc.)</td>
+      <td>Days</td>
+      <td>Variable (depot)</td>
+      <td>1–2 months</td>
+      <td>Flip-flop kinetics; loading strategies used</td>
+    </tr>
+  </tbody>
+</table>
+</section>
+
+<!-- SUBJECTIVE EFFECTS -->
+<section id="effects">
+<h2>Subjective effects</h2>
+<div class="alert alert-info">
+  <span class="alert-icon">ℹ️</span>
+  <div>Effects listed below are compiled primarily from controlled clinical trials, product labeling, and post-marketing reports. Individual response varies widely with dose, indication, duration of treatment, concurrent medications, and personal factors.</div>
+</div>
+
+<section id="eff-physical">
+<h3>Physical effects</h3>
+<div class="effects-group eff-positive">
+  <h4 class="positive">Positive / desired</h4>
+  <ul>
+    <li>Reduced positive psychotic symptoms (hallucinations, delusions)</li>
+    <li>Improved motor control / reduced tics (Tourette’s)</li>
+    <li>Lower risk of severe extrapyramidal symptoms relative to many antipsychotics</li>
+  </ul>
+</div>
+<div class="effects-group eff-neutral">
+  <h4 class="neutral">Neutral / variable</h4>
+  <ul>
+    <li>Mild sedation or mild activation (dose- and individual-dependent)</li>
+    <li>Minimal prolactin elevation in most patients</li>
+    <li>Generally weight-neutral to modest weight gain</li>
+  </ul>
+</div>
+<div class="effects-group eff-negative">
+  <h4 class="negative">Adverse / physical</h4>
+  <ul>
+    <li>Akathisia (restlessness) — most common EPS-related AE (often dose-related)</li>
+    <li>Nausea, vomiting, constipation, dyspepsia</li>
+    <li>Headache, dizziness, fatigue / somnolence</li>
+    <li>Insomnia or restlessness</li>
+    <li>Tremor, extrapyramidal disorder (less frequent than older agents)</li>
+    <li>Orthostatic hypotension (α<sub>1</sub> antagonism)</li>
+    <li>Blurred vision</li>
+    <li>Weight increase (more pronounced in some pediatric populations)</li>
+  </ul>
+</div>
+</section>
+
+<section id="eff-cognitive">
+<h3>Cognitive and emotional effects</h3>
+<div class="effects-group eff-positive">
+  <h4 class="positive">Positive / therapeutic</h4>
+  <ul>
+    <li>Reduction of positive, negative and (to a lesser extent) cognitive symptoms of schizophrenia</li>
+    <li>Mood stabilization in bipolar mania</li>
+    <li>Adjunctive antidepressant effect in MDD</li>
+    <li>Decreased irritability and aggression in ASD</li>
+  </ul>
+</div>
+<div class="effects-group eff-neutral">
+  <h4 class="neutral">Neutral / variable</h4>
+  <ul>
+    <li>Alertness may be preserved or mildly reduced</li>
+    <li>Emotional blunting reported by some patients (as with other antipsychotics)</li>
+  </ul>
+</div>
+<div class="effects-group eff-negative">
+  <h4 class="negative">Adverse / cognitive / psychological</h4>
+  <ul>
+    <li>Anxiety, agitation, restlessness</li>
+    <li>Insomnia</li>
+    <li>Akathisia-related dysphoria</li>
+    <li>Rare: impulse-control problems (gambling, hypersexuality, binge eating) — black-box / warning language exists</li>
+    <li>Possible cognitive slowing at higher doses</li>
+  </ul>
+</div>
+</section>
+</section>
+
+<!-- TOLERANCE -->
+<section id="tolerance">
+<h2>Tolerance and discontinuation</h2>
+<h3>Tolerance</h3>
+<p>Tolerance to the antipsychotic effect does not typically develop in the same manner as with substances of abuse. Some patients may experience diminishing response over years (common to many antipsychotics). Cross-tolerance with other dopamine D<sub>2</sub> partial agonists (brexpiprazole, cariprazine) is expected on theoretical grounds.</p>
+<h3>Discontinuation / withdrawal</h3>
+<p>Abrupt cessation after prolonged use can produce rebound symptoms including insomnia, anxiety, agitation, and return of underlying psychotic or manic symptoms. Gradual taper is generally recommended, especially after long-term treatment. Because of the long half-life, plasma levels decline slowly, which may mitigate acute withdrawal intensity compared with shorter-acting agents.</p>
+</section>
+
+<!-- TOXICITY -->
+<section id="toxicity">
+<h2>Toxicity and harm potential</h2>
+<h3>Acute toxicity</h3>
+<p>Overdose experience is relatively limited. Reported symptoms include somnolence, vomiting, tremor, akathisia, and, in severe cases, seizures or cardiovascular effects. Fatalities are rare; supportive care is the mainstay of management. The wide therapeutic index relative to many older antipsychotics is a clinical advantage.</p>
+<h3>Chronic toxicity</h3>
+<p>Long-term risks include metabolic changes (weight gain, dyslipidemia, hyperglycemia — generally milder than with olanzapine or quetiapine), tardive dyskinesia (incidence lower than with first-generation agents but not zero), and possible impulse-control disorders. Regular metabolic monitoring is recommended. Black-box warning exists for increased mortality in elderly patients with dementia-related psychosis.</p>
+<h3>Abuse potential</h3>
+<p>Aripiprazole has negligible reinforcing properties and is not scheduled under controlled-substance legislation in major jurisdictions. Dependence liability is considered very low.</p>
+<div class="alert alert-danger">
+  <span class="alert-icon">🚑</span>
+  <div><b>In an emergency:</b> Contact local emergency services or poison control immediately. In the United States call 1-800-222-1222 (Poison Help) or 911.</div>
+</div>
+</section>
+
+<!-- INTERACTIONS -->
+<section id="interactions">
+<h2>Drug interactions</h2>
+<table class="int-table">
+  <thead><tr><th>Substance / class</th><th>Risk</th><th>Mechanism / notes</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Strong CYP3A4 inhibitors (ketoconazole, clarithromycin, etc.)</td>
+      <td><span class="sev-caution">Caution</span></td>
+      <td>Increases aripiprazole exposure; reduce dose by ~50%</td>
+    </tr>
+    <tr>
+      <td>Strong CYP2D6 inhibitors (fluoxetine, paroxetine, quinidine)</td>
+      <td><span class="sev-caution">Caution</span></td>
+      <td>Increases exposure; dose reduction recommended</td>
+    </tr>
+    <tr>
+      <td>Strong CYP3A4 inducers (carbamazepine, rifampin, St John’s wort)</td>
+      <td><span class="sev-caution">Caution</span></td>
+      <td>Decreases exposure; dose increase may be required</td>
+    </tr>
+    <tr>
+      <td>Other CNS depressants / alcohol</td>
+      <td><span class="sev-caution">Caution</span></td>
+      <td>Additive sedation and psychomotor impairment</td>
+    </tr>
+    <tr>
+      <td>Dopamine agonists (e.g., for Parkinson’s)</td>
+      <td><span class="sev-danger">High risk</span></td>
+      <td>Pharmacodynamic antagonism; may reduce efficacy of both</td>
+    </tr>
+    <tr>
+      <td>Antihypertensives</td>
+      <td><span class="sev-caution">Caution</span></td>
+      <td>Possible additive orthostatic hypotension (α<sub>1</sub>)</td>
+    </tr>
+    <tr>
+      <td>Most SSRIs / SNRIs (except strong CYP2D6 inhibitors)</td>
+      <td><span class="sev-safe">Generally safe</span></td>
+      <td>Commonly co-prescribed as adjunct in depression</td>
+    </tr>
+  </tbody>
+</table>
+</section>
+
+<!-- METABOLITES -->
+<section id="metabolites">
+<h2>Pharmacokinetics and metabolites</h2>
+<div class="metab-flow">
+  Aripiprazole → CYP3A4 / CYP2D6 → Dehydroaripiprazole (active) + other inactive metabolites<br>
+  (Dehydroaripiprazole retains similar D<sub>2</sub> affinity and contributes ~40% of parent AUC at steady state)
+</div>
+<table class="dur-table">
+  <thead><tr><th>Parameter</th><th>Parent compound</th><th>Dehydroaripiprazole</th></tr></thead>
+  <tbody>
+    <tr><td>Half-life</td><td>~75 h (extensive metabolizers)</td><td>~94 h</td></tr>
+    <tr><td>Protein binding</td><td>&gt;99%</td><td>High</td></tr>
+    <tr><td>Primary elimination</td><td colspan="2">Feces (~60%), urine (~27%); &lt;1% unchanged in urine</td></tr>
+  </tbody>
+</table>
+<h3>Clinical implications</h3>
+<ul style="padding-left:22px;margin:8px 0;">
+  <li>Long half-life supports once-daily dosing and provides a pharmacokinetic “buffer” against missed doses.</li>
+  <li>CYP2D6 poor metabolizers have approximately doubled exposure and longer half-life (~146 h); dose adjustment is recommended.</li>
+  <li>Steady-state monitoring (if needed) is best performed after ≥2 weeks of consistent dosing.</li>
+</ul>
+</section>
+
+<!-- COMPARISON -->
+<section id="comparison">
+<h2>Comparison with related substances</h2>
+<table class="comp-table">
+  <thead><tr><th>Property</th><th>Aripiprazole</th><th>Brexpiprazole</th><th>Cariprazine</th></tr></thead>
+  <tbody>
+    <tr><td>Primary mechanism</td><td>D<sub>2</sub>/D<sub>3</sub>/5-HT<sub>1A</sub> partial agonist</td><td>D<sub>2</sub>/5-HT<sub>1A</sub> partial agonist</td><td>D<sub>3</sub>-preferring partial agonist</td></tr>
+    <tr><td>D<sub>2</sub> intrinsic activity</td><td>Moderate (~25–60%)</td><td>Lower</td><td>Moderate</td></tr>
+    <tr><td>5-HT<sub>1A</sub> affinity</td><td>High</td><td>Very high</td><td>High</td></tr>
+    <tr><td>H<sub>1</sub> affinity</td><td>Moderate</td><td>Low–moderate</td><td>Low</td></tr>
+    <tr><td>Half-life</td><td>~75 h</td><td>~91 h</td><td>~2–4 days (parent + metabolites)</td></tr>
+    <tr><td>LAI available</td><td>Yes (multiple)</td><td>No</td><td>No</td></tr>
+    <tr><td>Typical starting dose (adult schizophrenia)</td><td>10–15 mg</td><td>1 mg</td><td>1.5 mg</td></tr>
+    <tr><td>Metabolic risk</td><td>Low–moderate</td><td>Low–moderate</td><td>Low</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- LEGAL STATUS -->
+<section id="legal">
+<h2>Legal status</h2>
+<p>Aripiprazole is a prescription-only medicine in essentially all jurisdictions. It is not classified as a controlled substance under the UN conventions or under the US Controlled Substances Act (Schedule N/A).</p>
+<div class="legal-grid">
+  <div class="legal-item legal-rx"><div class="country">United States</div><div class="status">Rx only (FDA approved 2002)</div></div>
+  <div class="legal-item legal-rx"><div class="country">European Union</div><div class="status">Rx only (EMA 2004)</div></div>
+  <div class="legal-item legal-rx"><div class="country">United Kingdom</div><div class="status">POM (prescription-only medicine)</div></div>
+  <div class="legal-item legal-rx"><div class="country">Canada</div><div class="status">Rx only</div></div>
+  <div class="legal-item legal-rx"><div class="country">Australia</div><div class="status">S4 (prescription only)</div></div>
+  <div class="legal-item legal-rx"><div class="country">Japan</div><div class="status">Prescription medicine (originator)</div></div>
+</div>
+</section>
+
+<!-- REFERENCES -->
+<section id="references">
+<h2>References</h2>
+<div class="refs">
+<ol>
+  <li>Shapiro DA et al. (2003). Aripiprazole, a novel atypical antipsychotic drug with a unique and robust pharmacology. Neuropsychopharmacology.</li>
+  <li>Casey AB, Canal CE (2017). Classics in Chemical Neuroscience: Aripiprazole. ACS Chem Neurosci. PMC5495458.</li>
+  <li>FDA / DailyMed prescribing information for aripiprazole tablets (multiple labels, latest revisions 2023–2025).</li>
+  <li>StatPearls – Aripiprazole (NCBI Bookshelf, last update 2023).</li>
+  <li>DrugBank – Aripiprazole (DB01238).</li>
+  <li>Wikipedia – Aripiprazole (accessed 2026; primary data cross-checked against regulatory sources).</li>
+  <li>Product monographs (Canada, EMA, Medsafe) for receptor affinity and PK data.</li>
+  <li>Additional receptor Ki values compiled from PDSP, Shapiro 2003, and subsequent literature reviews.</li>
+</ol>
+</div>
+</section>
+
+</div><!-- clearfix -->
+
+<!-- CATEGORY BAR -->
+<div class="category-bar">
+  <span>Categories:</span>
+  <a href="#">Atypical antipsychotics</a>
+  <a href="#">Dopamine partial agonists</a>
+  <a href="#">Quinolinones</a>
+  <a href="#">Phenylpiperazines</a>
+  <a href="#">Third-generation antipsychotics</a>
+</div>
+
+</main>
+</div>
+</body>
+</html>
