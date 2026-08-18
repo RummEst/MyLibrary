@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Herbarium — Plant Chemistry Ledger</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap');
+
+  :root{
+    --ink:#100d09;
+    --panel:#1a1610;
+    --panel-2:#221c14;
+    --line: #3a3122;
+    --parchment:#e9ddc4;
+    --parchment-dim:#9c9078;
+    --amber:#c98a3e;
+    --amber-bright:#e0a55c;
+    --sage:#7c9b7e;
+    --rust:#a24a3a;
+    --shadow: 0 8px 24px rgba(0,0,0,0.45);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at top left, #1c1710 0%, var(--ink) 55%),
+      var(--ink);
+    color:var(--parchment);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+    padding:0 0 80px 0;
+  }
+
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    opacity:0.05;
+    background-image: repeating-linear-gradient(0deg, #fff 0px, transparent 1px, transparent 2px);
+    z-index:0;
+  }
+
+  header{
+    position:relative;
+    padding:56px 32px 36px;
+    border-bottom:1px solid var(--line);
+    background: linear-gradient(180deg, rgba(201,138,62,0.06), transparent);
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .version-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.08em;
+    text-transform:none;
+    color:var(--parchment-dim);
+    border:1px solid var(--line);
+    padding:3px 8px;
+    border-radius:3px;
+    background:var(--panel);
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:clamp(32px, 5vw, 54px);
+    margin:0 0 10px 0;
+    letter-spacing:-0.01em;
+    color:var(--parchment);
+  }
+  h1 em{
+    font-style:italic;
+    font-weight:400;
+    color:var(--amber-bright);
+  }
+  .subhead{
+    font-size:14.5px;
+    color:var(--parchment-dim);
+    max-width:680px;
+    line-height:1.6;
+  }
+  .stat-row{
+    display:flex;
+    gap:28px;
+    margin-top:26px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--parchment-dim);
+    flex-wrap:wrap;
+  }
+  .stat-row b{ color:var(--parchment); font-weight:600;}
+
+  main{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 32px;
+    position:relative;
+    z-index:1;
+  }
+
+  .controls{
+    position:sticky;
+    top:0;
+    z-index:5;
+    background: rgba(16,13,9,0.92);
+    backdrop-filter: blur(6px);
+    padding:20px 0 16px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:6px;
+  }
+  .control-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--parchment-dim);
+    margin-bottom:10px;
+  }
+  .filter-label-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .toggle-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--parchment-dim);
+    padding:5px 11px;
+    border-radius:3px;
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+  .toggle-btn:hover{ border-color:var(--amber); color:var(--parchment); }
+  .pill-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:16px;
+    overflow:hidden;
+    max-height:600px;
+    transition: max-height .25s ease, opacity .2s ease, margin .2s ease;
+    opacity:1;
+  }
+  .pill-row.collapsed{
+    max-height:0;
+    opacity:0;
+    margin-bottom:0;
+  }
+  .pill{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    padding:6px 13px;
+    border-radius:3px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:var(--parchment-dim);
+    cursor:pointer;
+    transition: all .15s ease;
+    user-select:none;
+  }
+  .pill:hover{ border-color:var(--amber); color:var(--parchment);}
+  .pill.active{
+    background:var(--amber);
+    border-color:var(--amber);
+    color:#1a1207;
+    font-weight:600;
+  }
+  .pill.cat-dot::before{
+    content:"";
+    display:inline-block;
+    width:7px; height:7px;
+    border-radius:50%;
+    background:var(--cat-color, var(--parchment-dim));
+    margin-right:7px;
+    vertical-align:middle;
+  }
+  .pill.active.cat-dot::before{ background:#1a1207; }
+  .sort-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  select{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    background:var(--panel);
+    color:var(--parchment);
+    border:1px solid var(--line);
+    padding:7px 10px;
+    border-radius:3px;
+    cursor:pointer;
+  }
+  .search-box{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    background:var(--panel);
+    color:var(--parchment);
+    border:1px solid var(--line);
+    padding:7px 12px;
+    border-radius:3px;
+    width:240px;
+    margin-left:auto;
+  }
+  .search-box::placeholder{ color:var(--parchment-dim); }
+  .search-box:focus, select:focus{ outline:1px solid var(--amber); }
+
+  .count-line{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--parchment-dim);
+    margin:14px 0 10px;
+  }
+
+  .ledger{
+    display:flex;
+    flex-direction:column;
+    border-top:1px solid var(--line);
+  }
+  .entry{
+    border-bottom:1px solid var(--line);
+    background:transparent;
+    transition: background .15s ease;
+    border-left:3px solid var(--cat-color, var(--line));
+  }
+  .entry:hover{ background: rgba(201,138,62,0.045); }
+
+  .entry-row{
+    display:grid;
+    grid-template-columns: 46px 42px 1fr 150px 140px 20px;
+    align-items:center;
+    gap:14px;
+    padding:15px 8px 15px 13px;
+    cursor:pointer;
+  }
+  .idx{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--parchment-dim);
+  }
+  .mol-box{
+    width:42px;
+    height:42px;
+    border-radius:4px;
+    border:1px solid var(--line);
+    background:#f4ecd8;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    flex-shrink:0;
+  }
+  .mol-box img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+  }
+  .mol-box.mol-empty{
+    background:var(--panel-2);
+    border-style:dashed;
+  }
+  .mol-box.mol-empty::after{
+    content:"—";
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--parchment-dim);
+  }
+  .mol-box-lg{
+    width:110px;
+    height:110px;
+    border-radius:6px;
+    border:1px solid var(--line);
+    background:#f4ecd8;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    flex-shrink:0;
+  }
+  .mol-box-lg img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+  }
+  .mol-box-lg.mol-empty{
+    background:var(--panel-2);
+    border-style:dashed;
+  }
+  .mol-box-lg.mol-empty::after{
+    content:"no structure found";
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.03em;
+    color:var(--parchment-dim);
+    text-align:center;
+    padding:0 8px;
+  }
+  .mol-box-sm{
+    width:56px;
+    height:56px;
+    border-radius:5px;
+    border:1px solid var(--line);
+    background:#f4ecd8;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    flex-shrink:0;
+  }
+  .mol-box-sm img{ width:100%; height:100%; object-fit:contain; display:block; }
+  .mol-box-sm.mol-empty{ background:var(--panel-2); border-style:dashed; }
+  .mol-box-sm.mol-empty::after{
+    content:"—"; font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--parchment-dim);
+  }
+  .name-cell{
+    font-family:'Fraunces', serif;
+    font-size:17px;
+    font-weight:500;
+    font-style:italic;
+    color:var(--parchment);
+    letter-spacing:0.01em;
+    line-height:1.3;
+  }
+  .sub-cat{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    font-style:normal;
+    color:var(--cat-color, var(--parchment-dim));
+    opacity:0.85;
+    margin-top:2px;
+    font-weight:500;
+  }
+  .entry:hover .name-cell{ color:var(--amber-bright); }
+  .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--cat-color, var(--sage));
+    border:1px solid var(--cat-color, var(--sage));
+    opacity:0.92;
+    padding:3px 8px;
+    border-radius:2px;
+    display:inline-block;
+    width:fit-content;
+  }
+
+  .wiki-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:var(--ink);
+    background:var(--cat-color, var(--amber));
+    border:none;
+    padding:7px 14px;
+    border-radius:3px;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-weight:600;
+    transition:filter .15s ease;
+    height:fit-content;
+  }
+  .wiki-btn:hover{ filter:brightness(1.15); }
+  .wiki-btn::after{ content:"↗"; font-size:11px; }
+  .detail-meta-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:4px;
+  }
+  .pkpd-btn{
+    background:var(--panel-2);
+    color:var(--parchment);
+    border:1px solid var(--cat-color, var(--sage));
+  }
+  .pkpd-btn::after{ content:"⚕"; font-size:11px; }
+  .pkpd-btn:hover{ filter:brightness(1.25); }
+  .pkpd-btn[hidden]{ display:none !important; }
+  .pkpd-btn.loading{ opacity:0.55; cursor:progress; pointer-events:none; }
+
+  .bar1-compact{
+    display:flex;
+    flex-wrap:wrap;
+    gap:4px;
+    justify-content:flex-end;
+  }
+  .tiny-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9px;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:2px 6px;
+    border-radius:2px;
+    line-height:1.6;
+    white-space:nowrap;
+    border:1px solid var(--line);
+    color:var(--parchment-dim);
+  }
+  .tiny-tag.count-tag{ border-color:var(--sage); color:var(--sage); }
+  .tiny-tag.origin-tag{ border-color:var(--amber); color:var(--amber-bright); }
+  .tiny-tag.receptor-tag{ background:rgba(255,255,255,0.03); }
+  .tagbars-block{ flex:1 1 280px; min-width:0; padding-left:18px; }
+  .bar-row{ display:flex; flex-wrap:wrap; gap:6px; }
+  .bar-row.bar1-row{ margin-bottom:8px; }
+  .chevron, .sub-chevron{
+    font-size:12px;
+    color:var(--parchment-dim);
+    transition:transform .2s ease;
+    text-align:center;
+  }
+  .entry.open > .entry-row .chevron{ transform:rotate(90deg); color:var(--amber); }
+  .substance-row.open .sub-chevron{ transform:rotate(90deg); color:var(--amber-bright); }
+
+  .detail{
+    max-height:0;
+    overflow:hidden;
+    transition: max-height .28s ease;
+  }
+  .entry.open > .detail{ max-height:4000px; }
+  .detail-inner{
+    padding:0 20px 24px 60px;
+    display:flex;
+    gap:24px;
+    flex-wrap:wrap;
+    width:100%;
+    box-sizing:border-box;
+  }
+  .detail-text{
+    flex:1 1 280px;
+    min-width:0;
+    font-size:14px;
+    line-height:1.7;
+    color:#d8cbac;
+    border-left:2px solid var(--cat-color, var(--amber));
+    padding-left:18px;
+    overflow-wrap:break-word;
+    word-wrap:break-word;
+  }
+  .detail-side{
+    display:flex;
+    gap:16px;
+    flex:1 1 280px;
+    min-width:0;
+  }
+  .detail-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--parchment-dim);
+    line-height:2;
+    min-width:150px;
+    flex:1 1 150px;
+  }
+  .detail-meta div span{ color:var(--parchment); }
+
+  .submenu-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--parchment-dim);
+    margin:0 0 8px;
+  }
+
+  .composition-block{
+    flex:1 1 100%;
+    padding-left:18px;
+    border-top:1px dashed var(--line);
+    padding-top:16px;
+    margin-top:4px;
+  }
+  .composition-text, .bindingprofile-text{
+    font-size:13px;
+    line-height:1.7;
+    color:#d8cbac;
+  }
+  .composition-block + .composition-block{ border-top:none; padding-top:0; margin-top:-6px; }
+
+  .substances-block{
+    flex:1 1 100%;
+    padding-left:18px;
+    border-top:1px dashed var(--line);
+    padding-top:16px;
+  }
+  .substance-list{
+    display:flex;
+    flex-direction:column;
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .substance-row{
+    display:grid;
+    grid-template-columns: 44px 1fr 120px 16px;
+    align-items:center;
+    gap:12px;
+    padding:10px 14px;
+    cursor:pointer;
+    background:var(--panel);
+    transition: background .15s ease;
+    border-bottom:1px solid var(--line);
+  }
+  .substance-list > div:last-of-type .substance-row{ border-bottom:none; }
+  .substance-row:hover{ background:var(--panel-2); }
+  .sub-name-cell{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--parchment);
+  }
+  .sub-name-cell span{
+    display:block;
+    font-size:10px;
+    color:var(--parchment-dim);
+    margin-top:2px;
+    letter-spacing:0.02em;
+  }
+  .sub-recap{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.02em;
+    color:var(--parchment-dim);
+    text-align:right;
+  }
+  .substance-detail{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .25s ease;
+    background:var(--ink);
+  }
+  .substance-row.open + .substance-detail{ max-height:1400px; }
+  .substance-detail-inner{
+    padding:18px 18px 20px;
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    border-top:1px solid var(--line);
+  }
+  .sub-detail-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--parchment-dim);
+    line-height:2;
+    flex:1 1 220px;
+    min-width:180px;
+  }
+  .sub-detail-meta div span{ color:var(--parchment); }
+  .sub-tables{
+    flex:2 1 380px;
+    min-width:260px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  table.data-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12px;
+    font-family:'IBM Plex Mono', monospace;
+  }
+  table.data-table th, table.data-table td{
+    border:1px solid var(--line);
+    padding:6px 9px;
+    text-align:left;
+  }
+  table.data-table th{
+    background:var(--panel-2);
+    color:var(--parchment-dim);
+    font-weight:500;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    font-size:10px;
+  }
+  table.data-table td{ color:var(--parchment); }
+  table.data-table td.dim{ color:var(--parchment-dim); }
+  .sub-binding-block{
+    flex:1 1 100%;
+  }
+  .sub-binding-block .bindingprofile-text{
+    border-left:2px solid var(--cat-color, var(--amber));
+    padding-left:14px;
+  }
+
+  /* PK/PD modal */
+  .pkpd-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(8,6,3,0.72);
+    backdrop-filter:blur(3px);
+    z-index:50;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:5vh 16px;
+    overflow-y:auto;
+  }
+  .pkpd-overlay[hidden]{ display:none; }
+  .pkpd-modal{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    max-width:760px;
+    width:100%;
+    box-shadow:var(--shadow);
+    margin-bottom:5vh;
+  }
+  .pkpd-modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:18px 22px;
+    border-bottom:1px solid var(--line);
+    position:sticky;
+    top:0;
+    background:var(--panel);
+    border-radius:8px 8px 0 0;
+  }
+  .pkpd-modal-title{
+    font-family:'Fraunces', serif;
+    font-size:20px;
+    font-weight:600;
+    color:var(--parchment);
+  }
+  .pkpd-modal-title span{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:4px;
+  }
+  .pkpd-modal-close{
+    font-family:'IBM Plex Mono', monospace;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--parchment-dim);
+    width:30px;
+    height:30px;
+    border-radius:4px;
+    cursor:pointer;
+    flex-shrink:0;
+    font-size:14px;
+    line-height:1;
+  }
+  .pkpd-modal-close:hover{ border-color:var(--amber); color:var(--parchment); }
+  .pkpd-modal-body{
+    padding:20px 22px;
+    max-height:64vh;
+    overflow-y:auto;
+    color:#d8cbac;
+    font-size:14px;
+    line-height:1.7;
+  }
+  .pkpd-modal-body .pkpd-loading,
+  .pkpd-modal-body .pkpd-error{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--parchment-dim);
+  }
+  .pkpd-section-block{
+    margin-bottom:26px;
+    padding-bottom:2px;
+  }
+  .pkpd-section-block:last-child{ margin-bottom:0; }
+  .wiki-content h2, .wiki-content h3, .wiki-content h4{
+    font-family:'Fraunces', serif;
+    color:var(--amber-bright);
+    font-weight:600;
+    margin:18px 0 8px;
+    line-height:1.3;
+  }
+  .wiki-content h2:first-child, .wiki-content h3:first-child, .wiki-content h4:first-child{ margin-top:0; }
+  .wiki-content p{ margin:0 0 12px; }
+  .wiki-content a{ color:var(--amber-bright); }
+  .wiki-content ul, .wiki-content ol{ margin:0 0 12px; padding-left:22px; }
+  .wiki-content li{ margin-bottom:4px; }
+  .wiki-content table{
+    border-collapse:collapse;
+    width:100%;
+    margin:12px 0 18px;
+    font-size:12.5px;
+  }
+  .wiki-content table caption{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--parchment-dim); margin-bottom:6px; text-align:left; }
+  .wiki-content th, .wiki-content td{
+    border:1px solid var(--line);
+    padding:6px 9px;
+    text-align:left;
+  }
+  .wiki-content th{ background:var(--panel-2); color:var(--parchment); }
+  .wiki-content sup{ font-size:9.5px; color:var(--parchment-dim); }
+  .wiki-content .mw-editsection{ display:none; }
+  .wiki-content .reference{ display:none; }
+  .wiki-content img{ max-width:100%; height:auto; }
+  .pkpd-modal-footer{
+    padding:14px 22px;
+    border-top:1px solid var(--line);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--parchment-dim);
+  }
+  .pkpd-modal-footer a{ color:var(--amber-bright); }
+
+  footer{
+    max-width:1080px;
+    margin:40px auto 0;
+    padding:24px 32px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--parchment-dim);
+    border-top:1px solid var(--line);
+    line-height:1.8;
+  }
+
+  @media (max-width: 860px) and (min-width: 641px){
+    .entry-row{ grid-template-columns: 40px 38px 1fr 120px 120px 20px; }
+  }
+
+  @media (max-width: 640px){
+    header{ padding:36px 18px 24px; }
+    main{ padding:0 14px; }
+    footer{ padding:20px 14px; }
+
+    .controls{ padding:16px 0 12px; }
+    .pill-row{ gap:6px; }
+    .pill{ font-size:10.5px; padding:5px 10px; }
+    .sort-row{ gap:8px; }
+    select{ font-size:11px; padding:6px 8px; }
+
+    .entry-row{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:6px 10px;
+      padding:14px 10px 14px 13px;
+    }
+    .idx{ order:1; }
+    .mol-box{ order:2; width:34px; height:34px; }
+    .name-cell{ order:3; flex:1 1 auto; font-size:16px; min-width:50%; }
+    .chevron{ order:4; margin-left:auto; }
+    .tag{ display:none; }
+    .bar1-compact{ order:5; margin-left:auto; justify-content:flex-end; }
+
+    .detail-inner{ padding:0 12px 20px 16px; gap:14px; }
+    .detail-text{ padding-left:14px; font-size:13.5px; flex:1 1 100%; }
+    .detail-side{ flex:1 1 100%; flex-wrap:wrap; }
+    .detail-meta{ flex:1 1 100%; min-width:0; }
+    .composition-block, .substances-block{ padding-left:14px; }
+    .mol-box-lg{ width:90px; height:90px; }
+    .wiki-btn{ font-size:10.5px; padding:6px 12px; }
+    .search-box{ width:100%; margin-left:0; }
+    .substance-row{ grid-template-columns: 36px 1fr 16px; }
+    .sub-recap{ display:none; }
+    .substance-detail-inner{ padding:14px 12px 16px; gap:14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow"><span>Personal Reference — Not Medical Advice</span><span class="version-tag" id="versionTag">v1.0.0</span></div>
+  <h1>The <em>Herbarium</em></h1>
+  <div class="subhead">A working ledger of psychoactive and traditional plants: chemical composition, pharmacology, and receptor binding profile per species. Click a plant to expand its full chemistry; click any listed substance inside to open its own binding-profile card — molecule structure, substance class, approximate abundance by plant part, and receptor/Ki data where available. Percentages and Ki values are best-effort figures from the phytochemical/pharmacological literature and are marked N/A where no reliable figure exists — always verify against primary sources.</div>
+  <div class="stat-row">
+    <span><b id="stat-total">—</b> species</span>
+    <span><b id="stat-compounds">—</b> catalogued compounds</span>
+    <span><b id="stat-cats">—</b> chemical classes</span>
+  </div>
+</header>
+
+<main>
+  <div class="controls">
+    <div class="filter-label-row">
+      <div class="control-label" style="margin-bottom:0;">Filter by chemical class</div>
+      <button class="toggle-btn" id="toggleFilters">Hide filters</button>
+    </div>
+    <div class="pill-row" id="pillRow"></div>
+    <div class="sort-row">
+      <div class="control-label" style="margin-bottom:0;">Sort</div>
+      <select id="sortSelect">
+        <option value="name-asc">Name A→Z</option>
+        <option value="name-desc">Name Z→A</option>
+        <option value="category">Class, then name</option>
+        <option value="compounds-desc">Most compounds first</option>
+      </select>
+      <input type="text" class="search-box" id="searchBox" placeholder="Search plant or compound…">
+    </div>
+  </div>
+
+  <div class="count-line" id="countLine"></div>
+  <div class="ledger" id="ledger"></div>
+</main>
+
+<div class="pkpd-overlay" id="pkpdOverlay" hidden>
+  <div class="pkpd-modal">
+    <div class="pkpd-modal-header">
+      <div class="pkpd-modal-title"><span>Pharmacology · PK/PD</span><span id="pkpdModalName"></span></div>
+      <button class="pkpd-modal-close" id="pkpdModalClose" aria-label="Close">✕</button>
+    </div>
+    <div class="pkpd-modal-body" id="pkpdModalBody"></div>
+    <div class="pkpd-modal-footer">Source: Wikipedia — <a id="pkpdModalSourceLink" href="#" target="_blank" rel="noopener noreferrer">view full article ↗</a></div>
+  </div>
+</div>
+
+<footer>
+  Personal botanical/phytochemical reference. Molecule thumbnails are fetched live from PubChem by compound name; the PK/PD button (when shown) pulls the species' own Wikipedia pharmacology-related sections live. Ki/IC50 figures and part-percentages are approximate literature figures where known, marked N/A otherwise. Traditional-use notes are ethnobotanical context, not usage instructions. Not medical advice.
+</footer>
+
+<script>
+const APP_VERSION = "1.0.0";
+
+// ---- Chemical class vocabulary (for filter pills / coloring) -----------
+const CAT_LABELS = {
+  "iboga-alkaloid": "Iboga Alkaloids",
+  "opioid-indole": "Opioid-like Indoles",
+  "tryptamine": "Tryptamines",
+  "beta-carboline": "β-Carbolines / MAOIs",
+  "ergoline": "Ergolines",
+  "phenylpropanoid": "Phenylpropanoids",
+  "diterpene": "Diterpenes",
+  "kavalactone": "Kavalactones",
+  "phenethylamine": "Phenethylamines",
+  "stimulant-xanthine": "Xanthine Stimulants",
+  "cathinone": "Cathinones",
+  "cannabinoid": "Cannabinoids",
+  "sedative-botanical": "Sedative / Anxiolytic",
+  "nootropic-botanical": "Nootropic / Cognitive"
+};
+const CAT_COLORS = {
+  "iboga-alkaloid": "#a24a3a",
+  "opioid-indole": "#c98a3e",
+  "tryptamine": "#7c9b7e",
+  "beta-carboline": "#4f8fc4",
+  "ergoline": "#9b6bc9",
+  "phenylpropanoid": "#c9a13e",
+  "diterpene": "#d1587a",
+  "kavalactone": "#5fae8f",
+  "phenethylamine": "#e0a55c",
+  "stimulant-xanthine": "#c65b3f",
+  "cathinone": "#b35d78",
+  "cannabinoid": "#6a9e4a",
+  "sedative-botanical": "#7d95b3",
+  "nootropic-botanical": "#b08d57"
+};
+
+// ---- Plant + substance data --------------------------------------------
+// Each plant lists its known active constituents. Each constituent carries:
+//   cls        — chemical class
+//   parts      — approximate % abundance by plant part (N/A where unknown)
+//   oil        — essential-oil content, when documented (N/A otherwise)
+//   receptors  — [{r: receptor/target, ki: Ki or IC50 (nM), or N/A}]
+const DATA = [
+  {
+    name:"Tabernanthe iboga",
+    cat:"iboga-alkaloid",
+    origin:"Central Africa",
+    chemicalComposition:"Ibogaine (principal alkaloid), noribogaine, ibogamine, tabernanthine, voacangine.",
+    note:"Oneirogenic and anti-addictive effects; interrupts opioid and stimulant withdrawal. Ibogaine and noribogaine modulate multiple monoamine systems and neurotrophic factors (GDNF). Strong ethnobotanical use in Bwiti rites.",
+    bindingProfile:"Ibogaine: σ2 agonist, NMDA antagonist (moderate), SERT/NET inhibitor, κ-opioid partial agonist, nicotinic nAChR antagonist. Noribogaine: potent SERT inhibitor, κ-opioid agonist. Limited high-affinity 5-HT2A data.",
+    substances:[
+      {name:"Ibogaine", cls:"Iboga-type indole alkaloid", parts:[{part:"Root bark",pct:"N/A"}], oil:"N/A", receptors:[
+        {r:"Sigma-2 (σ2)",ki:"N/A (agonist)"}, {r:"NMDA (GluN2B)",ki:"N/A (moderate antagonist)"},
+        {r:"SERT",ki:"N/A (inhibitor)"}, {r:"NET",ki:"N/A (inhibitor)"},
+        {r:"Kappa (KOR)",ki:"N/A (partial agonist)"}, {r:"α3β4",ki:"N/A (antagonist)"}
+      ]},
+      {name:"Noribogaine", cls:"Iboga-type indole alkaloid (active metabolite)", parts:[{part:"Root bark",pct:"N/A (formed metabolically)"}], oil:"N/A", receptors:[
+        {r:"SERT",ki:"N/A (potent inhibitor)"}, {r:"Kappa (KOR)",ki:"N/A (agonist)"}
+      ]},
+      {name:"Ibogamine", cls:"Iboga-type indole alkaloid", parts:[{part:"Root bark",pct:"N/A"}], oil:"N/A", receptors:[{r:"Sigma-2 (σ2)",ki:"N/A"}]},
+      {name:"Tabernanthine", cls:"Iboga-type indole alkaloid", parts:[{part:"Root bark",pct:"N/A"}], oil:"N/A", receptors:[{r:"SERT",ki:"N/A (weak)"}]},
+      {name:"Voacangine", cls:"Iboga-type indole alkaloid (biosynthetic precursor)", parts:[{part:"Root bark",pct:"N/A"}], oil:"N/A", receptors:[{r:"Sigma-2 (σ2)",ki:"N/A"}]}
+    ]
+  },
+  {
+    name:"Voacanga africana",
+    cat:"iboga-alkaloid",
+    origin:"West/Central Africa",
+    chemicalComposition:"Voacangine, ibogaine-related alkaloids, voacamine, vobasine.",
+    note:"Mild stimulant and oneirogenic effects similar to low-dose iboga; used traditionally for fatigue and as a stimulant. Some anti-addictive potential reported.",
+    bindingProfile:"Voacangine and related iboga alkaloids share σ2, NMDA and monoamine transporter affinity profiles with ibogaine (weaker overall).",
+    substances:[
+      {name:"Voacangine", cls:"Iboga-type indole alkaloid", parts:[{part:"Seed",pct:"N/A"},{part:"Root bark",pct:"N/A"}], oil:"N/A", receptors:[
+        {r:"Sigma-2 (σ2)",ki:"N/A (weaker than ibogaine)"}, {r:"NMDA (GluN2B)",ki:"N/A (weak)"}
+      ]},
+      {name:"Voacamine", cls:"Bisindole alkaloid", parts:[{part:"Root bark",pct:"N/A"}], oil:"N/A", receptors:[{r:"SERT",ki:"N/A"}]},
+      {name:"Vobasine", cls:"Indole alkaloid", parts:[{part:"Root bark",pct:"N/A"}], oil:"N/A", receptors:[{r:"NET",ki:"N/A"}]}
+    ]
+  },
+  {
+    name:"Mitragyna speciosa",
+    cat:"opioid-indole",
+    origin:"Southeast Asia",
+    chemicalComposition:"Mitragynine (primary), 7-hydroxymitragynine (potent minor), speciogynine, paynantheine, speciociliatine.",
+    note:"Dose-dependent stimulant (low) to opioid-like sedative/analgesic (high). 7-OH-mitragynine is a potent µ-opioid partial agonist; mitragynine is biased G-protein agonist at µ-OR with additional adrenergic and serotonergic activity.",
+    bindingProfile:"7-Hydroxymitragynine: µ-opioid partial agonist (Ki low nM, high efficacy at G-protein, low β-arrestin). Mitragynine: µ-OR biased agonist + α2-adrenergic and 5-HT2A/2C activity. Limited quantitative data on other receptors.",
+    substances:[
+      {name:"Mitragynine", cls:"Corynanthe-type indole alkaloid", parts:[{part:"Leaf (dry)",pct:"N/A (major alkaloid)"}], oil:"N/A", receptors:[
+        {r:"Mu (MOR)",ki:"N/A (biased agonist)"}, {r:"α2A",ki:"N/A"}, {r:"5-HT2A",ki:"N/A"}, {r:"5-HT2C",ki:"N/A"}
+      ]},
+      {name:"7-Hydroxymitragynine", cls:"Corynanthe-type indole alkaloid (minor, potent)", parts:[{part:"Leaf (dry)",pct:"N/A (trace)"}], oil:"N/A", receptors:[
+        {r:"Mu (MOR)",ki:"low nM (potent partial agonist)"}
+      ]},
+      {name:"Speciogynine", cls:"Corynanthe-type indole alkaloid", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"Mu (MOR)",ki:"N/A (weak)"}]},
+      {name:"Paynantheine", cls:"Corynanthe-type indole alkaloid", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"Mu (MOR)",ki:"N/A (weak)"}]},
+      {name:"Speciociliatine", cls:"Corynanthe-type indole alkaloid", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"Mu (MOR)",ki:"N/A (weak partial agonist)"}]}
+    ]
+  },
+  {
+    name:"Psychotria viridis",
+    cat:"tryptamine",
+    origin:"Amazon Basin",
+    chemicalComposition:"N,N-Dimethyltryptamine (DMT) as primary psychoactive alkaloid (typically 0.1–1.7 % dry leaf).",
+    note:"Source of DMT in ayahuasca. When combined with MAOI, produces intense short-acting psychedelic effects via 5-HT2A agonism; pure leaf is inactive orally due to first-pass MAO.",
+    bindingProfile:"DMT: 5-HT2A agonist (Ki ≈ 75–100 nM), 5-HT1A partial agonist, TAAR1 agonist, sigma-1 ligand. Rapidly metabolized by MAO-A.",
+    substances:[
+      {name:"N,N-Dimethyltryptamine (DMT)", cls:"Tryptamine alkaloid", parts:[{part:"Leaf (dry)",pct:"0.1–1.7%"}], oil:"N/A", receptors:[
+        {r:"5-HT2A",ki:"≈75–100 nM"}, {r:"5-HT1A",ki:"N/A (partial agonist)"}, {r:"TAAR1",ki:"N/A (agonist)"}, {r:"Sigma-1 (σ1)",ki:"N/A"}
+      ]}
+    ]
+  },
+  {
+    name:"Psychotria carthagenensis",
+    cat:"tryptamine",
+    origin:"Amazon Basin",
+    chemicalComposition:"N,N-Dimethyltryptamine (DMT) and related tryptamines (variable content).",
+    note:"Occasionally used as DMT admixture in ayahuasca analogues; pharmacology identical to P. viridis when DMT is present.",
+    bindingProfile:"Same as DMT: 5-HT2A agonist (primary), 5-HT1A, TAAR1, sigma-1.",
+    substances:[
+      {name:"N,N-Dimethyltryptamine (DMT)", cls:"Tryptamine alkaloid", parts:[{part:"Leaf",pct:"variable"}], oil:"N/A", receptors:[
+        {r:"5-HT2A",ki:"≈75–100 nM"}, {r:"5-HT1A",ki:"N/A (partial agonist)"}, {r:"TAAR1",ki:"N/A (agonist)"}, {r:"Sigma-1 (σ1)",ki:"N/A"}
+      ]}
+    ]
+  },
+  {
+    name:"Banisteriopsis caapi",
+    cat:"beta-carboline",
+    origin:"Amazon Basin",
+    chemicalComposition:"Harmine, harmaline, tetrahydroharmine (β-carbolines); trace DMT in some samples.",
+    note:"Primary MAOI component of ayahuasca. Harmine/harmaline are reversible MAO-A inhibitors enabling oral DMT activity; also possess mild psychoactive and neuroprotective effects of their own.",
+    bindingProfile:"Harmine: reversible MAO-A inhibitor (IC50 ≈ 2–10 nM range in many assays), DYRK1A inhibitor, weak 5-HT2A ligand. Harmaline similar MAO-A profile. Tetrahydroharmine weak SERT inhibitor.",
+    substances:[
+      {name:"Harmine", cls:"β-Carboline alkaloid", parts:[{part:"Vine/bark",pct:"N/A"}], oil:"N/A", receptors:[
+        {r:"MAO-A",ki:"IC50 ≈2–10 nM"}, {r:"DYRK1A",ki:"N/A (inhibitor)"}, {r:"5-HT2A",ki:"N/A (weak)"}
+      ]},
+      {name:"Harmaline", cls:"β-Carboline alkaloid", parts:[{part:"Vine/bark",pct:"N/A"}], oil:"N/A", receptors:[{r:"MAO-A",ki:"N/A (similar to harmine)"}]},
+      {name:"Tetrahydroharmine", cls:"β-Carboline alkaloid", parts:[{part:"Vine/bark",pct:"N/A"}], oil:"N/A", receptors:[{r:"SERT",ki:"N/A (weak inhibitor)"}]}
+    ]
+  },
+  {
+    name:"Mimosa tenuiflora",
+    cat:"tryptamine",
+    origin:"NE Brazil (Jurema)",
+    chemicalComposition:"N,N-Dimethyltryptamine (DMT) in root bark (0.5–2 % typical); yuremamine (possible prodrug).",
+    note:"Traditional source of DMT for jurema / ayahuasca analogues. Oral activity requires MAOI co-administration.",
+    bindingProfile:"DMT: 5-HT2A agonist (Ki ≈ 75–100 nM), 5-HT1A partial agonist, TAAR1 agonist, sigma-1 ligand.",
+    substances:[
+      {name:"N,N-Dimethyltryptamine (DMT)", cls:"Tryptamine alkaloid", parts:[{part:"Root bark",pct:"0.5–2%"}], oil:"N/A", receptors:[
+        {r:"5-HT2A",ki:"≈75–100 nM"}, {r:"5-HT1A",ki:"N/A (partial agonist)"}, {r:"TAAR1",ki:"N/A (agonist)"}, {r:"Sigma-1 (σ1)",ki:"N/A"}
+      ]},
+      {name:"Yuremamine", cls:"Phlobatannin (possible tryptamine prodrug)", parts:[{part:"Root bark",pct:"N/A"}], oil:"N/A", receptors:[{r:"5-HT2A",ki:"N/A (unconfirmed)"}]}
+    ]
+  },
+  {
+    name:"Anadenanthera peregrina",
+    cat:"tryptamine",
+    origin:"Caribbean / Orinoco",
+    chemicalComposition:"Bufotenine (5-HO-DMT), N,N-DMT, 5-MeO-DMT (variable by seed/origin).",
+    note:"Traditional snuff (yopo/cohoba). Rapid onset intense tryptamine psychedelic effects; bufotenine is less psychedelic and more peripheral.",
+    bindingProfile:"Bufotenine: 5-HT2A agonist (moderate affinity), 5-HT1A. 5-MeO-DMT: potent 5-HT1A agonist + 5-HT2A. DMT as above.",
+    substances:[
+      {name:"Bufotenine (5-HO-DMT)", cls:"Tryptamine alkaloid", parts:[{part:"Seed",pct:"variable"}], oil:"N/A", receptors:[{r:"5-HT2A",ki:"N/A (moderate)"},{r:"5-HT1A",ki:"N/A"}]},
+      {name:"N,N-Dimethyltryptamine (DMT)", cls:"Tryptamine alkaloid", parts:[{part:"Seed",pct:"variable"}], oil:"N/A", receptors:[{r:"5-HT2A",ki:"≈75–100 nM"},{r:"5-HT1A",ki:"N/A"}]},
+      {name:"5-MeO-DMT", cls:"Tryptamine alkaloid", parts:[{part:"Seed",pct:"variable"}], oil:"N/A", receptors:[{r:"5-HT1A",ki:"N/A (potent agonist)"},{r:"5-HT2A",ki:"N/A"}]}
+    ]
+  },
+  {
+    name:"Anadenanthera colubrina",
+    cat:"tryptamine",
+    origin:"S. America (Andes/Chaco)",
+    chemicalComposition:"Bufotenine (dominant), N,N-DMT, 5-MeO-DMT (seed).",
+    note:"Same traditional snuff use as A. peregrina; effects driven primarily by bufotenine and tryptamines.",
+    bindingProfile:"Bufotenine: 5-HT2A/5-HT1A agonist profile; DMT/5-MeO-DMT as above.",
+    substances:[
+      {name:"Bufotenine (5-HO-DMT)", cls:"Tryptamine alkaloid", parts:[{part:"Seed",pct:"N/A (dominant alkaloid)"}], oil:"N/A", receptors:[{r:"5-HT2A",ki:"N/A"},{r:"5-HT1A",ki:"N/A"}]},
+      {name:"N,N-Dimethyltryptamine (DMT)", cls:"Tryptamine alkaloid", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"5-HT2A",ki:"≈75–100 nM"}]},
+      {name:"5-MeO-DMT", cls:"Tryptamine alkaloid", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"5-HT1A",ki:"N/A (potent agonist)"}]}
+    ]
+  },
+  {
+    name:"Ipomoea tricolor",
+    cat:"ergoline",
+    origin:"Mesoamerica",
+    chemicalComposition:"Ergoline alkaloids (ergine/LSA, isoergine, ergometrine) in seeds.",
+    note:"Seeds produce mild-to-moderate psychedelic/sedative effects similar to low-dose LSD but with more body load and nausea. Traditional use in Mesoamerica.",
+    bindingProfile:"Ergine (LSA): partial agonist at 5-HT2A and 5-HT1A; lower efficacy than LSD. Weak dopaminergic activity.",
+    substances:[
+      {name:"Ergine (LSA)", cls:"Ergoline alkaloid", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[
+        {r:"5-HT2A",ki:"N/A (partial agonist, lower efficacy than LSD)"}, {r:"5-HT1A",ki:"N/A"}, {r:"D2",ki:"N/A (weak)"}
+      ]},
+      {name:"Isoergine", cls:"Ergoline alkaloid", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"5-HT2A",ki:"N/A"}]},
+      {name:"Ergometrine", cls:"Ergoline alkaloid (uterotonic)", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"5-HT2A",ki:"N/A (minor)"}]}
+    ]
+  },
+  {
+    name:"Ipomoea violacea",
+    cat:"ergoline",
+    origin:"Mesoamerica",
+    chemicalComposition:"Ergoline alkaloids (ergine/LSA and related) in seeds.",
+    note:"Similar to I. tricolor; mild psychedelic effects via lysergic acid amides.",
+    bindingProfile:"Ergine: 5-HT2A/5-HT1A partial agonist (lower intrinsic efficacy than LSD).",
+    substances:[
+      {name:"Ergine (LSA)", cls:"Ergoline alkaloid", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[
+        {r:"5-HT2A",ki:"N/A (partial agonist)"}, {r:"5-HT1A",ki:"N/A"}
+      ]}
+    ]
+  },
+  {
+    name:"Turbina corymbosa",
+    cat:"ergoline",
+    origin:"Mesoamerica (Oaxaca)",
+    chemicalComposition:"Ergoline alkaloids (ergine/LSA, chanoclavine, etc.) in seeds (ololiuhqui).",
+    note:"Classic Mesoamerican visionary seed; milder, more dream-like than morning glory with strong sedative component.",
+    bindingProfile:"Ergine (LSA): 5-HT2A partial agonist, 5-HT1A activity.",
+    substances:[
+      {name:"Ergine (LSA)", cls:"Ergoline alkaloid", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"5-HT2A",ki:"N/A (partial agonist)"},{r:"5-HT1A",ki:"N/A"}]},
+      {name:"Chanoclavine", cls:"Clavine-type ergoline alkaloid", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"5-HT2A",ki:"N/A (minor)"}]}
+    ]
+  },
+  {
+    name:"Myristica fragrans",
+    cat:"phenylpropanoid",
+    origin:"Indonesia (Banda Islands)",
+    chemicalComposition:"Myristicin, elemicin, safrole (phenylpropanoids) in seed (nutmeg).",
+    note:"High doses produce delirium, anticholinergic-like and mild psychedelic effects lasting 12–48 h; unpleasant body load common. Traditional use limited.",
+    bindingProfile:"Myristicin/elemicin: weak MAOI and possible 5-HT2A activity after metabolism; primarily pro-drug effects via CYP-mediated conversion. Limited high-affinity receptor data.",
+    substances:[
+      {name:"Myristicin", cls:"Methylenedioxy phenylpropanoid", parts:[{part:"Seed",pct:"N/A"}], oil:"~5–15% (seed essential oil, major component)", receptors:[
+        {r:"MAO-A",ki:"N/A (weak, after metabolism)"}, {r:"5-HT2A",ki:"N/A (possible, post-metabolism)"}
+      ]},
+      {name:"Elemicin", cls:"Phenylpropanoid", parts:[{part:"Seed",pct:"N/A"}], oil:"present in seed essential oil (minor fraction)", receptors:[{r:"MAO-A",ki:"N/A (weak)"}]},
+      {name:"Safrole", cls:"Phenylpropanoid (regulated precursor compound)", parts:[{part:"Seed",pct:"N/A (trace)"}], oil:"present in seed essential oil (minor fraction)", receptors:[{r:"MAO-A",ki:"N/A (weak)"}]}
+    ]
+  },
+  {
+    name:"Salvia divinorum",
+    cat:"diterpene",
+    origin:"Oaxaca, Mexico (Mazatec)",
+    chemicalComposition:"Salvinorin A (diterpene, principal active), salvinorin B and minor analogues.",
+    note:"Extremely potent, short-acting dissociative/hallucinogenic effects via selective κ-opioid agonism. Unique non-nitrogenous structure. Traditional Mazatec use.",
+    bindingProfile:"Salvinorin A: highly selective full agonist at κ-opioid receptor (Ki ≈ 1.3–4 nM, EC50 low nM). Negligible affinity at µ/δ-opioid, monoamine transporters or 5-HT receptors.",
+    substances:[
+      {name:"Salvinorin A", cls:"Neoclerodane diterpene", parts:[{part:"Leaf (dry)",pct:"N/A (typically <2% of dry leaf)"}], oil:"N/A", receptors:[
+        {r:"Kappa (KOR)",ki:"≈1.3–4 nM (full agonist)"}, {r:"Mu (MOR)",ki:"N/A (negligible)"}, {r:"Delta (DOR)",ki:"N/A (negligible)"}
+      ]},
+      {name:"Salvinorin B", cls:"Neoclerodane diterpene (minor)", parts:[{part:"Leaf",pct:"N/A (minor)"}], oil:"N/A", receptors:[{r:"Kappa (KOR)",ki:"N/A (inactive/weak — hydrolysis product)"}]}
+    ]
+  },
+  {
+    name:"Piper methysticum",
+    cat:"kavalactone",
+    origin:"Pacific Islands",
+    chemicalComposition:"Kavalactones (kavain, dihydrokavain, methysticin, dihydromethysticin, yangonin, desmethoxyyangonin).",
+    note:"Anxiolytic, muscle-relaxant and mild sedative effects. Enhances GABA transmission without direct benzodiazepine-site binding; also sodium-channel modulation.",
+    bindingProfile:"Kavalactones: positive modulation of GABAA (non-benzodiazepine site), weak MAO-B inhibition, voltage-gated Na+ channel blockade. Yangonin has some CB1 affinity.",
+    substances:[
+      {name:"Kavain", cls:"Kavalactone (α-pyrone)", parts:[{part:"Root",pct:"N/A"}], oil:"N/A", receptors:[{r:"GABA-A",ki:"N/A (positive modulator, non-BZD site)"},{r:"Nav1.2",ki:"N/A (blocker)"}]},
+      {name:"Dihydrokavain", cls:"Kavalactone (α-pyrone)", parts:[{part:"Root",pct:"N/A"}], oil:"N/A", receptors:[{r:"GABA-A",ki:"N/A"}]},
+      {name:"Methysticin", cls:"Kavalactone (α-pyrone)", parts:[{part:"Root",pct:"N/A"}], oil:"N/A", receptors:[{r:"GABA-A",ki:"N/A"}]},
+      {name:"Dihydromethysticin", cls:"Kavalactone (α-pyrone)", parts:[{part:"Root",pct:"N/A"}], oil:"N/A", receptors:[{r:"GABA-A",ki:"N/A"}]},
+      {name:"Yangonin", cls:"Kavalactone (α-pyrone)", parts:[{part:"Root",pct:"N/A"}], oil:"N/A", receptors:[{r:"CB1",ki:"N/A (some affinity)"},{r:"MAO-B",ki:"N/A (weak inhibitor)"}]},
+      {name:"Desmethoxyyangonin", cls:"Kavalactone (α-pyrone)", parts:[{part:"Root",pct:"N/A"}], oil:"N/A", receptors:[{r:"MAO-B",ki:"N/A (weak)"}]}
+    ]
+  },
+  {
+    name:"Lophophora williamsii",
+    cat:"phenethylamine",
+    origin:"N. Mexico / SW USA",
+    chemicalComposition:"Mescaline (3,4,5-trimethoxyphenethylamine) primary; also pellotine, anhalonidine, lophophorine.",
+    note:"Classic psychedelic phenethylamine; produces visual, introspective and empathogenic effects lasting 8–12 h. Traditional Native American Church and Huichol use.",
+    bindingProfile:"Mescaline: 5-HT2A partial agonist (Ki ≈ 200–400 nM range), 5-HT2C agonist, weaker 5-HT1A. Low dopamine receptor affinity.",
+    substances:[
+      {name:"Mescaline", cls:"Phenethylamine", parts:[{part:"Above-ground button",pct:"N/A"}], oil:"N/A", receptors:[
+        {r:"5-HT2A",ki:"≈200–400 nM (partial agonist)"}, {r:"5-HT2C",ki:"N/A (agonist)"}, {r:"5-HT1A",ki:"N/A (weak)"}
+      ]},
+      {name:"Pellotine", cls:"Phenethylamine (tetrahydroisoquinoline)", parts:[{part:"Button",pct:"N/A"}], oil:"N/A", receptors:[{r:"5-HT2A",ki:"N/A (weak)"}]},
+      {name:"Anhalonidine", cls:"Phenethylamine (tetrahydroisoquinoline)", parts:[{part:"Button",pct:"N/A"}], oil:"N/A", receptors:[{r:"5-HT2A",ki:"N/A (weak)"}]},
+      {name:"Lophophorine", cls:"Phenethylamine (tetrahydroisoquinoline, minor/toxic)", parts:[{part:"Button",pct:"N/A (minor)"}], oil:"N/A", receptors:[{r:"5-HT2A",ki:"N/A"}]}
+    ]
+  },
+  {
+    name:"Echinopsis pachanoi",
+    cat:"phenethylamine",
+    origin:"Andes (Peru/Ecuador)",
+    chemicalComposition:"Mescaline (variable, typically 0.5–2 % dry), plus minor PEAs and isoquinolines.",
+    note:"Same mescaline-driven psychedelic profile as peyote; widely used in Andean San Pedro ceremonies.",
+    bindingProfile:"Mescaline: 5-HT2A partial agonist (primary), 5-HT2C, weak 5-HT1A.",
+    substances:[
+      {name:"Mescaline", cls:"Phenethylamine", parts:[{part:"Stem (dry)",pct:"0.5–2%"}], oil:"N/A", receptors:[
+        {r:"5-HT2A",ki:"≈200–400 nM (partial agonist)"}, {r:"5-HT2C",ki:"N/A"}, {r:"5-HT1A",ki:"N/A (weak)"}
+      ]}
+    ]
+  },
+  {
+    name:"Cola nitida",
+    cat:"stimulant-xanthine",
+    origin:"West Africa",
+    chemicalComposition:"Caffeine, theobromine, kolanin, tannins.",
+    note:"Stimulant via adenosine receptor antagonism and mild PDE inhibition; traditional West African use for energy and appetite suppression.",
+    bindingProfile:"Caffeine: non-selective adenosine A1/A2A antagonist (Ki low µM), weak PDE inhibitor. Theobromine weaker adenosine antagonist.",
+    substances:[
+      {name:"Caffeine", cls:"Xanthine alkaloid", parts:[{part:"Seed (kola nut)",pct:"N/A"}], oil:"N/A", receptors:[{r:"A1",ki:"low µM (antagonist)"},{r:"A2A",ki:"low µM (antagonist)"}]},
+      {name:"Theobromine", cls:"Xanthine alkaloid", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"A1",ki:"N/A (weaker antagonist)"}]},
+      {name:"Kolanin", cls:"Glycoside (minor, poorly characterized)", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"N/A",ki:"N/A"}]}
+    ]
+  },
+  {
+    name:"Cola acuminata",
+    cat:"stimulant-xanthine",
+    origin:"West/Central Africa",
+    chemicalComposition:"Caffeine, theobromine, kolanin.",
+    note:"Identical stimulant profile to C. nitida.",
+    bindingProfile:"Caffeine: adenosine A1/A2A antagonist; theobromine similar but weaker.",
+    substances:[
+      {name:"Caffeine", cls:"Xanthine alkaloid", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"A1",ki:"low µM (antagonist)"},{r:"A2A",ki:"low µM (antagonist)"}]},
+      {name:"Theobromine", cls:"Xanthine alkaloid", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"A1",ki:"N/A (weaker antagonist)"}]},
+      {name:"Kolanin", cls:"Glycoside (minor, poorly characterized)", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"N/A",ki:"N/A"}]}
+    ]
+  },
+  {
+    name:"Catha edulis",
+    cat:"cathinone",
+    origin:"Horn of Africa / Yemen",
+    chemicalComposition:"Cathinone (primary, unstable), cathine (norpseudoephedrine), norephedrine.",
+    note:"Amphetamine-like stimulant; increases release and blocks reuptake of dopamine, noradrenaline and serotonin. Traditional East African/Yemeni use (khat).",
+    bindingProfile:"Cathinone: monoamine releaser/reuptake inhibitor (DAT > NET > SERT), similar to amphetamine but lower potency. Cathine weaker releaser.",
+    substances:[
+      {name:"Cathinone", cls:"β-Keto phenethylamine (cathinone)", parts:[{part:"Fresh leaf",pct:"N/A (unstable, degrades to cathine on drying)"}], oil:"N/A", receptors:[
+        {r:"DAT",ki:"N/A (potent releaser)"}, {r:"NET",ki:"N/A (releaser)"}, {r:"SERT",ki:"N/A (weaker releaser)"}
+      ]},
+      {name:"Cathine", cls:"Phenethylamine (norpseudoephedrine)", parts:[{part:"Dried leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"NET",ki:"N/A (weaker releaser)"}]},
+      {name:"Norephedrine", cls:"Phenethylamine", parts:[{part:"Leaf",pct:"N/A (minor)"}], oil:"N/A", receptors:[{r:"NET",ki:"N/A (weak)"}]}
+    ]
+  },
+  {
+    name:"Cannabis sativa",
+    cat:"cannabinoid",
+    origin:"Central/South Asia (now cultivated worldwide)",
+    chemicalComposition:"Δ9-THC, CBD, CBN, CBG, terpenes (myrcene, limonene, β-caryophyllene, etc.).",
+    note:"Complex dose-dependent effects: euphoria, altered perception, anxiolysis or anxiety, analgesia, appetite stimulation via CB1/CB2 and non-cannabinoid targets.",
+    bindingProfile:"Δ9-THC: partial agonist CB1 (Ki ≈ 10–40 nM) and CB2. CBD: low affinity orthosteric; negative allosteric modulator at CB1, TRPV1 agonist, 5-HT1A partial agonist, FAAH inhibitor.",
+    substances:[
+      {name:"Δ9-THC", cls:"Terpenophenolic cannabinoid", parts:[{part:"Flower/resin",pct:"N/A (highly cultivar-dependent)"}], oil:"N/A", receptors:[
+        {r:"CB1",ki:"≈10–40 nM (partial agonist)"}, {r:"CB2",ki:"N/A (partial agonist)"}
+      ]},
+      {name:"CBD", cls:"Terpenophenolic cannabinoid", parts:[{part:"Flower/resin",pct:"N/A (cultivar-dependent)"}], oil:"N/A", receptors:[
+        {r:"CB1",ki:"N/A (negative allosteric modulator; low orthosteric affinity)"}, {r:"TRPV1",ki:"N/A (agonist)"}, {r:"5-HT1A",ki:"N/A (partial agonist)"}, {r:"FAAH",ki:"N/A (inhibitor)"}
+      ]},
+      {name:"CBN", cls:"Cannabinoid (THC oxidation product)", parts:[{part:"Aged flower/resin",pct:"N/A"}], oil:"N/A", receptors:[{r:"CB1",ki:"N/A (weak partial agonist)"}]},
+      {name:"CBG", cls:"Cannabinoid (biosynthetic precursor)", parts:[{part:"Flower/resin",pct:"N/A"}], oil:"N/A", receptors:[{r:"CB1",ki:"N/A (weak)"},{r:"CB2",ki:"N/A (weak)"}]},
+      {name:"β-Caryophyllene", cls:"Sesquiterpene", parts:[{part:"Flower (terpene fraction)",pct:"N/A"}], oil:"present in essential oil fraction", receptors:[{r:"CB2",ki:"N/A (agonist)"}]}
+    ]
+  },
+  {
+    name:"Peganum harmala",
+    cat:"beta-carboline",
+    origin:"N. Africa / Middle East / Central Asia",
+    chemicalComposition:"Harmine, harmaline, tetrahydroharmine, harmol, vasicine.",
+    note:"Strong reversible MAO-A inhibition; used as ayahuasca analogue (Syrian rue). Also mild psychoactive and uterine stimulant effects.",
+    bindingProfile:"Harmine/harmaline: potent reversible MAO-A inhibitors (IC50 low nM–tens of nM). Additional DYRK1A, weak monoamine receptor activity.",
+    substances:[
+      {name:"Harmine", cls:"β-Carboline alkaloid", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"MAO-A",ki:"low–tens of nM (reversible inhibitor)"},{r:"DYRK1A",ki:"N/A (inhibitor)"}]},
+      {name:"Harmaline", cls:"β-Carboline alkaloid", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"MAO-A",ki:"N/A (potent, similar to harmine)"}]},
+      {name:"Tetrahydroharmine", cls:"β-Carboline alkaloid", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"SERT",ki:"N/A (weak)"}]},
+      {name:"Harmol", cls:"β-Carboline alkaloid (metabolite)", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"MAO-A",ki:"N/A (weaker than harmine)"}]},
+      {name:"Vasicine", cls:"Quinazoline alkaloid", parts:[{part:"Seed",pct:"N/A"}], oil:"N/A", receptors:[{r:"N/A",ki:"N/A (uterotonic, non-MAOI)"}]}
+    ]
+  },
+  {
+    name:"Passiflora incarnata",
+    cat:"sedative-botanical",
+    origin:"SE North America",
+    chemicalComposition:"Flavonoids (vitexin, isovitexin, orientin), harman alkaloids (trace), maltol.",
+    note:"Mild anxiolytic and sedative; used for anxiety and insomnia. GABAergic and possible opioid-system modulation.",
+    bindingProfile:"Flavonoids: positive modulation of GABAA (benzodiazepine-insensitive sites). Trace harman: weak MAO inhibition. Limited high-affinity receptor data.",
+    substances:[
+      {name:"Vitexin", cls:"Flavonoid (C-glycoside)", parts:[{part:"Aerial parts",pct:"N/A"}], oil:"N/A", receptors:[{r:"GABA-A",ki:"N/A (positive modulation, BZD-insensitive site)"}]},
+      {name:"Isovitexin", cls:"Flavonoid (C-glycoside)", parts:[{part:"Aerial parts",pct:"N/A"}], oil:"N/A", receptors:[{r:"GABA-A",ki:"N/A"}]},
+      {name:"Orientin", cls:"Flavonoid (C-glycoside)", parts:[{part:"Aerial parts",pct:"N/A"}], oil:"N/A", receptors:[{r:"GABA-A",ki:"N/A"}]},
+      {name:"Harman", cls:"β-Carboline alkaloid (trace)", parts:[{part:"Aerial parts",pct:"N/A (trace)"}], oil:"N/A", receptors:[{r:"MAO-A",ki:"N/A (weak)"}]},
+      {name:"Maltol", cls:"Pyranone (flavor compound)", parts:[{part:"Aerial parts",pct:"N/A"}], oil:"N/A", receptors:[{r:"N/A",ki:"N/A"}]}
+    ]
+  },
+  {
+    name:"Valeriana officinalis",
+    cat:"sedative-botanical",
+    origin:"Europe / W. Asia",
+    chemicalComposition:"Valerenic acid, valerenol, isovaleric acid, iridoids (valepotriates – unstable).",
+    note:"Mild sedative and anxiolytic; improves sleep latency. Acts via GABAA potentiation and adenosine A1 receptor.",
+    bindingProfile:"Valerenic acid: positive allosteric modulator / partial agonist at GABAA (β3-subunit preferring), adenosine A1 agonist activity. Limited quantitative Ki data.",
+    substances:[
+      {name:"Valerenic acid", cls:"Sesquiterpenoid acid", parts:[{part:"Root",pct:"N/A"}], oil:"present in root essential oil fraction", receptors:[
+        {r:"GABA-A",ki:"N/A (positive allosteric modulator, β3-preferring)"}, {r:"A1",ki:"N/A (agonist activity)"}
+      ]},
+      {name:"Valerenol", cls:"Sesquiterpenoid", parts:[{part:"Root",pct:"N/A"}], oil:"present in root essential oil fraction", receptors:[{r:"GABA-A",ki:"N/A (weak)"}]},
+      {name:"Isovaleric acid", cls:"Short-chain fatty acid (odor compound)", parts:[{part:"Root",pct:"N/A"}], oil:"present in root essential oil fraction", receptors:[{r:"N/A",ki:"N/A"}]},
+      {name:"Valepotriates (iridoids)", cls:"Iridoid (chemically unstable)", parts:[{part:"Root",pct:"N/A"}], oil:"N/A", receptors:[{r:"GABA-A",ki:"N/A (proposed, unconfirmed)"}]}
+    ]
+  },
+  {
+    name:"Centella asiatica",
+    cat:"nootropic-botanical",
+    origin:"South/SE Asia (Ayurveda)",
+    chemicalComposition:"Asiaticoside, madecassoside, asiatic acid, madecassic acid (triterpenes).",
+    note:"Anxiolytic, cognitive-enhancing and neuroprotective effects; used in Ayurveda for mental clarity and wound healing. Increases BDNF and dendritic arborization in animal models.",
+    bindingProfile:"Limited direct high-affinity receptor binding data; primary actions appear downstream (BDNF, antioxidant, anti-inflammatory). Weak GABAA modulation reported in some studies.",
+    substances:[
+      {name:"Asiaticoside", cls:"Triterpene saponin", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"GABA-A",ki:"N/A (weak modulation reported)"}]},
+      {name:"Madecassoside", cls:"Triterpene saponin", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"N/A",ki:"N/A (mainly downstream/BDNF-linked)"}]},
+      {name:"Asiatic acid", cls:"Triterpene (saponin aglycone)", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"N/A",ki:"N/A (antioxidant/anti-inflammatory)"}]},
+      {name:"Madecassic acid", cls:"Triterpene (saponin aglycone)", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"N/A",ki:"N/A"}]}
+    ]
+  },
+  {
+    name:"Bacopa monnieri",
+    cat:"nootropic-botanical",
+    origin:"South Asia (Ayurveda)",
+    chemicalComposition:"Bacosides A & B (saponins), bacopasides, alkaloids (brahmine, herpestine).",
+    note:"Nootropic; improves memory acquisition and retention, reduces anxiety. Antioxidant and cholinergic enhancement in chronic use.",
+    bindingProfile:"Limited direct receptor binding data. Indirect effects on cholinergic system, antioxidant enzymes and BDNF. Some evidence of 5-HT modulation.",
+    substances:[
+      {name:"Bacoside A", cls:"Triterpenoid saponin", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"5-HT",ki:"N/A (indirect modulation reported)"}]},
+      {name:"Bacoside B", cls:"Triterpenoid saponin", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"AChE",ki:"N/A (indirect, cholinergic enhancement)"}]},
+      {name:"Bacopaside", cls:"Triterpenoid saponin", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"N/A",ki:"N/A"}]},
+      {name:"Brahmine", cls:"Alkaloid (minor)", parts:[{part:"Whole plant",pct:"N/A (minor)"}], oil:"N/A", receptors:[{r:"N/A",ki:"N/A"}]},
+      {name:"Herpestine", cls:"Alkaloid (minor)", parts:[{part:"Whole plant",pct:"N/A (minor)"}], oil:"N/A", receptors:[{r:"N/A",ki:"N/A"}]}
+    ]
+  },
+  {
+    name:"Ginkgo biloba",
+    cat:"nootropic-botanical",
+    origin:"China",
+    chemicalComposition:"Ginkgolides A/B/C/J, bilobalide, flavonol glycosides (quercetin, kaempferol).",
+    note:"Cognitive enhancer and mild vasodilator; used for age-related cognitive decline. Antioxidant, anti-PAF and improved cerebral blood flow.",
+    bindingProfile:"Ginkgolides: PAF receptor antagonists. Bilobalide and flavonoids have weak GABAA and monoamine effects; primary actions are non-receptor (antioxidant, mitochondrial).",
+    substances:[
+      {name:"Ginkgolide A", cls:"Diterpene lactone", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"PAF receptor",ki:"N/A (antagonist)"}]},
+      {name:"Ginkgolide B", cls:"Diterpene lactone", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"PAF receptor",ki:"N/A (antagonist, most potent of the ginkgolides)"}]},
+      {name:"Ginkgolide C", cls:"Diterpene lactone", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"PAF receptor",ki:"N/A (antagonist)"}]},
+      {name:"Ginkgolide J", cls:"Diterpene lactone", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"PAF receptor",ki:"N/A (antagonist)"}]},
+      {name:"Bilobalide", cls:"Sesquiterpene trilactone", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"GABA-A",ki:"N/A (weak)"}]},
+      {name:"Quercetin", cls:"Flavonol glycoside", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"MAO-A",ki:"N/A (weak)"}]},
+      {name:"Kaempferol", cls:"Flavonol glycoside", parts:[{part:"Leaf",pct:"N/A"}], oil:"N/A", receptors:[{r:"MAO-A",ki:"N/A (weak)"}]}
+    ]
+  }
+];
+
+let activeCat = "all";
+let sortMode = "name-asc";
+let searchTerm = "";
+let openIdx = null;   // currently open plant name
+let openSub = null;   // currently open "plantName::substanceIndex" key
+
+// ---- helpers ------------------------------------------------------------
+function baseCompoundName(name){
+  let s = name;
+  s = s.replace(/\s*\([^)]*\)\s*$/, '');
+  return s.trim();
+}
+function wikiUrlFor(baseName){
+  const q = encodeURIComponent(baseName);
+  return `https://en.wikipedia.org/wiki/Special:Search?search=${q}&go=Go`;
+}
+function moleculeImgSrc(baseName){
+  return `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(baseName)}/PNG?record_type=2d&image_size=200x200`;
+}
+function decodeHtmlEntities(s){
+  const ta = document.createElement('textarea');
+  ta.innerHTML = s;
+  return ta.value;
+}
+function cssEscape(s){
+  return (window.CSS && CSS.escape) ? CSS.escape(s) : s.replace(/["\\]/g, '\\$&');
+}
+
+// ---- PK/PD lookup (Wikipedia) — resolves the plant species' own page ----
+const WIKI_API = 'https://en.wikipedia.org/w/api.php';
+const PKPD_KEYWORDS = [
+  /pharmacokinet/i, /pharmacodynam/i, /pharmacolog/i,
+  /chemistry/i, /biological effects?/i, /physiological effects?/i,
+  /mechanism of action/i, /toxicology/i, /active compounds?/i
+];
+function isPkPdSectionTitle(title){
+  const t = decodeHtmlEntities((title || '').trim());
+  return PKPD_KEYWORDS.some(re => re.test(t));
+}
+
+const pkpdCache = {};
+const pkpdInFlight = new Set();
+
+async function fetchJson(url, retries = 1){
+  let lastErr;
+  for(let attempt = 0; attempt <= retries; attempt++){
+    try{
+      const res = await fetch(url);
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    }catch(err){
+      lastErr = err;
+      if(attempt < retries) await new Promise(r => setTimeout(r, 350));
+    }
+  }
+  throw lastErr;
+}
+
+async function resolveWikiTitle(baseName){
+  try{
+    const url = `${WIKI_API}?action=query&titles=${encodeURIComponent(baseName)}&redirects=1&format=json&origin=*`;
+    const data = await fetchJson(url);
+    const pages = data && data.query && data.query.pages;
+    if(pages){
+      const page = Object.values(pages)[0];
+      if(page && page.pageid && !page.missing) return page.title;
+    }
+  }catch(err){ /* fall through */ }
+
+  try{
+    const url = `${WIKI_API}?action=query&list=search&srsearch=${encodeURIComponent(baseName)}&srwhat=nearmatch&format=json&origin=*`;
+    const data = await fetchJson(url);
+    const hit = data && data.query && data.query.search && data.query.search[0];
+    if(hit) return hit.title;
+  }catch(err){ /* fall through */ }
+
+  const url = `${WIKI_API}?action=query&list=search&srsearch=${encodeURIComponent(baseName)}&srlimit=1&format=json&origin=*`;
+  const data = await fetchJson(url);
+  const hit = data && data.query && data.query.search && data.query.search[0];
+  return hit ? hit.title : null;
+}
+
+async function fetchWikiSections(title){
+  const url = `${WIKI_API}?action=parse&page=${encodeURIComponent(title)}&prop=sections&format=json&origin=*`;
+  const data = await fetchJson(url);
+  if(data.error) return [];
+  return (data.parse && data.parse.sections) || [];
+}
+
+async function fetchSectionHtml(title, index){
+  const url = `${WIKI_API}?action=parse&page=${encodeURIComponent(title)}&section=${encodeURIComponent(index)}&prop=text&format=json&origin=*`;
+  const data = await fetchJson(url);
+  if(data.error) return '';
+  return (data.parse && data.parse.text && data.parse.text['*']) || '';
+}
+
+async function checkPkPdAvailability(entryName, baseName, btnEl){
+  if(pkpdCache[entryName]){
+    applyPkPdButtonState(btnEl, pkpdCache[entryName]);
+    return;
+  }
+  if(pkpdInFlight.has(entryName)) return;
+  pkpdInFlight.add(entryName);
+  btnEl.classList.add('loading');
+  try{
+    const title = await resolveWikiTitle(baseName);
+    let matches = [];
+    if(title){
+      const sections = await fetchWikiSections(title);
+      matches = sections.filter(s => isPkPdSectionTitle(s.line));
+    }
+    const result = { title, sections: matches };
+    pkpdCache[entryName] = result;
+    const liveBtn = document.querySelector(`.pkpd-btn[data-name="${cssEscape(entryName)}"]`);
+    if(liveBtn) applyPkPdButtonState(liveBtn, result);
+  }catch(err){
+    console.error('PK/PD lookup could not reach Wikipedia for', entryName, err);
+    pkpdCache[entryName] = { title:null, sections:[], error:true };
+    const liveBtn = document.querySelector(`.pkpd-btn[data-name="${cssEscape(entryName)}"]`);
+    if(liveBtn) liveBtn.classList.remove('loading');
+  }finally{
+    pkpdInFlight.delete(entryName);
+  }
+}
+
+function applyPkPdButtonState(btnEl, result){
+  btnEl.classList.remove('loading');
+  btnEl.dataset.wikiTitle = result.title || '';
+  btnEl.hidden = !(result.sections && result.sections.length > 0);
+}
+
+const NON_CONTENT_HEADING_RE = /^(references?|footnotes?|notes|citations?|external links|further reading|bibliography|sources)$/i;
+
+function stripReferenceBlocks(wrapper){
+  wrapper.querySelectorAll('.reflist, ol.references, .mw-cite-backlink, .mw-references-wrap').forEach(el => el.remove());
+  wrapper.querySelectorAll('h2, h3, h4, h5, h6').forEach(h=>{
+    const text = decodeHtmlEntities(h.textContent || '').trim();
+    if(!NON_CONTENT_HEADING_RE.test(text)) return;
+    const toRemove = [h];
+    let sibling = h.nextSibling;
+    while(sibling){
+      const next = sibling.nextSibling;
+      if(sibling.nodeType === 1 && /^H[2-6]$/.test(sibling.tagName)) break;
+      toRemove.push(sibling);
+      sibling = next;
+    }
+    toRemove.forEach(n => n.remove());
+  });
+}
+
+function sanitizeWikiHtml(html){
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = html;
+  wrapper.querySelectorAll('.mw-editsection').forEach(el => el.remove());
+  wrapper.querySelectorAll('sup.reference, sup.noprint, .reference').forEach(el => el.remove());
+  wrapper.querySelectorAll('sup').forEach(sup=>{
+    if(sup.querySelector('a[href^="#cite_note"]')) sup.remove();
+  });
+  stripReferenceBlocks(wrapper);
+  wrapper.querySelectorAll('a[href^="#"]').forEach(a=> a.removeAttribute('href'));
+  wrapper.querySelectorAll('a[href^="/wiki/"]').forEach(a=>{
+    a.setAttribute('href', 'https://en.wikipedia.org' + a.getAttribute('href'));
+    a.setAttribute('target', '_blank');
+    a.setAttribute('rel', 'noopener noreferrer');
+  });
+  wrapper.querySelectorAll('img').forEach(img=>{
+    const src = img.getAttribute('src');
+    if(src && src.startsWith('//')) img.setAttribute('src', 'https:' + src);
+    const srcset = img.getAttribute('srcset');
+    if(srcset) img.setAttribute('srcset', srcset.replace(/(^|,\s*)\/\//g, '$1https://'));
+  });
+  return wrapper.innerHTML;
+}
+
+async function openPkPdModal(entryName, baseName){
+  const overlay = document.getElementById('pkpdOverlay');
+  const body = document.getElementById('pkpdModalBody');
+  const nameEl = document.getElementById('pkpdModalName');
+  const sourceLink = document.getElementById('pkpdModalSourceLink');
+
+  nameEl.textContent = entryName;
+  overlay.hidden = false;
+  document.body.style.overflow = 'hidden';
+
+  const cached = pkpdCache[entryName];
+  if(!cached || !cached.sections || cached.sections.length === 0){
+    body.innerHTML = `<div class="pkpd-error">No pharmacology/chemistry sections found.</div>`;
+    return;
+  }
+
+  sourceLink.href = wikiUrlFor(baseName);
+  body.innerHTML = `<div class="pkpd-loading">Loading literature…</div>`;
+
+  try{
+    const parts = await Promise.all(cached.sections.map(async s=>{
+      const html = await fetchSectionHtml(cached.title, s.index);
+      return `<div class="pkpd-section-block wiki-content">${sanitizeWikiHtml(html)}</div>`;
+    }));
+    if(document.getElementById('pkpdModalName').textContent !== entryName) return;
+    body.innerHTML = parts.join('') || `<div class="pkpd-error">No pharmacology/chemistry sections found.</div>`;
+  }catch(err){
+    console.error('Failed to load PK/PD sections', err);
+    body.innerHTML = `<div class="pkpd-error">Couldn't load this literature right now. Try the full article link below.</div>`;
+  }
+}
+
+function closePkPdModal(){
+  document.getElementById('pkpdOverlay').hidden = true;
+  document.body.style.overflow = '';
+}
+
+function buildPills(){
+  const row = document.getElementById('pillRow');
+  const cats = ["all", ...Object.keys(CAT_LABELS).filter(c => DATA.some(d=>d.cat===c))];
+  row.innerHTML = cats.map(c => {
+    const label = c === "all" ? "All" : CAT_LABELS[c];
+    const count = c === "all" ? DATA.length : DATA.filter(d=>d.cat===c).length;
+    const dotClass = c === "all" ? "" : " cat-dot";
+    const style = c === "all" ? "" : ` style="--cat-color:${CAT_COLORS[c]}"`;
+    return `<div class="pill${c===activeCat?' active':''}${dotClass}" data-cat="${c}"${style}>${label} · ${count}</div>`;
+  }).join('');
+  row.querySelectorAll('.pill').forEach(p=>{
+    p.addEventListener('click', ()=>{ activeCat = p.dataset.cat; openIdx=null; openSub=null; buildPills(); render(); });
+  });
+}
+
+function plantReceptorTags(plant){
+  const set = [];
+  plant.substances.forEach(s => s.receptors.forEach(rc => {
+    if(rc.r && rc.r !== "N/A" && !set.includes(rc.r)) set.push(rc.r);
+  }));
+  return set.slice(0, 6);
+}
+
+function tinyTag(text, extraClass){
+  return `<span class="tiny-tag ${extraClass}">${text}</span>`;
+}
+
+function getFiltered(){
+  let arr = DATA.filter(d => {
+    const inCat = activeCat==="all" || d.cat===activeCat;
+    const term = searchTerm.toLowerCase();
+    const nameMatch = d.name.toLowerCase().includes(term);
+    const subMatch = d.substances.some(s => s.name.toLowerCase().includes(term));
+    return inCat && (term === "" || nameMatch || subMatch);
+  });
+  switch(sortMode){
+    case "name-asc": arr.sort((a,b)=>a.name.localeCompare(b.name)); break;
+    case "name-desc": arr.sort((a,b)=>b.name.localeCompare(a.name)); break;
+    case "category": arr.sort((a,b)=> CAT_LABELS[a.cat].localeCompare(CAT_LABELS[b.cat]) || a.name.localeCompare(b.name)); break;
+    case "compounds-desc": arr.sort((a,b)=> b.substances.length - a.substances.length || a.name.localeCompare(b.name)); break;
+  }
+  return arr;
+}
+
+function renderSubstanceRow(plant, sub, subIdx){
+  const key = `${plant.name}::${subIdx}`;
+  const isOpen = openSub === key;
+  const base = baseCompoundName(sub.name);
+  const molSrc = moleculeImgSrc(base);
+  const partsRows = sub.parts.map(p => `<tr><td>${p.part}</td><td>${p.pct}</td></tr>`).join('');
+  const recRows = sub.receptors.map(r => `<tr><td>${r.r}</td><td>${r.ki}</td></tr>`).join('');
+  return `
+    <div>
+      <div class="substance-row${isOpen?' open':''}" data-plant="${plant.name}" data-idx="${subIdx}">
+        <div class="mol-box-sm" data-mol><img src="${molSrc}" alt="" loading="lazy" onerror="this.parentElement.classList.add('mol-empty');this.remove();"></div>
+        <div class="sub-name-cell">${sub.name}<span>${sub.cls}</span></div>
+        <div class="sub-recap">${sub.receptors.length} target${sub.receptors.length===1?'':'s'}</div>
+        <div class="sub-chevron">▶</div>
+      </div>
+      <div class="substance-detail">
+        <div class="substance-detail-inner">
+          <div class="mol-box-lg" data-mol><img src="${molSrc}" alt="${base} molecule" loading="lazy" onerror="this.parentElement.classList.add('mol-empty');this.remove();"></div>
+          <div class="sub-detail-meta">
+            <div>Substance: <span>${sub.name}</span></div>
+            <div>Class: <span>${sub.cls}</span></div>
+            <div>Oil %: <span>${sub.oil}</span></div>
+          </div>
+          <div class="sub-tables">
+            <div>
+              <div class="submenu-label">% in plant parts</div>
+              <table class="data-table"><thead><tr><th>Part</th><th>%</th></tr></thead><tbody>${partsRows}</tbody></table>
+            </div>
+            <div>
+              <div class="submenu-label">Receptor · Ki (nM)</div>
+              <table class="data-table"><thead><tr><th>Receptor</th><th>Ki (nM)</th></tr></thead><tbody>${recRows}</tbody></table>
+            </div>
+          </div>
+          <div class="sub-binding-block">
+            <div class="submenu-label">Binding profile (species-level, from literature)</div>
+            <div class="bindingprofile-text">${plant.bindingProfile}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function render(){
+  const arr = getFiltered();
+  document.getElementById('countLine').textContent = `Showing ${arr.length} of ${DATA.length} species`;
+  const ledger = document.getElementById('ledger');
+  ledger.innerHTML = arr.map((d, i) => {
+    const base = baseCompoundName(d.name);
+    const wikiQuery = encodeURIComponent(base);
+    const wikiUrl = wikiUrlFor(base);
+    const principal = d.substances[0];
+    const molSrc = moleculeImgSrc(baseCompoundName(principal.name));
+    const recTags = plantReceptorTags(d);
+    const isOpen = openIdx === d.name;
+    return `
+    <div class="entry${isOpen?' open':''}" data-name="${d.name}" style="--cat-color:${CAT_COLORS[d.cat]}">
+      <div class="entry-row">
+        <div class="idx">${String(i+1).padStart(2,'0')}</div>
+        <div class="mol-box" data-mol><img src="${molSrc}" alt="" loading="lazy" onerror="this.parentElement.classList.add('mol-empty');this.remove();"></div>
+        <div class="name-cell">${d.name}<span class="sub-cat">${CAT_LABELS[d.cat]}</span></div>
+        <div class="tag">${CAT_LABELS[d.cat]}</div>
+        <div class="bar1-compact">
+          ${tinyTag(d.substances.length + ' cmpd', 'count-tag')}
+          ${tinyTag(d.origin, 'origin-tag')}
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="detail">
+        <div class="detail-inner">
+          <div class="detail-text">${d.note}</div>
+          <div class="detail-side">
+            <div class="mol-box-lg" data-mol><img src="${molSrc}" alt="${base} molecule" loading="lazy" onerror="this.parentElement.classList.add('mol-empty');this.remove();"></div>
+            <div class="detail-meta">
+              <div>Class: <span>${CAT_LABELS[d.cat]}</span></div>
+              <div>Origin: <span>${d.origin}</span></div>
+              <div>Principal cmpd: <span>${principal.name}</span></div>
+              <div class="detail-meta-actions">
+                <a class="wiki-btn" href="${wikiUrl}" data-title="${wikiQuery}" target="_blank" rel="noopener noreferrer" onclick="return openWiki(event, this)">Wiki</a>
+                <button class="wiki-btn pkpd-btn" type="button" data-name="${d.name}" data-base="${base}" data-wiki-title="" hidden>PK/PD</button>
+              </div>
+            </div>
+          </div>
+          <div class="tagbars-block">
+            <div class="submenu-label">Reported receptor / target involvement</div>
+            <div class="bar-row bar2-row">
+              ${recTags.map(r=>tinyTag(r, 'receptor-tag')).join('') || tinyTag('N/A','receptor-tag')}
+            </div>
+          </div>
+          <div class="composition-block">
+            <div class="submenu-label">Chemical composition</div>
+            <div class="composition-text">${d.chemicalComposition}</div>
+          </div>
+          <div class="composition-block">
+            <div class="submenu-label">Binding profile</div>
+            <div class="composition-text">${d.bindingProfile}</div>
+          </div>
+          <div class="substances-block">
+            <div class="submenu-label">Substances — click to expand molecule, class, abundance and receptor/Ki data</div>
+            <div class="substance-list">
+              ${d.substances.map((s, si) => renderSubstanceRow(d, s, si)).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;}).join('');
+
+  ledger.querySelectorAll('.entry').forEach(el=>{
+    el.querySelector('.entry-row').addEventListener('click', ()=>{
+      const n = el.dataset.name;
+      openIdx = (openIdx === n) ? null : n;
+      openSub = null;
+      render();
+    });
+  });
+
+  ledger.querySelectorAll('.substance-row').forEach(row=>{
+    row.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const plantName = row.dataset.plant;
+      const idx = row.dataset.idx;
+      const key = `${plantName}::${idx}`;
+      openSub = (openSub === key) ? null : key;
+      render();
+    });
+  });
+
+  ledger.querySelectorAll('.pkpd-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      openPkPdModal(btn.dataset.name, btn.dataset.base);
+    });
+  });
+
+  if(openIdx){
+    const openBtn = ledger.querySelector(`.entry[data-name="${cssEscape(openIdx)}"] .pkpd-btn`);
+    if(openBtn) checkPkPdAvailability(openIdx, openBtn.dataset.base, openBtn);
+  }
+}
+
+function updateStats(){
+  document.getElementById('stat-total').textContent = DATA.length;
+  document.getElementById('stat-compounds').textContent = DATA.reduce((n,d)=>n+d.substances.length, 0);
+  document.getElementById('stat-cats').textContent = new Set(DATA.map(d=>d.cat)).size;
+}
+
+function openWiki(e, el){
+  e.stopPropagation();
+  e.preventDefault();
+
+  const title = el.dataset.title;
+  const webUrl = el.getAttribute('href');
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const isAndroid = /android/i.test(ua);
+
+  if(isAndroid){
+    const intentUrl = `intent://en.wikipedia.org/wiki/${title}#Intent;scheme=https;package=org.wikipedia;S.browser_fallback_url=${encodeURIComponent(webUrl)};end`;
+    window.location.href = intentUrl;
+    return false;
+  }
+
+  if(isIOS){
+    let handedOff = false;
+    const onHide = () => { handedOff = true; };
+    document.addEventListener('visibilitychange', onHide);
+    window.location.href = `wikipedia://en.wikipedia.org/wiki/${title}`;
+    setTimeout(()=>{
+      document.removeEventListener('visibilitychange', onHide);
+      if(!handedOff){ window.open(webUrl, '_blank', 'noopener,noreferrer'); }
+    }, 1200);
+    return false;
+  }
+
+  window.open(webUrl, '_blank', 'noopener,noreferrer');
+  return false;
+}
+
+document.getElementById('toggleFilters').addEventListener('click', (e)=>{
+  const row = document.getElementById('pillRow');
+  const collapsed = row.classList.toggle('collapsed');
+  e.target.textContent = collapsed ? 'Show filters' : 'Hide filters';
+});
+
+document.getElementById('sortSelect').addEventListener('change', (e)=>{ sortMode = e.target.value; render(); });
+document.getElementById('searchBox').addEventListener('input', (e)=>{ searchTerm = e.target.value; render(); });
+
+document.getElementById('pkpdModalClose').addEventListener('click', closePkPdModal);
+document.getElementById('pkpdOverlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'pkpdOverlay') closePkPdModal();
+});
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape' && !document.getElementById('pkpdOverlay').hidden) closePkPdModal();
+});
+
+document.getElementById('versionTag').textContent = `v${APP_VERSION}`;
+
+updateStats();
+buildPills();
+render();
+</script>
+</body>
+</html>
