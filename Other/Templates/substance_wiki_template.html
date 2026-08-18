@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[SUBSTANCE NAME] — Substance Wiki Template</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Linux+Libertine:ital,wght@0,400;0,600;1,400&family=Linux+Biolinum:wght@400;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8f9fa;
+  --bg2: #ffffff;
+  --border: #a2a9b1;
+  --border-light: #e0e4e8;
+  --text: #202122;
+  --text2: #54595d;
+  --text3: #72777d;
+  --link: #3366cc;
+  --link-hover: #6a4ead;
+  --warn-bg: #fef6e7;
+  --warn-border: #f0a500;
+  --danger-bg: #fee7e6;
+  --danger-border: #d33;
+  --info-bg: #eaf3fb;
+  --info-border: #3680b0;
+  --tip-bg: #e5f5e0;
+  --tip-border: #2d6a2d;
+  --box-bg: #f8f9fa;
+  --cat-bg: #eaf0fb;
+  --cat-border: #a2b8d8;
+  --infobox-bg: #f8f9fa;
+  --infobox-head: #cee0f2;
+  --tag-pa: #e8f0fe;
+  --tag-ant: #fce8e8;
+  --tag-inh: #f0e8fe;
+  --tag-mod: #e8feee;
+  --positive: #1a7a1a;
+  --neutral: #7a5c00;
+  --negative: #8b0000;
+  --both: #00457c;
+  --placeholder: #b0b6bd;
+  --font-body: 'Linux Libertine', Georgia, serif;
+  --font-ui: 'Linux Biolinum', 'Segoe UI', sans-serif;
+  --font-mono: 'Source Code Pro', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+/* PLACEHOLDER STYLING — makes unfilled fields visually obvious */
+.ph { color: var(--placeholder); font-style: italic; }
+[data-field] { color: var(--placeholder); font-style: italic; }
+
+/* LAYOUT */
+.page-wrap { display: flex; max-width: 1280px; margin: 0 auto; }
+.sidebar {
+  width: 220px; min-width: 220px; background: var(--bg2);
+  border-right: 1px solid var(--border-light);
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  padding: 16px 0; font-family: var(--font-ui); font-size: 13px;
+}
+.sidebar-logo {
+  padding: 0 12px 12px;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 10px;
+}
+.sidebar-logo .logo-name { font-size: 15px; font-weight: 600; color: #3a3a3a; }
+.sidebar-logo .logo-sub  { font-size: 11px; color: var(--text3); }
+.toc-section { padding: 4px 12px; }
+.toc-section h4 { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin-bottom: 4px; }
+.toc-section a { display: block; padding: 2px 0 2px 8px; color: var(--link); text-decoration: none; font-size: 12.5px; border-left: 2px solid transparent; line-height: 1.4; }
+.toc-section a:hover { border-left-color: var(--link); background: var(--info-bg); }
+.toc-section a.sub { padding-left: 18px; font-size: 12px; color: var(--text2); }
+.toc-divider { border: none; border-top: 1px solid var(--border-light); margin: 8px 12px; }
+
+.content { flex: 1; min-width: 0; padding: 24px 32px 80px; }
+
+/* HEADER */
+h1.page-title {
+  font-family: var(--font-body);
+  font-size: 2.1em;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+.page-subtitle { font-size: 13px; color: var(--text3); font-family: var(--font-ui); margin-bottom: 18px; }
+.page-subtitle a { color: var(--link); text-decoration: none; }
+
+/* SECTION HEADINGS */
+h2 { font-family: var(--font-body); font-size: 1.5em; font-weight: 600; border-bottom: 1px solid var(--border-light); padding-bottom: 3px; margin: 32px 0 12px; color: #1a1a1a; }
+h3 { font-family: var(--font-body); font-size: 1.18em; font-weight: 600; margin: 20px 0 8px; color: #2a2a2a; }
+h4 { font-family: var(--font-ui); font-size: 0.95em; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--text2); margin: 14px 0 4px; }
+p  { margin-bottom: 10px; }
+a  { color: var(--link); }
+a:hover { color: var(--link-hover); }
+sup { font-size: 0.72em; }
+sup a { text-decoration: none; }
+
+/* INFOBOX (right-side summary card) */
+.infobox {
+  float: right; clear: right;
+  width: 310px; margin: 0 0 16px 24px;
+  background: var(--infobox-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+}
+.infobox-head {
+  background: var(--infobox-head);
+  text-align: center;
+  padding: 7px 10px;
+  font-weight: 600;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+  border-radius: 4px 4px 0 0;
+}
+.infobox-img {
+  text-align: center;
+  padding: 10px;
+  border-bottom: 1px solid var(--border-light);
+  background: #fff;
+}
+.mol-diagram-placeholder {
+  width: 240px; height: 150px;
+  margin: 0 auto;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  color: var(--placeholder);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  text-align: center;
+}
+.infobox table { width: 100%; border-collapse: collapse; }
+.infobox tr td { padding: 4px 9px; border-top: 1px solid var(--border-light); vertical-align: top; }
+.infobox tr td:first-child { font-weight: 500; color: var(--text2); width: 42%; }
+.infobox tr td:last-child { color: var(--text); }
+.infobox-section-head { background: var(--infobox-head); text-align: center; font-weight: 600; padding: 4px 8px; font-size: 12px; }
+
+/* CLEARFIX */
+.clearfix::after { content: ""; display: table; clear: both; }
+
+/* ALERT BOXES */
+.alert {
+  border-radius: 4px; padding: 10px 14px; margin: 14px 0;
+  font-size: 14px; font-family: var(--font-ui);
+  display: flex; gap: 10px; align-items: flex-start;
+  border-left: 4px solid;
+}
+.alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.alert-warn   { background: var(--warn-bg);   border-color: var(--warn-border); }
+.alert-danger { background: var(--danger-bg); border-color: var(--danger-border); }
+.alert-info   { background: var(--info-bg);   border-color: var(--info-border); }
+.alert-tip    { background: var(--tip-bg);    border-color: var(--tip-border); }
+
+/* DOSAGE TABLE */
+.dose-table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 13.5px; margin: 10px 0; }
+.dose-table th { background: var(--infobox-head); padding: 7px 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.dose-table td { padding: 7px 12px; border: 1px solid var(--border-light); vertical-align: middle; }
+.dose-table tr.thresh { background: #f0f8e8; }
+.dose-table tr.light  { background: #e8f8e0; }
+.dose-table tr.common { background: #fffde8; }
+.dose-table tr.strong { background: #fef0d8; }
+.dose-table tr.heavy  { background: #fee8e8; }
+
+/* DURATION TABLE */
+.dur-table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 13.5px; margin: 10px 0; }
+.dur-table th { background: var(--infobox-head); padding: 7px 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.dur-table td { padding: 7px 12px; border: 1px solid var(--border-light); }
+
+/* EFFECTS LIST */
+.effects-group { margin: 14px 0; }
+.effects-group h4 { font-size: 13px; font-family: var(--font-ui); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.effects-group h4.positive { color: var(--positive); }
+.effects-group h4.neutral  { color: var(--neutral); }
+.effects-group h4.negative { color: var(--negative); }
+.effects-group h4.both     { color: var(--both); }
+.effects-group ul { list-style: none; padding: 0; margin: 0; }
+.effects-group li { padding: 3px 0 3px 18px; position: relative; font-size: 14.5px; border-bottom: 1px solid var(--border-light); }
+.effects-group li:last-child { border-bottom: none; }
+.effects-group li::before { content: "•"; position: absolute; left: 5px; }
+.eff-positive li::before { color: var(--positive); }
+.eff-neutral  li::before { color: var(--neutral); }
+.eff-negative li::before { color: var(--negative); }
+.eff-both     li::before { color: var(--both); }
+.eff-note { font-size: 12px; color: var(--text3); font-style: italic; margin-left: 4px; }
+
+/* PHARMACOLOGY TABLE */
+.pharm-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--font-ui); margin: 10px 0; }
+.pharm-table th { background: var(--infobox-head); padding: 7px 10px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.pharm-table td { padding: 6px 10px; border: 1px solid var(--border-light); vertical-align: top; }
+.pharm-table tr:hover td { background: var(--info-bg); }
+.pharm-tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+.pa  { background: var(--tag-pa);  color: #1a3ca8; }
+.ant { background: var(--tag-ant); color: #8b0000; }
+.mod { background: var(--tag-mod); color: #1a5c1a; }
+.inh { background: var(--tag-inh); color: #5c1a8b; }
+.ki-val { font-family: var(--font-mono); font-weight: 500; }
+
+/* INTERACTIONS */
+.int-table { width: 100%; border-collapse: collapse; font-size: 13.5px; font-family: var(--font-ui); margin: 10px 0; }
+.int-table th { background: var(--infobox-head); padding: 7px 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.int-table td { padding: 7px 12px; border: 1px solid var(--border-light); vertical-align: top; }
+.sev-danger  { background: #fee; color: #900; font-weight: 600; font-size: 12px; padding: 2px 7px; border-radius: 3px; }
+.sev-caution { background: #fff3cd; color: #856404; font-weight: 600; font-size: 12px; padding: 2px 7px; border-radius: 3px; }
+.sev-safe    { background: #d4edda; color: #155724; font-weight: 600; font-size: 12px; padding: 2px 7px; border-radius: 3px; }
+
+/* METABOLITES DIAGRAM */
+.metab-flow {
+  background: #fff; border: 1px dashed var(--border);
+  border-radius: 6px; padding: 20px; margin: 12px 0;
+  font-family: var(--font-ui); text-align: center;
+  color: var(--placeholder); font-size: 13px;
+}
+
+/* LEGAL STATUS */
+.legal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin: 12px 0; }
+.legal-item { background: #fff; border: 1px solid var(--border-light); border-radius: 5px; padding: 8px 10px; font-family: var(--font-ui); font-size: 12.5px; }
+.legal-item .country { font-weight: 600; color: var(--text); }
+.legal-item .status  { color: var(--text2); }
+.legal-rx { border-left: 3px solid #2196f3; }
+.legal-cont { border-left: 3px solid #f44336; }
+.legal-unsched { border-left: 3px solid #9e9e9e; }
+
+/* REFERENCES */
+.refs { font-size: 12.5px; font-family: var(--font-ui); color: var(--text2); }
+.refs ol { padding-left: 20px; }
+.refs li { margin-bottom: 3px; }
+
+/* CATEGORIES */
+.category-bar {
+  background: var(--cat-bg); border: 1px solid var(--cat-border);
+  border-radius: 4px; padding: 8px 12px; margin-top: 32px;
+  font-family: var(--font-ui); font-size: 13px;
+}
+.category-bar span { font-weight: 600; margin-right: 6px; }
+.category-bar a { color: var(--link); text-decoration: none; margin-right: 10px; }
+
+/* COMPARISON TABLE */
+.comp-table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-family: var(--font-ui); }
+.comp-table th { background: var(--infobox-head); padding: 6px 10px; font-weight: 600; border: 1px solid var(--border); text-align: left; }
+.comp-table td { padding: 5px 10px; border: 1px solid var(--border-light); }
+.comp-table tr:hover td { background: #f0f4ff; }
+.tick { color: #2a7; } .cross { color: #c33; } .partial { color: #a86; }
+
+/* FILL-ME NOTE BOX (meta guidance, remove when populating a real page) */
+.fillnote {
+  background: #f3f0ff; border: 1px dashed #9b8ce0; border-radius: 4px;
+  padding: 8px 12px; margin: 6px 0 14px; font-family: var(--font-ui);
+  font-size: 12px; color: #5c4d99;
+}
+
+@media (max-width: 860px) {
+  .sidebar { display: none; }
+  .infobox { float: none; width: 100%; margin: 0 0 16px 0; }
+  .content { padding: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- SIDEBAR TOC -->
+<nav class="sidebar" aria-label="Table of contents">
+  <div class="sidebar-logo">
+    <div class="logo-name">⚗ Substance Wiki</div>
+    <div class="logo-sub">Template — reference/education only</div>
+  </div>
+  <div class="toc-section">
+    <h4>Contents</h4>
+    <a href="#summary">Summary</a>
+    <a href="#history">History &amp; culture</a>
+    <a href="#chemistry">Chemistry</a>
+    <a href="#pharmacology">Pharmacology</a>
+    <a href="#dosage">Dosage</a>
+    <a href="#duration">Duration</a>
+    <a href="#effects">Subjective effects</a>
+    <a class="sub" href="#eff-physical">Physical effects</a>
+    <a class="sub" href="#eff-cognitive">Cognitive effects</a>
+    <a href="#tolerance">Tolerance &amp; withdrawal</a>
+    <a href="#toxicity">Toxicity &amp; harm</a>
+    <a href="#interactions">Interactions</a>
+    <a href="#metabolites">Metabolites &amp; PK</a>
+    <a href="#comparison">Comparison</a>
+    <a href="#legal">Legal status</a>
+    <a href="#references">References</a>
+  </div>
+  <hr class="toc-divider">
+  <div class="toc-section">
+    <h4>Related</h4>
+    <a href="#">[Related substance 1]</a>
+    <a href="#">[Related substance 2]</a>
+    <a href="#">[Related substance 3]</a>
+    <a href="#">[Related class]</a>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+<h1 class="page-title">[SUBSTANCE NAME]</h1>
+<p class="page-subtitle">
+  From Substance Wiki Template · 
+  <a href="#">[Chemical class]</a> · 
+  <a href="#">[Pharmacological class]</a> · 
+  <a href="#">[Category tag]</a>
+</p>
+
+<div class="clearfix">
+
+<!-- INFOBOX -->
+<aside class="infobox" aria-label="Substance summary">
+  <div class="infobox-head">[SUBSTANCE NAME]</div>
+  <div class="infobox-img">
+    <div class="mol-diagram-placeholder">[Molecular structure image / diagram]</div>
+    <div style="font-size:11px;color:var(--placeholder);margin-top:4px;font-family:monospace;">[Molecular formula]</div>
+  </div>
+  <table>
+    <tr><td>Also known as</td><td data-field>[Synonyms / street names / brand names]</td></tr>
+    <tr><td>Class</td><td data-field>[Chemical class]</td></tr>
+    <tr><td>Psychoactive class</td><td data-field>[Psychoactive class]</td></tr>
+    <tr><td>CAS number</td><td data-field>[CAS number]</td></tr>
+    <tr><td>Mol. formula</td><td data-field>[Formula]</td></tr>
+    <tr><td>Mol. weight</td><td data-field>[g/mol]</td></tr>
+    <tr><td>Routes</td><td data-field>[Route(s) of administration]</td></tr>
+    <tr><td>Bioavailability</td><td data-field>[%]</td></tr>
+    <tr><td>Protein binding</td><td data-field>[%]</td></tr>
+    <tr><td>Metabolism</td><td data-field>[Primary metabolic pathway]</td></tr>
+    <tr><td>Half-life</td><td data-field>[Duration]</td></tr>
+    <tr><td>Onset</td><td data-field>[Time to onset]</td></tr>
+    <tr><td>Developed by / origin</td><td data-field>[Originator / discovery context]</td></tr>
+    <tr><td>Approved / scheduled</td><td data-field>[Regulatory status + year]</td></tr>
+    <tr><td>Legal status</td><td data-field>[Summary legal status]</td></tr>
+  </table>
+
+  <div class="infobox-section-head" style="margin-top:4px;">Dosage</div>
+  <table>
+    <tr class="thresh"><td>Threshold</td><td data-field>[value]</td></tr>
+    <tr><td>Light</td><td data-field>[value]</td></tr>
+    <tr><td>Common</td><td data-field>[value]</td></tr>
+    <tr><td>Strong</td><td data-field>[value]</td></tr>
+    <tr><td>Heavy</td><td data-field>[value]</td></tr>
+  </table>
+
+  <div class="infobox-section-head" style="margin-top:4px;">Duration</div>
+  <table>
+    <tr><td>Onset</td><td data-field>[value]</td></tr>
+    <tr><td>Peak</td><td data-field>[value]</td></tr>
+    <tr><td>Duration (total)</td><td data-field>[value]</td></tr>
+    <tr><td>After-effects</td><td data-field>[value]</td></tr>
+  </table>
+</aside>
+
+<!-- SUMMARY -->
+<section id="summary">
+<div class="fillnote">Fill: 2–3 paragraph overview — what it is, class, defining mechanism, why it's notable, primary approved/traditional use if any.</div>
+<p><span class="ph">[Paragraph 1: what the substance is, its class, origin/discoverer, and primary context of use.]</span></p>
+<p><span class="ph">[Paragraph 2: defining pharmacological mechanism and what distinguishes it from related compounds.]</span></p>
+<p><span class="ph">[Paragraph 3: any pharmacokinetic quirks or other notable properties.]</span></p>
+
+<div class="alert alert-warn">
+  <span class="alert-icon">⚠️</span>
+  <div><b>Disclaimer:</b> <span class="ph">[Standard disclaimer — information is for education/harm-reduction purposes, effects vary by individual, not a substitute for professional medical advice.]</span></div>
+</div>
+</section>
+
+<!-- HISTORY -->
+<section id="history">
+<h2>History and culture</h2>
+<div class="fillnote">Fill: discovery/synthesis history, key dates, cultural or clinical adoption, current status.</div>
+<p><span class="ph">[Discovery/first synthesis, by whom, and when.]</span></p>
+<p><span class="ph">[Path to approval/scheduling or spread of recreational/traditional use, with key dates.]</span></p>
+<p><span class="ph">[Current cultural, clinical, or community context.]</span></p>
+</section>
+
+<!-- CHEMISTRY -->
+<section id="chemistry">
+<h2>Chemistry</h2>
+<div class="fillnote">Fill: structural class, key functional groups, relationship to other compounds in its family.</div>
+<p><span class="ph">[Structural description — parent scaffold, substituents, stereochemistry if relevant.]</span></p>
+<p><span class="ph">[Relationship to structurally similar compounds.]</span></p>
+</section>
+
+<!-- PHARMACOLOGY -->
+<section id="pharmacology">
+<h2>Pharmacology</h2>
+<div class="fillnote">Fill: receptor/target binding table, mechanism of action narrative.</div>
+<p><span class="ph">[Narrative description of primary mechanism of action.]</span></p>
+<table class="pharm-table">
+  <thead><tr><th>Target</th><th>Action</th><th>Affinity</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td data-field>[Target 1]</td><td data-field>[agonist/antagonist/etc.]</td><td class="ki-val" data-field>[value]</td><td data-field>[note]</td></tr>
+    <tr><td data-field>[Target 2]</td><td data-field>[agonist/antagonist/etc.]</td><td class="ki-val" data-field>[value]</td><td data-field>[note]</td></tr>
+    <tr><td data-field>[Target 3]</td><td data-field>[agonist/antagonist/etc.]</td><td class="ki-val" data-field>[value]</td><td data-field>[note]</td></tr>
+  </tbody>
+</table>
+<h3>Unique kinetic properties</h3>
+<p><span class="ph">[Any notable absorption, distribution, or elimination properties.]</span></p>
+</section>
+
+<!-- DOSAGE -->
+<section id="dosage">
+<h2>Dosage</h2>
+<div class="fillnote">Fill only from an authoritative/regulatory source (e.g. approved prescribing information) when the substance is a regulated medicine. For non-medical substances, leave this section as a structural placeholder rather than populating specific figures.</div>
+<table class="dose-table">
+  <thead><tr><th>Route</th><th>Threshold</th><th>Light</th><th>Common</th><th>Strong</th><th>Heavy</th></tr></thead>
+  <tbody>
+    <tr>
+      <td data-field>[Route]</td>
+      <td class="thresh" data-field>[value]</td>
+      <td class="light" data-field>[value]</td>
+      <td class="common" data-field>[value]</td>
+      <td class="strong" data-field>[value]</td>
+      <td class="heavy" data-field>[value]</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Dose modifications</h3>
+<p><span class="ph">[Adjustments for renal/hepatic impairment, age, interacting medications, etc., where applicable.]</span></p>
+</section>
+
+<!-- DURATION -->
+<section id="duration">
+<h2>Duration and timeline</h2>
+<div class="fillnote">Fill: onset / peak / offset / after-effects, ideally per route of administration.</div>
+<table class="dur-table">
+  <thead><tr><th>Route</th><th>Onset</th><th>Peak</th><th>Duration</th><th>After-effects</th></tr></thead>
+  <tbody>
+    <tr>
+      <td data-field>[Route]</td>
+      <td data-field>[value]</td>
+      <td data-field>[value]</td>
+      <td data-field>[value]</td>
+      <td data-field>[value]</td>
+    </tr>
+  </tbody>
+</table>
+</section>
+
+<!-- SUBJECTIVE EFFECTS -->
+<section id="effects">
+<h2>Subjective effects</h2>
+<div class="alert alert-info">
+  <span class="alert-icon">ℹ️</span>
+  <div><span class="ph">[Note on how this effects list was compiled — clinical trial data, adverse-event reporting, and/or self-report community sources — and that individual experience varies.]</span></div>
+</div>
+
+<section id="eff-physical">
+<h3>Physical effects</h3>
+<div class="effects-group eff-positive">
+  <h4 class="positive">Positive / desired</h4>
+  <ul>
+    <li><span class="ph">[Effect]</span> — <span class="eff-note">[brief note]</span></li>
+    <li><span class="ph">[Effect]</span></li>
+  </ul>
+</div>
+<div class="effects-group eff-neutral">
+  <h4 class="neutral">Neutral / variable</h4>
+  <ul>
+    <li><span class="ph">[Effect]</span></li>
+    <li><span class="ph">[Effect]</span></li>
+  </ul>
+</div>
+<div class="effects-group eff-negative">
+  <h4 class="negative">Adverse / physical</h4>
+  <ul>
+    <li><span class="ph">[Effect]</span></li>
+    <li><span class="ph">[Effect]</span></li>
+  </ul>
+</div>
+</section>
+
+<section id="eff-cognitive">
+<h3>Cognitive and emotional effects</h3>
+<div class="effects-group eff-positive">
+  <h4 class="positive">Positive / therapeutic</h4>
+  <ul>
+    <li><span class="ph">[Effect]</span></li>
+  </ul>
+</div>
+<div class="effects-group eff-neutral">
+  <h4 class="neutral">Neutral / variable</h4>
+  <ul>
+    <li><span class="ph">[Effect]</span></li>
+  </ul>
+</div>
+<div class="effects-group eff-negative">
+  <h4 class="negative">Adverse / cognitive / psychological</h4>
+  <ul>
+    <li><span class="ph">[Effect]</span></li>
+  </ul>
+</div>
+</section>
+</section>
+
+<!-- TOLERANCE -->
+<section id="tolerance">
+<h2>Tolerance and discontinuation</h2>
+<h3>Tolerance</h3>
+<p><span class="ph">[How tolerance develops, timeframe, cross-tolerance with related compounds.]</span></p>
+<h3>Discontinuation / withdrawal</h3>
+<p><span class="ph">[Withdrawal profile, taper considerations, rebound effects.]</span></p>
+</section>
+
+<!-- TOXICITY -->
+<section id="toxicity">
+<h2>Toxicity and harm potential</h2>
+<div class="fillnote">Fill from clinical/toxicological literature only. This section should point people toward professional medical guidance, not substitute for it.</div>
+<h3>Acute toxicity</h3>
+<p><span class="ph">[Overdose signs, general toxicity profile.]</span></p>
+<h3>Chronic toxicity</h3>
+<p><span class="ph">[Long-term risks with sustained use.]</span></p>
+<h3>Abuse potential</h3>
+<p><span class="ph">[Dependence liability, reinforcing properties.]</span></p>
+<div class="alert alert-danger">
+  <span class="alert-icon">🚑</span>
+  <div><b>In an emergency:</b> <span class="ph">[Region-appropriate guidance to contact emergency services / poison control.]</span></div>
+</div>
+</section>
+
+<!-- INTERACTIONS -->
+<section id="interactions">
+<h2>Drug interactions</h2>
+<div class="fillnote">Fill from pharmacology/clinical sources. Keep this general (mechanism + risk level), not a how-to.</div>
+<table class="int-table">
+  <thead><tr><th>Substance / class</th><th>Risk</th><th>Mechanism / notes</th></tr></thead>
+  <tbody>
+    <tr>
+      <td data-field>[Interacting substance/class]</td>
+      <td><span class="sev-caution">[RISK LEVEL]</span></td>
+      <td data-field>[Mechanism and clinical reasoning]</td>
+    </tr>
+    <tr>
+      <td data-field>[Interacting substance/class]</td>
+      <td><span class="sev-danger">[RISK LEVEL]</span></td>
+      <td data-field>[Mechanism and clinical reasoning]</td>
+    </tr>
+    <tr>
+      <td data-field>[Interacting substance/class]</td>
+      <td><span class="sev-safe">[RISK LEVEL]</span></td>
+      <td data-field>[Mechanism and clinical reasoning]</td>
+    </tr>
+  </tbody>
+</table>
+</section>
+
+<!-- METABOLITES -->
+<section id="metabolites">
+<h2>Pharmacokinetics and metabolites</h2>
+<div class="metab-flow">[Metabolic pathway diagram — parent compound → enzyme(s) → metabolite(s)]</div>
+<table class="dur-table">
+  <thead><tr><th>Parameter</th><th>Parent compound</th><th>Metabolite(s)</th></tr></thead>
+  <tbody>
+    <tr><td>Half-life</td><td data-field>[value]</td><td data-field>[value]</td></tr>
+    <tr><td>Protein binding</td><td data-field>[value]</td><td data-field>[value]</td></tr>
+    <tr><td>Primary elimination</td><td colspan="2" data-field>[route]</td></tr>
+  </tbody>
+</table>
+<h3>Clinical implications</h3>
+<ul style="padding-left:22px;margin:8px 0;">
+  <li><span class="ph">[Implication of PK profile for dosing/monitoring]</span></li>
+</ul>
+</section>
+
+<!-- COMPARISON -->
+<section id="comparison">
+<h2>Comparison with related substances</h2>
+<table class="comp-table">
+  <thead><tr><th>Property</th><th>[This substance]</th><th>[Comparator 1]</th><th>[Comparator 2]</th></tr></thead>
+  <tbody>
+    <tr><td data-field>[Property]</td><td data-field>[value]</td><td data-field>[value]</td><td data-field>[value]</td></tr>
+    <tr><td data-field>[Property]</td><td data-field>[value]</td><td data-field>[value]</td><td data-field>[value]</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- LEGAL STATUS -->
+<section id="legal">
+<h2>Legal status</h2>
+<p><span class="ph">[General summary of legal/regulatory status.]</span></p>
+<div class="legal-grid">
+  <div class="legal-item legal-rx"><div class="country">[Country]</div><div class="status" data-field>[status]</div></div>
+  <div class="legal-item legal-rx"><div class="country">[Country]</div><div class="status" data-field>[status]</div></div>
+  <div class="legal-item legal-rx"><div class="country">[Country]</div><div class="status" data-field>[status]</div></div>
+</div>
+</section>
+
+<!-- REFERENCES -->
+<section id="references">
+<h2>References</h2>
+<div class="refs">
+<ol>
+  <li><span class="ph">[Author(s) (Year). Title. Journal. DOI/link.]</span></li>
+  <li><span class="ph">[Author(s) (Year). Title. Journal. DOI/link.]</span></li>
+</ol>
+</div>
+</section>
+
+</div><!-- clearfix -->
+
+<!-- CATEGORY BAR -->
+<div class="category-bar">
+  <span>Categories:</span>
+  <a href="#">[Category 1]</a>
+  <a href="#">[Category 2]</a>
+  <a href="#">[Category 3]</a>
+</div>
+
+</main>
+</div>
+</body>
+</html>
