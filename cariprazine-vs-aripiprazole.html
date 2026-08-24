@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Cariprazine vs Aripiprazole — Full Pharmacological Comparison</title>
+<style>
+  :root{
+    --bg:#0b0e14;
+    --panel:#141922;
+    --panel2:#1b2230;
+    --border:#2a3242;
+    --text:#dbe2ef;
+    --muted:#8b96ab;
+    --accent:#5ec2c0;
+    --accent2:#c98be0;
+    --car:#5ec2c0;
+    --ari:#e0a75e;
+    --good:#6fcf87;
+    --warn:#e0a75e;
+    --bad:#e06868;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5; padding-bottom:60px;
+  }
+  header{
+    padding:22px 16px 14px; border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg,#121722,#0b0e14);
+    position:sticky; top:0; z-index:5;
+  }
+  h1{font-size:1.25rem; margin:0 0 4px; letter-spacing:.2px;}
+  header p{margin:0; color:var(--muted); font-size:.85rem;}
+  .legend{display:flex; gap:14px; margin-top:10px; font-size:.78rem; flex-wrap:wrap;}
+  .dot{display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px;}
+  .container{padding:16px; max-width:900px; margin:0 auto;}
+  section{margin-bottom:28px;}
+  h2{
+    font-size:1rem; color:var(--accent); border-left:3px solid var(--accent);
+    padding-left:10px; margin:0 0 10px; text-transform:uppercase; letter-spacing:.5px;
+  }
+  .lede{color:var(--muted); font-size:.88rem; margin-bottom:14px;}
+  .card{
+    background:var(--panel); border:1px solid var(--border); border-radius:10px;
+    padding:14px; margin-bottom:14px;
+  }
+  .molgrid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .molcard{
+    background:var(--panel2); border:1px solid var(--border); border-radius:10px;
+    padding:10px; text-align:center;
+  }
+  .molcard img{width:100%; max-width:220px; background:#fff; border-radius:6px; padding:4px;}
+  .molcard h3{font-size:.82rem; margin:8px 0 2px;}
+  .molcard .formula{font-size:.72rem; color:var(--muted);}
+  .metabolite-row{grid-column:1 / -1; display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;}
+
+  .tablewrap{overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:10px; border:1px solid var(--border);}
+  table{border-collapse:collapse; width:100%; min-width:560px; font-size:.82rem;}
+  th, td{padding:8px 10px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top;}
+  th{background:var(--panel2); color:var(--accent2); font-size:.72rem; text-transform:uppercase; letter-spacing:.4px; position:sticky; top:0;}
+  tr:last-child td{border-bottom:none;}
+  td:first-child, th:first-child{
+    position:sticky; left:0; background:var(--panel); font-weight:600; color:var(--text); min-width:120px;
+  }
+  th:first-child{background:var(--panel2);}
+  tr:hover td{background:#1a2130;}
+
+  .term{
+    color:var(--accent); border-bottom:1px dotted var(--accent);
+    cursor:pointer; font-weight:600; white-space:nowrap;
+  }
+  .term:active{opacity:.7;}
+  .tag{display:inline-block; font-size:.68rem; padding:1px 6px; border-radius:8px; margin-left:4px; vertical-align:middle;}
+  .tag.car{background:rgba(94,194,192,.15); color:var(--car); border:1px solid var(--car);}
+  .tag.ari{background:rgba(224,167,94,.15); color:var(--ari); border:1px solid var(--ari);}
+
+  .pill{display:inline-block; padding:2px 7px; border-radius:6px; font-size:.72rem; font-weight:600;}
+  .pill.hi{background:rgba(224,104,104,.18); color:var(--bad);}
+  .pill.mid{background:rgba(224,167,94,.18); color:var(--warn);}
+  .pill.lo{background:rgba(111,207,135,.18); color:var(--good);}
+
+  .note{font-size:.76rem; color:var(--muted); margin-top:6px; padding-top:6px; border-top:1px dashed var(--border);}
+  .bottomline{background:var(--panel2); border-left:3px solid var(--accent2); padding:12px 14px; border-radius:8px; font-size:.86rem;}
+
+  /* Modal */
+  .overlay{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.65);
+    z-index:50; align-items:flex-end; justify-content:center;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:var(--panel); border:1px solid var(--border); border-top:1px solid var(--accent);
+    border-radius:14px 14px 0 0; width:100%; max-width:640px; max-height:80vh; overflow-y:auto;
+    padding:18px 18px 26px; animation:slideup .18s ease-out;
+  }
+  @media(min-width:700px){
+    .overlay{align-items:center;}
+    .modal{border-radius:14px; max-height:75vh;}
+  }
+  @keyframes slideup{from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;}}
+  .modal h3{color:var(--accent); margin:0 0 8px; font-size:1.05rem;}
+  .modal .sub{color:var(--muted); font-size:.78rem; margin-bottom:12px;}
+  .modal p{font-size:.88rem; margin:0 0 10px;}
+  .modal .closebtn{
+    position:sticky; top:0; float:right; background:var(--panel2); border:1px solid var(--border);
+    color:var(--text); border-radius:50%; width:30px; height:30px; font-size:1rem; cursor:pointer;
+  }
+  .modal ul{margin:0 0 10px; padding-left:18px; font-size:.86rem;}
+  .modal .k{color:var(--accent2); font-weight:600;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Cariprazine vs Aripiprazole</h1>
+  <p>Third-generation D2/D3 partial agonists — full mechanism, PK, clinical, and safety comparison</p>
+  <div class="legend">
+    <span><span class="dot" style="background:var(--car);"></span>Cariprazine (Vraylar/Reagila)</span>
+    <span><span class="dot" style="background:var(--ari);"></span>Aripiprazole (Abilify)</span>
+  </div>
+</header>
+
+<div class="container">
+
+<section>
+  <p class="lede">Tap any <span class="term">underlined receptor or metabolite name</span> in the tables below to open a quick explainer. Both drugs stabilize dopamine signaling rather than blocking it outright — the core divide is <strong>which dopamine receptor subtype each prefers</strong>, and that cascades into everything else here.</p>
+</section>
+
+<section id="molecules">
+  <h2>1. Molecule Comparison</h2>
+  <div class="card">
+    <div class="molgrid">
+      <div class="molcard">
+        <img src="https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid=11154555&t=l" alt="Cariprazine structure">
+        <h3>Cariprazine <span class="tag car">CAR</span></h3>
+        <div class="formula">C21H32Cl2N4O · 427.4 g/mol</div>
+      </div>
+      <div class="molcard">
+        <img src="https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid=60795&t=l" alt="Aripiprazole structure">
+        <h3>Aripiprazole <span class="tag ari">ARI</span></h3>
+        <div class="formula">C23H27Cl2N3O2 · 448.4 g/mol</div>
+      </div>
+      <div class="metabolite-row">
+        <div class="molcard">
+          <img src="https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid=11200383&t=l" alt="Didesmethyl-cariprazine structure">
+          <h3 class="term" onclick="openModal('DDCAR')">Didesmethyl-cariprazine (DDCAR)</h3>
+          <div class="formula">C19H28Cl2N4O — major active metabolite</div>
+        </div>
+        <div class="molcard">
+          <img src="https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid=10114519&t=l" alt="Dehydro-aripiprazole structure">
+          <h3 class="term" onclick="openModal('DHA')">Dehydro-aripiprazole</h3>
+          <div class="formula">C23H25Cl2N3O2 — major active metabolite</div>
+        </div>
+      </div>
+    </div>
+    <div class="note">Both share the 2,3-dichlorophenylpiperazine pharmacophore that anchors dopamine-receptor binding. Cariprazine adds a <em>trans</em>-cyclohexyl dimethylurea tail (drives D3 preference + long half-life); aripiprazole uses a butoxy-dihydroquinolinone tail (drives higher overall bioavailability and IM depot chemistry). Structures via PubChem.</div>
+  </div>
+</section>
+
+<section id="mechanism">
+  <h2>2. Core Mechanism</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Feature</th><th>Cariprazine</th><th>Aripiprazole</th></tr>
+    <tr><td>Primary mechanism</td><td><span class="term" onclick="openModal('D3')">D3</span> partial agonist, even higher <span class="term" onclick="openModal('D2')">D2</span> affinity — but D3 &gt; D2</td><td><span class="term" onclick="openModal('D2')">D2</span> partial agonist — D2 &gt; D3</td></tr>
+    <tr><td>D2:D3 affinity ratio</td><td>D3-preferring (~6–10× higher affinity for D3)</td><td>D2-preferring (~2–5× higher affinity for D2)</td></tr>
+    <tr><td><span class="term" onclick="openModal('5HT1A')">5-HT1A</span></td><td>Partial agonist</td><td>Partial agonist</td></tr>
+    <tr><td><span class="term" onclick="openModal('5HT2A')">5-HT2A</span></td><td>Antagonist (moderate affinity)</td><td>Antagonist (high affinity)</td></tr>
+    <tr><td><span class="term" onclick="openModal('5HT2B')">5-HT2B</span></td><td>Antagonist — notably high affinity</td><td>Minimal</td></tr>
+    <tr><td><span class="term" onclick="openModal('5HT2C')">5-HT2C</span></td><td>Antagonist</td><td>Partial agonist</td></tr>
+    <tr><td><span class="term" onclick="openModal('M1')">Muscarinic (M1)</span></td><td>Negligible</td><td>Negligible</td></tr>
+    <tr><td><span class="term" onclick="openModal('H1')">H1</span></td><td>Weak antagonist</td><td>Weak antagonist</td></tr>
+    <tr><td><span class="term" onclick="openModal('A1')">Alpha-1</span></td><td>Weak antagonist</td><td>Weak antagonist</td></tr>
+    <tr><td>"Dopamine stabilizer" logic</td><td>D3 preference — theorized pro-cognitive / antidepressant edge</td><td>Original prototype (2002) — first D2 partial agonist antipsychotic</td></tr>
+  </table></div>
+  <div class="note">Tap a receptor name for what it does physiologically and what pharmacology at it produces clinically.</div>
+</section>
+
+<section id="binding">
+  <h2>3. Receptor Binding, Occupancy &amp; Intrinsic Activity</h2>
+  <div class="card">
+    <p style="font-size:.82rem; margin:0 0 8px;"><strong>Affinity (Ki, nM)</strong> = how tightly the drug binds (lower = tighter). <strong>Occupancy %</strong> = how much of the receptor pool is bound at clinical plasma levels, from PET imaging. <strong>Intrinsic activity %</strong> = how strongly the drug activates the receptor relative to dopamine/serotonin itself (100% = full agonist, 0% = pure antagonist) — these numbers are assay- and receptor-density-dependent and vary meaningfully across studies; treat as directional, not absolute.</p>
+  </div>
+  <div class="tablewrap"><table>
+    <tr><th>Receptor</th><th>CAR Ki (nM)</th><th>ARI Ki (nM)</th><th>CAR Occupancy</th><th>ARI Occupancy</th><th>CAR Intrinsic Act.</th><th>ARI Intrinsic Act.</th></tr>
+    <tr>
+      <td><span class="term" onclick="openModal('D3')">D3</span></td>
+      <td>~0.1–0.3</td><td>~0.8–1.6</td>
+      <td><span class="pill hi">76–92%</span> <span style="color:var(--muted);font-size:.7rem;">(1–3mg/d)</span></td>
+      <td><span class="pill mid">no clinical D3-selective PET</span></td>
+      <td><span class="pill hi">~71%</span> <span style="color:var(--muted);font-size:.7rem;">(cAMP, D3)</span></td>
+      <td><span class="pill mid">partial, not well isolated from D2</span></td>
+    </tr>
+    <tr>
+      <td><span class="term" onclick="openModal('D2')">D2</span> (L/S)</td>
+      <td>~0.5–0.7</td><td>~0.3–0.7</td>
+      <td><span class="pill mid">45–79%</span> <span style="color:var(--muted);font-size:.7rem;">(1–3mg/d, →~100% at 4.5–6mg/d)</span></td>
+      <td><span class="pill hi">85–96%</span> <span style="color:var(--muted);font-size:.7rem;">(10–30mg/d)</span></td>
+      <td><span class="pill lo">~30%</span> <span style="color:var(--muted);font-size:.7rem;">(IP assay, D2L)</span></td>
+      <td><span class="pill mid">~25–80%</span> <span style="color:var(--muted);font-size:.7rem;">(highly density-dependent)</span></td>
+    </tr>
+    <tr>
+      <td><span class="term" onclick="openModal('5HT1A')">5-HT1A</span></td>
+      <td>~2.6–3</td><td>~1.7</td>
+      <td><span class="pill lo">~30% max</span> <span style="color:var(--muted);font-size:.7rem;">(animal PET)</span></td>
+      <td><span class="pill lo">~16%</span> <span style="color:var(--muted);font-size:.7rem;">(10–30mg/d)</span></td>
+      <td>partial agonist, % not well isolated</td>
+      <td>partial agonist, % not well isolated</td>
+    </tr>
+    <tr>
+      <td><span class="term" onclick="openModal('5HT2A')">5-HT2A</span></td>
+      <td>~18–19</td><td>~3.4</td>
+      <td>no dedicated human PET data</td>
+      <td><span class="pill mid">54–60%</span> <span style="color:var(--muted);font-size:.7rem;">(10–30mg/d)</span></td>
+      <td>0% (antagonist)</td><td>0% (antagonist)</td>
+    </tr>
+    <tr>
+      <td><span class="term" onclick="openModal('5HT2B')">5-HT2B</span></td>
+      <td>~0.6</td><td>weak/negligible</td>
+      <td>no human PET data</td><td>n/a — minimal binding</td>
+      <td>0% (antagonist)</td><td>n/a</td>
+    </tr>
+    <tr>
+      <td><span class="term" onclick="openModal('5HT2C')">5-HT2C</span></td>
+      <td>~130</td><td>~15</td>
+      <td>no human PET data</td><td>no human PET data</td>
+      <td>0% (antagonist)</td><td>partial agonist, % not well isolated</td>
+    </tr>
+    <tr>
+      <td><span class="term" onclick="openModal('H1')">H1</span></td>
+      <td>~23</td><td>~25–60</td>
+      <td>—</td><td>—</td><td>0% (antagonist)</td><td>0% (antagonist)</td>
+    </tr>
+    <tr>
+      <td><span class="term" onclick="openModal('A1')">Alpha-1A</span></td>
+      <td>~150</td><td>~26–57</td>
+      <td>—</td><td>—</td><td>0% (antagonist)</td><td>0% (antagonist)</td>
+    </tr>
+  </table></div>
+  <div class="note">Occupancy sourced from PET studies: cariprazine — Girgis et al. 2016 ([11C]-PHNO, schizophrenia patients); aripiprazole — Yokoi et al. 2002 and Mamo et al. 2007 ([11C]raclopride / triple-tracer). Intrinsic activity from Kiss et al. (cariprazine) and Burris et al./Shapiro et al. (aripiprazole) cAMP/IP functional assays. Where a cell says "no human PET data," that reflects a genuine literature gap, not near-zero binding.</div>
+</section>
+
+<section id="pk">
+  <h2>4. Pharmacokinetics</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Parameter</th><th>Cariprazine</th><th>Aripiprazole</th></tr>
+    <tr><td>Oral bioavailability</td><td>Well absorbed</td><td>~87%</td></tr>
+    <tr><td>Tmax</td><td>3–6 hours</td><td>3–5 hours</td></tr>
+    <tr><td>Major enzyme</td><td>CYP3A4 (major), CYP2D6 (minor)</td><td>CYP2D6 and CYP3A4</td></tr>
+    <tr><td>Active metabolites</td>
+      <td><span class="term" onclick="openModal('DCAR')">Desmethyl-cariprazine</span>, <span class="term" onclick="openModal('DDCAR')">didesmethyl-cariprazine</span></td>
+      <td><span class="term" onclick="openModal('DHA')">Dehydro-aripiprazole</span> (~40% of exposure)</td>
+    </tr>
+    <tr><td>Parent half-life</td><td>~2–4 days</td><td>~75h (extensive CYP2D6 metabolizers); ~146h (poor metabolizers)</td></tr>
+    <tr><td>Active metabolite half-life</td><td>DDCAR: ~1–3 weeks</td><td>Dehydro-ARI: ~94 hours</td></tr>
+    <tr><td>Time to steady state</td><td>1–2 months (DDCAR-driven)</td><td>~14 days</td></tr>
+    <tr><td>Protein binding</td><td>~91–97%</td><td>&gt;99%</td></tr>
+    <tr><td>CYP2D6 PM relevance</td><td>Minor pathway</td><td>Significant — dose adjustment needed</td></tr>
+    <tr><td>CYP3A4 inhibitor interaction</td><td>Strong inhibitor → halve cariprazine dose</td><td>Dose reduction also needed, less pronounced</td></tr>
+    <tr><td>Formulations</td><td>Oral capsule only</td><td>Oral tablet/solution + LAI depots (Maintena, Aristada, Asimtufii)</td></tr>
+  </table></div>
+</section>
+
+<section id="clinical">
+  <h2>5. Clinical Use</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Parameter</th><th>Cariprazine</th><th>Aripiprazole</th></tr>
+    <tr><td>First approved</td><td>2015</td><td>2002</td></tr>
+    <tr><td>FDA indications</td><td>Schizophrenia (≥13y), acute manic/mixed bipolar I (≥10y), bipolar I depression, adjunct MDD</td><td>Schizophrenia, bipolar I mania, adjunct MDD, autism-related irritability, Tourette's</td></tr>
+    <tr><td>Bipolar depression</td><td>Approved monotherapy</td><td>Not specifically approved</td></tr>
+    <tr><td>Typical dose range</td><td>1.5–6 mg/day</td><td>10–30 mg/day</td></tr>
+    <tr><td>Long-acting injectable</td><td>No</td><td>Yes (monthly to every-2-month)</td></tr>
+  </table></div>
+</section>
+
+<section id="safety">
+  <h2>6. Safety / Tolerability</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Parameter</th><th>Cariprazine</th><th>Aripiprazole</th></tr>
+    <tr><td>Black box warnings</td><td colspan="2">Increased mortality in elderly dementia-related psychosis; suicidal thoughts/behavior in young adults (class warning, both drugs)</td></tr>
+    <tr><td>Common AEs</td><td>Akathisia, EPS, insomnia, nausea, dyspepsia, restlessness</td><td>Akathisia, insomnia, nausea, headache, anxiety</td></tr>
+    <tr><td>Weight/metabolic burden</td><td>Modest — low among atypicals</td><td>Low — one of the more metabolically neutral atypicals</td></tr>
+    <tr><td>Prolactin</td><td>Minimal (can lower it)</td><td>Minimal (can lower it)</td></tr>
+    <tr><td>Sedation</td><td>Low</td><td>Low</td></tr>
+    <tr><td>QTc prolongation</td><td>Minimal</td><td>Minimal</td></tr>
+    <tr><td>Impulse-control signal</td><td>Reported, less emphasized</td><td>FDA-highlighted (gambling, hypersexuality, compulsive shopping/eating) — biologically plausible extension of partial <span class="term" onclick="openModal('D3')">D3</span> agonism in mesolimbic reward circuitry</td></tr>
+    <tr><td>PK-driven safety note</td><td>Long DDCAR half-life → slow titration and slow washout of side effects</td><td>Standard washout; CYP2D6 status changes exposure meaningfully</td></tr>
+  </table></div>
+</section>
+
+<section id="bottomline">
+  <h2>7. Bottom Line</h2>
+  <div class="bottomline">
+    Aripiprazole is D2-preferring, has two decades more real-world use, broader approved indications (autism irritability, Tourette's), and offers long-acting injectable depots — the more flexible, better-characterized agent, with PET data showing it reliably drives D2 occupancy into the 85–96% range at clinical doses without much EPS. Cariprazine's D3-preference is the theoretical basis for claimed benefit on negative symptoms, cognition, and depression, and PET confirms its D3 occupancy saturates faster and at lower doses than its D2 occupancy — but the long DDCAR half-life means side effects and interactions resolve over weeks, not days. This is a pharmacology reference, not prescribing guidance — a prescriber weighs CYP2D6 status, comorbidities, and target symptoms before choosing between them.
+  </div>
+</section>
+
+</div>
+
+<!-- Modal -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="closebtn" onclick="closeModal()">✕</button>
+    <h3 id="modalTitle"></h3>
+    <div class="sub" id="modalSub"></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const glossary = {
+  D2: {
+    title: "D2 Receptor",
+    sub: "Dopamine D2-like family — Gi/o-coupled",
+    body: `<p>Inhibits adenylyl cyclase, lowering cAMP; the main target of essentially every antipsychotic ever made. Densely expressed in the <span class="k">striatum</span> (motor control), <span class="k">mesolimbic pathway</span> (reward/motivation, implicated in positive psychotic symptoms), and pituitary lactotrophs (prolactin regulation).</p>
+    <ul><li><strong>Full antagonism</strong> (haloperidol-type) → controls positive symptoms but causes EPS, prolactin elevation.</li><li><strong>Partial agonism</strong> (both drugs here) → "stabilizes" the system: dampens excess dopamine tone, props up low tone — theorized to lower EPS/prolactin risk at the cost of narrower efficacy margins.</li></ul>`
+  },
+  D3: {
+    title: "D3 Receptor",
+    sub: "Dopamine D2-like family — Gi/o-coupled",
+    body: `<p>Structurally similar to D2 but much more restricted in distribution — concentrated in <span class="k">limbic areas</span> (nucleus accumbens shell, islands of Calleja, hippocampus) rather than the motor striatum. Thought to modulate motivation, reward valuation, and cognition more than movement.</p>
+    <p>D3-preferring partial agonism (cariprazine) is the mechanistic rationale for claimed benefits on <span class="k">negative symptoms</span> and <span class="k">cognition</span> — but D3 involvement in reward circuitry is also the leading hypothesis for the impulse-control-disorder signal (gambling, hypersexuality) seen with this drug class.</p>`
+  },
+  '5HT1A': {
+    title: "5-HT1A Receptor",
+    sub: "Serotonin — Gi/o-coupled (auto- and heteroreceptor)",
+    body: `<p>Acts as a somatodendritic <span class="k">autoreceptor</span> on raphe serotonin neurons (turns down serotonin release) and a <span class="k">heteroreceptor</span> in cortex/hippocampus modulating glutamate and dopamine release, especially in prefrontal cortex.</p>
+    <p>Partial agonism here is linked to anxiolytic and antidepressant-like effects and is part of why both drugs carry adjunct-MDD indications; it's also proposed to blunt EPS risk by boosting cortical/striatal dopamine release indirectly.</p>`
+  },
+  '5HT2A': {
+    title: "5-HT2A Receptor",
+    sub: "Serotonin — Gq-coupled",
+    body: `<p>Densely expressed in cortex (layer V pyramidal neurons). Mediates cortical excitability and is the primary target of classic psychedelics as agonists. Antagonism here is the defining "atypical" antipsychotic mechanism.</p>
+    <p>5-HT2A antagonism is believed to counterbalance D2 blockade in the nigrostriatal pathway, reducing EPS risk, and to help with negative/affective symptoms. Aripiprazole's much higher 5-HT2A affinity than cariprazine's contributes to its broader serotonergic footprint.</p>`
+  },
+  '5HT2B': {
+    title: "5-HT2B Receptor",
+    sub: "Serotonin — Gq-coupled",
+    body: `<p>Best known from cardiac valve tissue — chronic agonism here (as with fenfluramine or pergolide) is the mechanism behind serotonergic valvulopathy. In the CNS it has more minor roles in mood and possibly gut motility peripherally.</p>
+    <p>Cariprazine's notably high 5-HT2B antagonist affinity is a point of pharmacological distinction from aripiprazole, though there's no established valvulopathy signal with either drug — antagonism is not the same risk direction as the agonism that caused historical valve damage.</p>`
+  },
+  '5HT2C': {
+    title: "5-HT2C Receptor",
+    sub: "Serotonin — Gq-coupled",
+    body: `<p>Concentrated in hypothalamus and choroid plexus; a major regulator of satiety and appetite. Antagonism here (common with olanzapine, clozapine) drives much of antipsychotic-associated weight gain and metabolic risk.</p>
+    <p>Cariprazine antagonizes 5-HT2C (theoretical weight-gain liability, though clinically modest); aripiprazole is a partial agonist here instead, consistent with its reputation as one of the more weight-neutral atypicals.</p>`
+  },
+  M1: {
+    title: "Muscarinic M1 Receptor",
+    sub: "Acetylcholine — Gq-coupled",
+    body: `<p>The main muscarinic subtype in cortex/hippocampus, central to memory and cognition. Antagonism causes the classic "anticholinergic" picture: dry mouth, constipation, blurred vision, confusion, and — with heavy exposure — cognitive impairment.</p>
+    <p>Both drugs have negligible M1 affinity, which is a meaningful advantage over older antipsychotics (e.g., clozapine, olanzapine) that carry real anticholinergic burden.</p>`
+  },
+  H1: {
+    title: "Histamine H1 Receptor",
+    sub: "Histamine — Gq-coupled",
+    body: `<p>Widely expressed in CNS, regulating wakefulness/arousal. Antagonism is the mechanism behind first-generation antihistamine drowsiness and contributes to antipsychotic-associated sedation and weight gain (via hypothalamic effects on appetite).</p>
+    <p>Both drugs bind H1 only weakly, consistent with their low sedation and comparatively modest weight-gain profiles versus H1-heavy agents like quetiapine or olanzapine.</p>`
+  },
+  A1: {
+    title: "Alpha-1 Adrenergic Receptor",
+    sub: "Norepinephrine — Gq-coupled",
+    body: `<p>Found on vascular smooth muscle (vasoconstriction) and in CNS arousal circuits. Antagonism causes orthostatic hypotension, reflex tachycardia, and some sedation — a classic issue with risperidone, quetiapine, and older typicals.</p>
+    <p>Both drugs are only weak alpha-1 antagonists, so orthostatic effects are less prominent than with alpha-1-heavy antipsychotics, though aripiprazole's affinity range runs somewhat higher than cariprazine's.</p>`
+  },
+  DCAR: {
+    title: "Desmethyl-cariprazine (DCAR)",
+    sub: "First-step CYP3A4 metabolite of cariprazine",
+    body: `<p>An intermediate metabolite formed by N-demethylation of cariprazine, itself further demethylated to DDCAR. Retains meaningful D2/D3 partial-agonist activity similar in profile to the parent drug, but is present at lower, more transient plasma concentrations than DDCAR since it's rapidly converted onward.</p>
+    <p>Clinically it's mostly relevant as a way-station in the metabolic pathway rather than a major independent driver of steady-state effect — DDCAR dominates long-term exposure.</p>`
+  },
+  DDCAR: {
+    title: "Didesmethyl-cariprazine (DDCAR)",
+    sub: "Major active metabolite — roughly equipotent to cariprazine",
+    body: `<p>The fully demethylated metabolite and the dominant circulating species at steady state — by the time someone's been on a stable cariprazine dose for a month or two, DDCAR plasma levels typically exceed the parent drug's. It shares essentially the same D3-preferring partial-agonist profile as cariprazine itself.</p>
+    <p>Its <span class="k">1–3 week half-life</span> is the single biggest practical difference between cariprazine and aripiprazole: slow to reach steady state, slow to wash out. That means side effects that emerge take longer to resolve after a dose change or discontinuation, and drug interactions (e.g., stopping a CYP3A4 inhibitor) unwind gradually rather than within days.</p>`
+  },
+  DHA: {
+    title: "Dehydro-aripiprazole",
+    sub: "Major active metabolite — ~40% of total drug exposure",
+    body: `<p>Formed mainly via CYP3A4/CYP2D6-mediated dehydrogenation of aripiprazole. Functionally near-equipotent to the parent at the D2 receptor, acting as a similar partial agonist, and contributes meaningfully to the overall clinical effect rather than being a minor byproduct.</p>
+    <p>Its ~94-hour half-life is close enough to the parent drug's (~75h in normal CYP2D6 metabolizers) that it doesn't create the same dramatic "long-tail" pharmacokinetics that DDCAR creates for cariprazine — aripiprazole's overall washout is far more predictable.</p>`
+  }
+};
+
+function openModal(key){
+  const g = glossary[key];
+  if(!g) return;
+  document.getElementById('modalTitle').textContent = g.title;
+  document.getElementById('modalSub').textContent = g.sub;
+  document.getElementById('modalBody').innerHTML = g.body;
+  document.getElementById('overlay').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('overlay').classList.remove('open');
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
