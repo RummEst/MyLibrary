@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terpene & Phenylpropanoid CNS Ledger</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap');
+
+  :root{
+    --ink:#100d09;
+    --panel:#1a1610;
+    --panel-2:#221c14;
+    --line: #3a3122;
+    --parchment:#e9ddc4;
+    --parchment-dim:#9c9078;
+    --amber:#c98a3e;
+    --amber-bright:#e0a55c;
+    --sage:#7c9b7e;
+    --rust:#a24a3a;
+    --shadow: 0 8px 24px rgba(0,0,0,0.45);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at top left, #1c1710 0%, var(--ink) 55%),
+      var(--ink);
+    color:var(--parchment);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+    padding:0 0 80px 0;
+  }
+
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    opacity:0.05;
+    background-image: repeating-linear-gradient(0deg, #fff 0px, transparent 1px, transparent 2px);
+    z-index:0;
+  }
+
+  header{
+    position:relative;
+    padding:56px 32px 36px;
+    border-bottom:1px solid var(--line);
+    background: linear-gradient(180deg, rgba(201,138,62,0.06), transparent);
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .version-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.08em;
+    text-transform:none;
+    color:var(--parchment-dim);
+    border:1px solid var(--line);
+    padding:3px 8px;
+    border-radius:3px;
+    background:var(--panel);
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:clamp(32px, 5vw, 54px);
+    margin:0 0 10px 0;
+    letter-spacing:-0.01em;
+    color:var(--parchment);
+  }
+  h1 em{
+    font-style:italic;
+    font-weight:400;
+    color:var(--amber-bright);
+  }
+  .subhead{
+    font-size:14.5px;
+    color:var(--parchment-dim);
+    max-width:640px;
+    line-height:1.6;
+  }
+  .stat-row{
+    display:flex;
+    gap:28px;
+    margin-top:26px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--parchment-dim);
+    flex-wrap:wrap;
+  }
+  .stat-row b{ color:var(--parchment); font-weight:600;}
+
+  main{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 32px;
+    position:relative;
+    z-index:1;
+  }
+
+  .controls{
+    position:sticky;
+    top:0;
+    z-index:5;
+    background: rgba(16,13,9,0.92);
+    backdrop-filter: blur(6px);
+    padding:20px 0 16px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:6px;
+  }
+  .control-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--parchment-dim);
+    margin-bottom:10px;
+  }
+  .filter-label-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .toggle-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--parchment-dim);
+    padding:5px 11px;
+    border-radius:3px;
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+  .toggle-btn:hover{ border-color:var(--amber); color:var(--parchment); }
+  .pill-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:16px;
+    overflow:hidden;
+    max-height:600px;
+    transition: max-height .25s ease, opacity .2s ease, margin .2s ease;
+    opacity:1;
+  }
+  .pill-row.collapsed{
+    max-height:0;
+    opacity:0;
+    margin-bottom:0;
+  }
+  .pill{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    padding:6px 13px;
+    border-radius:3px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:var(--parchment-dim);
+    cursor:pointer;
+    transition: all .15s ease;
+    user-select:none;
+  }
+  .pill:hover{ border-color:var(--amber); color:var(--parchment);}
+  .pill.active{
+    background:var(--amber);
+    border-color:var(--amber);
+    color:#1a1207;
+    font-weight:600;
+  }
+  .sort-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  select{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    background:var(--panel);
+    color:var(--parchment);
+    border:1px solid var(--line);
+    padding:7px 10px;
+    border-radius:3px;
+    cursor:pointer;
+  }
+  .search-box{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    background:var(--panel);
+    color:var(--parchment);
+    border:1px solid var(--line);
+    padding:7px 12px;
+    border-radius:3px;
+    width:220px;
+    margin-left:auto;
+  }
+  .search-box::placeholder{ color:var(--parchment-dim); }
+  .search-box:focus, select:focus{ outline:1px solid var(--amber); }
+
+  .count-line{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--parchment-dim);
+    margin:14px 0 10px;
+  }
+
+  .ledger{
+    display:flex;
+    flex-direction:column;
+    border-top:1px solid var(--line);
+  }
+  .entry{
+    border-bottom:1px solid var(--line);
+    background:transparent;
+    transition: background .15s ease;
+    border-left:3px solid var(--cat-color, var(--line));
+  }
+  .entry:hover{ background: rgba(201,138,62,0.045); }
+
+  .entry-row{
+    display:grid;
+    grid-template-columns: 46px 42px 1fr 150px 180px 20px;
+    align-items:center;
+    gap:14px;
+    padding:15px 8px 15px 13px;
+    cursor:pointer;
+  }
+  .idx{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--parchment-dim);
+  }
+  .mol-box{
+    width:42px;
+    height:42px;
+    border-radius:4px;
+    border:1px solid var(--line);
+    background:#f4ecd8;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    flex-shrink:0;
+  }
+  .mol-box img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+  }
+  .mol-box.mol-empty{
+    background:var(--panel-2);
+    border-style:dashed;
+  }
+  .mol-box.mol-empty::after{
+    content:"—";
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--parchment-dim);
+  }
+  .mol-box-lg{
+    width:110px;
+    height:110px;
+    border-radius:6px;
+    border:1px solid var(--line);
+    background:#f4ecd8;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    flex-shrink:0;
+  }
+  .mol-box-lg img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+  }
+  .mol-box-lg.mol-empty{
+    background:var(--panel-2);
+    border-style:dashed;
+  }
+  .mol-box-lg.mol-empty::after{
+    content:"no structure found";
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.03em;
+    color:var(--parchment-dim);
+    text-align:center;
+    padding:0 8px;
+  }
+  .name-cell{
+    font-family:'Fraunces', serif;
+    font-size:17px;
+    font-weight:500;
+    color:var(--parchment);
+    letter-spacing:0.01em;
+    line-height:1.3;
+  }
+  .sub-cat{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--cat-color, var(--parchment-dim));
+    opacity:0.85;
+    margin-top:2px;
+    font-weight:500;
+  }
+  .entry:hover .name-cell{ color:var(--amber-bright); }
+  .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--cat-color, var(--sage));
+    border:1px solid var(--cat-color, var(--sage));
+    opacity:0.92;
+    padding:3px 8px;
+    border-radius:2px;
+    display:inline-block;
+    width:fit-content;
+  }
+  .pill.cat-dot::before{
+    content:"";
+    display:inline-block;
+    width:7px; height:7px;
+    border-radius:50%;
+    background:var(--cat-color, var(--parchment-dim));
+    margin-right:7px;
+    vertical-align:middle;
+  }
+  .pill.active.cat-dot::before{ background:#1a1207; }
+
+  .wiki-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:var(--ink);
+    background:var(--cat-color, var(--amber));
+    border:none;
+    padding:7px 14px;
+    border-radius:3px;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-weight:600;
+    transition:filter .15s ease;
+    height:fit-content;
+  }
+  .wiki-btn:hover{ filter:brightness(1.15); }
+  .wiki-btn::after{ content:"↗"; font-size:11px; }
+  .detail-meta-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:4px;
+  }
+  .pkpd-btn{
+    background:var(--panel-2);
+    color:var(--parchment);
+    border:1px solid var(--cat-color, var(--sage));
+  }
+  .pkpd-btn::after{ content:"⚕"; font-size:11px; }
+  .pkpd-btn:hover{ filter:brightness(1.25); }
+  .pkpd-btn[hidden]{ display:none !important; }
+  .pkpd-btn.loading{ opacity:0.55; cursor:progress; pointer-events:none; }
+
+  .bar1-compact{
+    display:flex;
+    flex-wrap:wrap;
+    gap:4px;
+    justify-content:flex-end;
+  }
+  .tiny-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9px;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:2px 6px;
+    border-radius:2px;
+    line-height:1.6;
+    white-space:nowrap;
+    border:1px solid var(--line);
+    color:var(--parchment-dim);
+  }
+  .tiny-tag.receptor-tag{ background:rgba(255,255,255,0.03); border-color:var(--amber); color:var(--amber-bright); }
+  .tagbars-block{ flex:1 1 280px; min-width:0; padding-left:18px; }
+  .bar-row{ display:flex; flex-wrap:wrap; gap:6px; }
+  .bar-row.bar1-row{ margin-bottom:8px; }
+  .chevron{
+    font-size:12px;
+    color:var(--parchment-dim);
+    transition:transform .2s ease;
+    text-align:center;
+  }
+  .entry.open .chevron{ transform:rotate(90deg); color:var(--amber); }
+
+  .detail{
+    max-height:0;
+    overflow:hidden;
+    transition: max-height .28s ease;
+  }
+  .entry.open .detail{ max-height:800px; }
+  .detail-inner{
+    padding:0 20px 24px 60px;
+    display:flex;
+    gap:24px;
+    flex-wrap:wrap;
+    width:100%;
+    box-sizing:border-box;
+  }
+  .detail-text{
+    flex:1 1 280px;
+    min-width:0;
+    font-size:14px;
+    line-height:1.7;
+    color:#d8cbac;
+    border-left:2px solid var(--cat-color, var(--amber));
+    padding-left:18px;
+    overflow-wrap:break-word;
+    word-wrap:break-word;
+  }
+  .detail-side{
+    display:flex;
+    gap:16px;
+    flex:1 1 280px;
+    min-width:0;
+  }
+  .detail-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--parchment-dim);
+    line-height:2;
+    min-width:150px;
+    flex:1 1 150px;
+  }
+  .detail-meta div span{ color:var(--parchment); }
+
+  .submenu-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--parchment-dim);
+    margin:0 0 8px;
+  }
+  .effects-block{
+    flex:1 1 280px;
+    min-width:0;
+    padding-left:18px;
+  }
+  .effects-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+  }
+  .effect-chip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.02em;
+    padding:5px 10px;
+    border-radius:12px;
+    border:1px solid var(--cat-color, var(--line));
+    color:var(--parchment);
+    background:rgba(255,255,255,0.03);
+  }
+  .ratings-block{
+    flex:0 1 220px;
+    min-width:190px;
+    padding-left:18px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .rating-row{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+  .rating-label{
+    display:flex;
+    justify-content:space-between;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--parchment-dim);
+  }
+  .rating-label b{
+    color:var(--parchment);
+    font-weight:600;
+    letter-spacing:0;
+    text-transform:none;
+    font-size:10.5px;
+  }
+  .rating-track{
+    width:100%;
+    height:5px;
+    border-radius:3px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    overflow:hidden;
+  }
+  .rating-fill{
+    height:100%;
+    border-radius:3px;
+  }
+
+  .pkpd-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(8,6,3,0.72);
+    backdrop-filter:blur(3px);
+    z-index:50;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:5vh 16px;
+    overflow-y:auto;
+  }
+  .pkpd-overlay[hidden]{ display:none; }
+  .pkpd-modal{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    max-width:760px;
+    width:100%;
+    box-shadow:var(--shadow);
+    margin-bottom:5vh;
+  }
+  .pkpd-modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:18px 22px;
+    border-bottom:1px solid var(--line);
+    position:sticky;
+    top:0;
+    background:var(--panel);
+    border-radius:8px 8px 0 0;
+  }
+  .pkpd-modal-title{
+    font-family:'Fraunces', serif;
+    font-size:20px;
+    font-weight:600;
+    color:var(--parchment);
+  }
+  .pkpd-modal-title span{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:4px;
+  }
+  .pkpd-modal-close{
+    font-family:'IBM Plex Mono', monospace;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--parchment-dim);
+    width:30px;
+    height:30px;
+    border-radius:4px;
+    cursor:pointer;
+    flex-shrink:0;
+    font-size:14px;
+    line-height:1;
+  }
+  .pkpd-modal-close:hover{ border-color:var(--amber); color:var(--parchment); }
+  .pkpd-modal-body{
+    padding:20px 22px;
+    max-height:64vh;
+    overflow-y:auto;
+    color:#d8cbac;
+    font-size:14px;
+    line-height:1.7;
+  }
+  .pkpd-modal-body .pkpd-loading,
+  .pkpd-modal-body .pkpd-error{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--parchment-dim);
+  }
+  .pkpd-section-block{
+    margin-bottom:26px;
+    padding-bottom:2px;
+  }
+  .pkpd-section-block:last-child{ margin-bottom:0; }
+  .wiki-content h2, .wiki-content h3, .wiki-content h4{
+    font-family:'Fraunces', serif;
+    color:var(--amber-bright);
+    font-weight:600;
+    margin:18px 0 8px;
+    line-height:1.3;
+  }
+  .wiki-content h2:first-child, .wiki-content h3:first-child, .wiki-content h4:first-child{ margin-top:0; }
+  .wiki-content p{ margin:0 0 12px; }
+  .wiki-content a{ color:var(--amber-bright); }
+  .wiki-content ul, .wiki-content ol{ margin:0 0 12px; padding-left:22px; }
+  .wiki-content li{ margin-bottom:4px; }
+  .wiki-content table{
+    border-collapse:collapse;
+    width:100%;
+    margin:12px 0 18px;
+    font-size:12.5px;
+  }
+  .wiki-content table caption{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--parchment-dim); margin-bottom:6px; text-align:left; }
+  .wiki-content th, .wiki-content td{
+    border:1px solid var(--line);
+    padding:6px 9px;
+    text-align:left;
+  }
+  .wiki-content th{ background:var(--panel-2); color:var(--parchment); }
+  .wiki-content sup{ font-size:9.5px; color:var(--parchment-dim); }
+  .wiki-content .mw-editsection{ display:none; }
+  .wiki-content .reference{ display:none; }
+  .wiki-content img{ max-width:100%; height:auto; }
+  .pkpd-modal-footer{
+    padding:14px 22px;
+    border-top:1px solid var(--line);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--parchment-dim);
+  }
+  .pkpd-modal-footer a{ color:var(--amber-bright); }
+
+  footer{
+    max-width:1080px;
+    margin:40px auto 0;
+    padding:24px 32px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--parchment-dim);
+    border-top:1px solid var(--line);
+    line-height:1.8;
+  }
+
+  @media (max-width: 860px) and (min-width: 641px){
+    .entry-row{ grid-template-columns: 40px 38px 1fr 120px 140px 20px; }
+  }
+
+  @media (max-width: 640px){
+    header{ padding:36px 18px 24px; }
+    main{ padding:0 14px; }
+    footer{ padding:20px 14px; }
+
+    .controls{ padding:16px 0 12px; }
+    .pill-row{ gap:6px; }
+    .pill{ font-size:10.5px; padding:5px 10px; }
+    .sort-row{ gap:8px; }
+    select{ font-size:11px; padding:6px 8px; }
+
+    .entry-row{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:6px 10px;
+      padding:14px 10px 14px 13px;
+    }
+    .idx{ order:1; }
+    .mol-box{ order:2; width:34px; height:34px; }
+    .name-cell{ order:3; flex:1 1 auto; font-size:16px; min-width:50%; }
+    .chevron{ order:4; margin-left:auto; }
+    .tag{ display:none; }
+    .bar1-compact{ order:5; margin-left:auto; justify-content:flex-end; }
+
+    .detail-inner{ padding:0 12px 20px 16px; gap:14px; }
+    .detail-text{ padding-left:14px; font-size:13.5px; flex:1 1 100%; }
+    .detail-side{ flex:1 1 100%; flex-wrap:wrap; }
+    .detail-meta{ flex:1 1 100%; min-width:0; }
+    .effects-block{ padding-left:14px; flex:1 1 100%; }
+    .ratings-block{ padding-left:14px; flex:1 1 100%; }
+    .mol-box-lg{ width:90px; height:90px; }
+    .wiki-btn{ font-size:10.5px; padding:6px 12px; }
+    .search-box{ width:100%; margin-left:0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow"><span>CNS Terpene & Phenylpropanoid Reference Ledger</span><span class="version-tag" id="versionTag">v2.0.0</span></div>
+  <h1>Terpene <em>Ledger</em></h1>
+  <div class="subhead">Top active CNS compounds categorized by primary class, mechanism tags, and max strength rating. Click any entry to inspect expanded pharmacology notes.</div>
+  <div class="stat-row">
+    <span><b id="stat-total">—</b> entries</span>
+    <span><b id="stat-classes">—</b> mechanism classes</span>
+  </div>
+</header>
+
+<main>
+  <div class="controls">
+    <div class="filter-label-row">
+      <div class="control-label" style="margin-bottom:0;">Filter by class</div>
+      <button class="toggle-btn" id="toggleFilters">Hide filters</button>
+    </div>
+    <div class="pill-row" id="pillRow"></div>
+    <div class="sort-row">
+      <div class="control-label" style="margin-bottom:0;">Sort</div>
+      <select id="sortSelect">
+        <option value="name-asc">Name A→Z</option>
+        <option value="name-desc">Name Z→A</option>
+        <option value="strength-desc">Max Strength (High→Low)</option>
+        <option value="category">Class, then name</option>
+      </select>
+      <input type="text" class="search-box" id="searchBox" placeholder="Search name…">
+    </div>
+  </div>
+
+  <div class="count-line" id="countLine"></div>
+  <div class="ledger" id="ledger"></div>
+</main>
+
+<div class="pkpd-overlay" id="pkpdOverlay" hidden>
+  <div class="pkpd-modal">
+    <div class="pkpd-modal-header">
+      <div class="pkpd-modal-title"><span>Pharmacology · PK/PD</span><span id="pkpdModalName"></span></div>
+      <button class="pkpd-modal-close" id="pkpdModalClose" aria-label="Close">✕</button>
+    </div>
+    <div class="pkpd-modal-body" id="pkpdModalBody"></div>
+    <div class="pkpd-modal-footer">Source: Wikipedia — <a id="pkpdModalSourceLink" href="#" target="_blank" rel="noopener noreferrer">view full article ↗</a></div>
+  </div>
+</div>
+
+<footer>
+  Curated database of volatile terpenes, sesquiterpenes, and phenylpropanoids with documented or expected central nervous system activity. Not medical advice.
+</footer>
+
+<script>
+const APP_VERSION = "2.0.0-terpenes";
+
+const RECEPTORS = [
+  "GABA-A", "NMDA", "AChE", "CB2", "5-HT1A", "5-HT2", "TRPM8", "TRPA1", "Nicotinic", "Monoamine"
+];
+
+const DATA = [
+  {
+    name: "Linalool",
+    cat: "gaba",
+    strength: 6.5,
+    tags: ["GABA-A", "NMDA", "Sedative"],
+    note: "Linalool acts as a robust, direct positive allosteric modulator of GABA-A receptors and inhibits glutamate release via NMDA receptor antagonism. It reliably produces deep behavioral sedation, muscle relaxation, and anxiolysis at doses well below toxic thresholds, displaying high bioavailability via inhalational routes.",
+    effects: ["Sedation", "Anxiolysis", "Muscle Relaxation", "Hypnotic"],
+    risk: 20,
+    research: 85
+  },
+  {
+    name: "Camphor (Camphre)",
+    cat: "stim",
+    strength: 8.0,
+    tags: ["Nicotinic", "GABA-A", "Convulsant"],
+    note: "Camphor is a potent bicyclic monoterpene ketone acting as a non-competitive antagonist at central nicotinic acetylcholine receptors and GABA-A ionophores. While highly active and volatile for rapid inhalational uptake, it carries a very narrow therapeutic window, quickly triggering central hyperexcitability, neural stimulation, or toxic convulsions at elevated doses.",
+    effects: ["Neural Stimulation", "Alertness", "Excitatory Shock"],
+    risk: 75,
+    research: 80
+  },
+  {
+    name: "1,8-Cineole (Eucalyptol)",
+    cat: "stim",
+    strength: 6.0,
+    tags: ["AChE", "TRPM8", "Vigilance"],
+    note: "1,8-Cineole features exceptional vapor pressure and high lipophilicity, making inhalation its premier route. It acts as a high-affinity inhibitor of brain acetylcholinesterase, elevating synaptic acetylcholine pools to enhance cortical blood flow, alertness, and cognitive vigilance.",
+    effects: ["Cognitive Enhancement", "Vigilance", "Cortical Activation"],
+    risk: 25,
+    research: 90
+  },
+  {
+    name: "Elemicine (Elemicine)",
+    cat: "psy",
+    strength: 7.5,
+    tags: ["5-HT2", "Psychoactive", "Precursor"],
+    note: "Elemicine is a naturally occurring phenylpropanoid skeleton that functions as a metabolic precursor to central hallucinogenic amphetamine analogues (such as the TMA series) or interacts directly with 5-HT2 serotonergic receptor complexes, capable of inducing profound shifts in consciousness.",
+    effects: ["Psychedelic Shift", "Perceptual Alteration", "Visionary States"],
+    risk: 60,
+    research: 70
+  },
+  {
+    name: "Isoelemicin",
+    cat: "psy",
+    strength: 7.0,
+    tags: ["5-HT2", "Monoamine", "Psychoactive"],
+    note: "An allylic isomer of elemicin that readily crosses the blood-brain barrier via lipophilic diffusion, acting as a potent psychoactive pro-drug and receptor ligand capable of modifying central monoamine dynamics and triggering deep sensory modification.",
+    effects: ["Sensory Modulation", "Altered Consciousness", "Sedative Shift"],
+    risk: 55,
+    research: 65
+  },
+  {
+    name: "Alpha-Pinene",
+    cat: "stim",
+    strength: 5.5,
+    tags: ["AChE", "Memory", "Alertness"],
+    note: "Alpha-pinene is a widely distributed bicyclic monoterpene that acts as a reversible, non-competitive inhibitor of central acetylcholinesterase. By preserving acetylcholine availability in synaptic clefts, it supports sustained attention, short-term memory retention, and mental clarity.",
+    effects: ["Memory Retention", "Alertness", "Anti-inflammatory"],
+    risk: 15,
+    research: 85
+  },
+  {
+    name: "Beta-Pinene",
+    cat: "stim",
+    strength: 5.0,
+    tags: ["AChE", "GABA-A", "Vigilance"],
+    note: "A structural isomer of alpha-pinene sharing similar volatile characteristics and acetylcholinesterase-inhibiting properties. It provides moderate central awakening effects and minor GABA modulation when inhaled.",
+    effects: ["Mental Clarity", "Focus", "Mild Stimulation"],
+    risk: 15,
+    research: 75
+  },
+  {
+    name: "Limonene",
+    cat: "stim",
+    strength: 6.0,
+    tags: ["5-HT1A", "Monoamine", "Mood"],
+    note: "Limonene readily crosses the blood-brain barrier to act as an agonist at central 5-HT1A receptors, accelerating striatal dopamine and serotonin turnover. It delivers reliable mood elevation, stress relief, and crisp mental alertness.",
+    effects: ["Mood Elevation", "Anxiolysis", "Dopaminergic Tone"],
+    risk: 15,
+    research: 90
+  },
+  {
+    name: "Carvacrol",
+    cat: "gaba",
+    strength: 5.0,
+    tags: ["GABA-A", "Ion Channel", "Sedative"],
+    note: "Carvacrol provides strong positive allosteric modulation of central GABA-A receptors combined with open-channel blockade of voltage-gated sodium and calcium channels. It yields effective neural slowing and sedation, though higher exposures approach mucosal and membrane toxicity.",
+    effects: ["Neural Slowing", "Sedation", "Analgesia"],
+    risk: 35,
+    research: 80
+  },
+  {
+    name: "Beta-Myrcene",
+    cat: "gaba",
+    strength: 4.5,
+    tags: ["GABA-A", "Adrenergic", "Relaxation"],
+    note: "Beta-myrcene enhances central GABAergic activity alongside alpha-2 adrenergic mechanisms, generating physical heaviness, lowered motor activity, and deep muscle relaxation with a very wide therapeutic safety index.",
+    effects: ["Body Relaxation", "Sedation", "Motor Depression"],
+    risk: 10,
+    research: 85
+  },
+  {
+    name: "Alpha-Terpineol",
+    cat: "gaba",
+    strength: 4.5,
+    tags: ["GABA-A", "Sedative"],
+    note: "An oxygenated monoterpene alcohol that depresses central spontaneous motor activity through reliable GABA-A receptor potentiation, cleanly inducing calmness and sleep latency reduction.",
+    effects: ["Calmness", "Sleep Support", "Mild Sedation"],
+    risk: 15,
+    research: 75
+  },
+  {
+    name: "Terpinene-4-ol",
+    cat: "gaba",
+    strength: 4.5,
+    tags: ["GABA-A", "Sedative"],
+    note: "The primary active alcohol constituent of tea tree oil. It exhibits positive allosteric modulation at GABA receptor sites, promoting calm nervous states and dampening excessive neuronal firing.",
+    effects: ["Anxiolysis", "Sedation", "Neural Dampening"],
+    risk: 20,
+    research: 70
+  },
+  {
+    name: "Citral (Neral & Geranial)",
+    cat: "gaba",
+    strength: 4.0,
+    tags: ["GABA-A", "Sedative"],
+    note: "Active monoterpene aldehyde components that depress central pathway transmission through enhanced GABAergic tone, providing steady relaxation when inhaled.",
+    effects: ["Sedation", "Relaxation", "Calming"],
+    risk: 20,
+    research: 70
+  },
+  {
+    name: "Terpinolene",
+    cat: "gaba",
+    strength: 3.5,
+    tags: ["GABA-A", "TRPA1", "Hypnagogic"],
+    note: "Demonstrates proven activity in mammalian inhalation models, reducing locomotor activity and inducing calming, dreamy, or hypnagogic state shifts through mixed GABA and TRPA1 channel modulation.",
+    effects: ["Dreamy States", "Calming", "Hypnagogic Shift"],
+    risk: 15,
+    research: 65
+  }
+];
+
+const CAT_LABELS = {
+  "gaba": "GABAergic / Sedative",
+  "stim": "Stimulant / Cholinergic",
+  "psy": "Psychoactive / Phenylpropanoid"
+};
+
+const CAT_COLORS = {
+  "gaba": "#7c9b7e",
+  "stim": "#c98a3e",
+  "psy": "#a24a3a"
+};
+
+let activeCat = "all";
+let sortMode = "strength-desc";
+let searchTerm = "";
+let openIdx = null;
+
+function baseCompoundName(name){
+  let s = name;
+  s = s.replace(/\s*\([^)]*\)\s*$/, '');
+  s = s.replace(/\s+(HCl|HCL|HBr|Sodium|Acetate|Phosphate|Succinate|Free\s*Base)\s*$/i, '');
+  return s.trim();
+}
+
+function wikiUrlFor(baseName){
+  const q = encodeURIComponent(baseName);
+  return `https://en.wikipedia.org/wiki/Special:Search?search=${q}&go=Go`;
+}
+
+function moleculeImgSrc(baseName){
+  return `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(baseName)}/PNG?record_type=2d&image_size=200x200`;
+}
+
+const WIKI_API = 'https://en.wikipedia.org/w/api.php';
+
+const PKPD_KEYWORDS = [
+  /pharmacokinet/i,
+  /pharmacodynam/i,
+  /pharmacolog/i,
+  /biological effects?/i,
+  /physiological effects?/i,
+  /mechanism of action/i
+];
+
+function isPkPdSectionTitle(title){
+  const t = decodeHtmlEntities((title || '').trim());
+  return PKPD_KEYWORDS.some(re => re.test(t));
+}
+
+function decodeHtmlEntities(s){
+  const ta = document.createElement('textarea');
+  ta.innerHTML = s;
+  return ta.value;
+}
+
+const pkpdCache = {};
+const pkpdInFlight = new Set();
+
+async function fetchJson(url, retries = 1){
+  let lastErr;
+  for(let attempt = 0; attempt <= retries; attempt++){
+    try{
+      const res = await fetch(url);
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    }catch(err){
+      lastErr = err;
+      if(attempt < retries) await new Promise(r => setTimeout(r, 350));
+    }
+  }
+  throw lastErr;
+}
+
+async function resolveWikiTitle(baseName){
+  try{
+    const url = `${WIKI_API}?action=query&titles=${encodeURIComponent(baseName)}&redirects=1&format=json&origin=*`;
+    const data = await fetchJson(url);
+    const pages = data && data.query && data.query.pages;
+    if(pages){
+      const page = Object.values(pages)[0];
+      if(page && page.pageid && !page.missing) return page.title;
+    }
+  }catch(err){}
+
+  try{
+    const url = `${WIKI_API}?action=query&list=search&srsearch=${encodeURIComponent(baseName)}&srwhat=nearmatch&format=json&origin=*`;
+    const data = await fetchJson(url);
+    const hit = data && data.query && data.query.search && data.query.search[0];
+    if(hit) return hit.title;
+  }catch(err){}
+
+  const url = `${WIKI_API}?action=query&list=search&srsearch=${encodeURIComponent(baseName)}&srlimit=1&format=json&origin=*`;
+  const data = await fetchJson(url);
+  const hit = data && data.query && data.query.search && data.query.search[0];
+  return hit ? hit.title : null;
+}
+
+async function fetchWikiSections(title){
+  const url = `${WIKI_API}?action=parse&page=${encodeURIComponent(title)}&prop=sections&format=json&origin=*`;
+  const data = await fetchJson(url);
+  if(data.error) return [];
+  return (data.parse && data.parse.sections) || [];
+}
+
+async function fetchSectionHtml(title, index){
+  const url = `${WIKI_API}?action=parse&page=${encodeURIComponent(title)}&section=${encodeURIComponent(index)}&prop=text&format=json&origin=*`;
+  const data = await fetchJson(url);
+  if(data.error) return '';
+  return (data.parse && data.parse.text && data.parse.text['*']) || '';
+}
+
+async function checkPkPdAvailability(entryName, baseName, btnEl){
+  if(pkpdCache[entryName]){
+    applyPkPdButtonState(btnEl, pkpdCache[entryName]);
+    return;
+  }
+  if(pkpdInFlight.has(entryName)) return;
+  pkpdInFlight.add(entryName);
+  btnEl.classList.add('loading');
+  try{
+    const title = await resolveWikiTitle(baseName);
+    let matches = [];
+    if(title){
+      const sections = await fetchWikiSections(title);
+      matches = sections.filter(s => isPkPdSectionTitle(s.line));
+    }
+    const result = { title, sections: matches };
+    pkpdCache[entryName] = result;
+    const liveBtn = document.querySelector(`.pkpd-btn[data-name="${cssEscape(entryName)}"]`);
+    if(liveBtn) applyPkPdButtonState(liveBtn, result);
+  }catch(err){
+    pkpdCache[entryName] = { title:null, sections:[], error:true };
+    const liveBtn = document.querySelector(`.pkpd-btn[data-name="${cssEscape(entryName)}"]`);
+    if(liveBtn) liveBtn.classList.remove('loading');
+  }finally{
+    pkpdInFlight.delete(entryName);
+  }
+}
+
+function applyPkPdButtonState(btnEl, result){
+  btnEl.classList.remove('loading');
+  btnEl.dataset.wikiTitle = result.title || '';
+  if(result.sections && result.sections.length > 0){
+    btnEl.hidden = false;
+  }else{
+    btnEl.hidden = true;
+  }
+}
+
+const NON_CONTENT_HEADING_RE = /^(references?|footnotes?|notes|citations?|external links|further reading|bibliography|sources)$/i;
+
+function stripReferenceBlocks(wrapper){
+  wrapper.querySelectorAll('.reflist, ol.references, .mw-cite-backlink, .mw-references-wrap').forEach(el => el.remove());
+  wrapper.querySelectorAll('h2, h3, h4, h5, h6').forEach(h=>{
+    const text = decodeHtmlEntities(h.textContent || '').trim();
+    if(!NON_CONTENT_HEADING_RE.test(text)) return;
+    const toRemove = [h];
+    let sibling = h.nextSibling;
+    while(sibling){
+      const next = sibling.nextSibling;
+      if(sibling.nodeType === 1 && /^H[2-6]$/.test(sibling.tagName)) break;
+      toRemove.push(sibling);
+      sibling = next;
+    }
+    toRemove.forEach(n => n.remove());
+  });
+}
+
+function sanitizeWikiHtml(html){
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = html;
+  wrapper.querySelectorAll('.mw-editsection').forEach(el => el.remove());
+  wrapper.querySelectorAll('sup.reference, sup.noprint, .reference').forEach(el => el.remove());
+  wrapper.querySelectorAll('sup').forEach(sup=>{
+    if(sup.querySelector('a[href^="#cite_note"]')) sup.remove();
+  });
+  stripReferenceBlocks(wrapper);
+  wrapper.querySelectorAll('a[href^="#"]').forEach(a=> a.removeAttribute('href'));
+  wrapper.querySelectorAll('a[href^="/wiki/"]').forEach(a=>{
+    a.setAttribute('href', 'https://en.wikipedia.org' + a.getAttribute('href'));
+    a.setAttribute('target', '_blank');
+    a.setAttribute('rel', 'noopener noreferrer');
+  });
+  wrapper.querySelectorAll('img').forEach(img=>{
+    const src = img.getAttribute('src');
+    if(src && src.startsWith('//')) img.setAttribute('src', 'https:' + src);
+    const srcset = img.getAttribute('srcset');
+    if(srcset) img.setAttribute('srcset', srcset.replace(/(^|,\s*)\/\//g, '$1https://'));
+  });
+  return wrapper.innerHTML;
+}
+
+async function openPkPdModal(entryName, baseName){
+  const overlay = document.getElementById('pkpdOverlay');
+  const body = document.getElementById('pkpdModalBody');
+  const nameEl = document.getElementById('pkpdModalName');
+  const sourceLink = document.getElementById('pkpdModalSourceLink');
+
+  nameEl.textContent = entryName;
+  overlay.hidden = false;
+  document.body.style.overflow = 'hidden';
+
+  const cached = pkpdCache[entryName];
+  if(!cached || !cached.sections || cached.sections.length === 0){
+    body.innerHTML = `<div class="pkpd-error">No pharmacology/PK-PD sections found.</div>`;
+    return;
+  }
+
+  sourceLink.href = wikiUrlFor(baseName);
+  body.innerHTML = `<div class="pkpd-loading">Loading literature…</div>`;
+
+  try{
+    const parts = await Promise.all(cached.sections.map(async s=>{
+      const html = await fetchSectionHtml(cached.title, s.index);
+      return `<div class="pkpd-section-block wiki-content">${sanitizeWikiHtml(html)}</div>`;
+    }));
+    if(document.getElementById('pkpdModalName').textContent !== entryName) return;
+    body.innerHTML = parts.join('') || `<div class="pkpd-error">No pharmacology/PK-PD sections found.</div>`;
+  }catch(err){
+    body.innerHTML = `<div class="pkpd-error">Couldn't load this literature right now. Try the full article link below.</div>`;
+  }
+}
+
+function closePkPdModal(){
+  document.getElementById('pkpdOverlay').hidden = true;
+  document.body.style.overflow = '';
+}
+
+function ratingColor(value, goodHigh){
+  const v = goodHigh ? value : 100 - value;
+  if(v < 34) return "#a24a3a";
+  if(v < 67) return "#c98a3e";
+  return "#7c9b7e";
+}
+
+function buildPills(){
+  const row = document.getElementById('pillRow');
+  const cats = ["all", ...Object.keys(CAT_LABELS).filter(c => DATA.some(d=>d.cat===c))];
+  row.innerHTML = cats.map(c => {
+    const label = c === "all" ? "All" : CAT_LABELS[c];
+    const count = c === "all" ? DATA.length : DATA.filter(d=>d.cat===c).length;
+    const dotClass = c === "all" ? "" : " cat-dot";
+    const style = c === "all" ? "" : ` style="--cat-color:${CAT_COLORS[c]}"`;
+    return `<div class="pill${c===activeCat?' active':''}${dotClass}" data-cat="${c}"${style}>${label} · ${count}</div>`;
+  }).join('');
+  row.querySelectorAll('.pill').forEach(p=>{
+    p.addEventListener('click', ()=>{ activeCat = p.dataset.cat; openIdx=null; buildPills(); render(); });
+  });
+}
+
+function tinyTag(text, extraClass){
+  return `<span class="tiny-tag ${extraClass}">${text}</span>`;
+}
+
+function getFiltered(){
+  let arr = DATA.filter(d => (activeCat==="all" || d.cat===activeCat) &&
+    d.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  switch(sortMode){
+    case "name-asc": arr.sort((a,b)=>a.name.localeCompare(b.name)); break;
+    case "name-desc": arr.sort((a,b)=>b.name.localeCompare(a.name)); break;
+    case "strength-desc": arr.sort((a,b)=>b.strength - a.strength || a.name.localeCompare(b.name)); break;
+    case "category": arr.sort((a,b)=> CAT_LABELS[a.cat].localeCompare(CAT_LABELS[b.cat]) || a.name.localeCompare(b.name)); break;
+  }
+  return arr;
+}
+
+function render(){
+  const arr = getFiltered();
+  document.getElementById('countLine').textContent = `Showing ${arr.length} of ${DATA.length} entries`;
+  const ledger = document.getElementById('ledger');
+  ledger.innerHTML = arr.map((d, i) => {
+    const base = baseCompoundName(d.name);
+    const wikiQuery = encodeURIComponent(base);
+    const wikiUrl = wikiUrlFor(base);
+    const molSrc = moleculeImgSrc(base);
+    const effects = (d.effects || []).slice(0, 5);
+    const riskColor = ratingColor(d.risk, false);
+    const researchColor = ratingColor(d.research, true);
+    return `
+    <div class="entry${openIdx===d.name?' open':''}" data-name="${d.name}" style="--cat-color:${CAT_COLORS[d.cat]}">
+      <div class="entry-row">
+        <div class="idx">${String(i+1).padStart(2,'0')}</div>
+        <div class="mol-box" data-mol><img src="${molSrc}" alt="" loading="lazy" onerror="this.parentElement.classList.add('mol-empty');this.remove();"></div>
+        <div class="name-cell">${d.name}<span class="sub-cat">${CAT_LABELS[d.cat]}</span></div>
+        <div class="tag">${CAT_LABELS[d.cat]}</div>
+        <div class="bar1-compact">
+          ${(d.tags||[]).map(t=>tinyTag(t, 'receptor-tag')).join('')}
+        </div>
+        <div class="chevron">▶</div>
+      </div>
+      <div class="detail">
+        <div class="detail-inner">
+          <div class="detail-text">${d.note}</div>
+          <div class="detail-side">
+            <div class="mol-box-lg" data-mol><img src="${molSrc}" alt="${base} molecule" loading="lazy" onerror="this.parentElement.classList.add('mol-empty');this.remove();"></div>
+            <div class="detail-meta">
+              <div>Class: <span>${CAT_LABELS[d.cat]}</span></div>
+              <div>Max Strength: <span>${d.strength} / 10</span></div>
+              <div class="detail-meta-actions">
+                <a class="wiki-btn" href="${wikiUrl}" data-title="${wikiQuery}" target="_blank" rel="noopener noreferrer" onclick="return openWiki(event, this)">Wiki</a>
+                <button class="wiki-btn pkpd-btn" type="button" data-name="${d.name}" data-base="${base}" data-wiki-title="" hidden>PK/PD</button>
+              </div>
+            </div>
+          </div>
+          <div class="tagbars-block">
+            <div class="submenu-label">Tags / Receptors</div>
+            <div class="bar-row bar2-row">
+              ${(d.tags||[]).map(r=>tinyTag(r, 'receptor-tag')).join('')}
+            </div>
+          </div>
+          <div class="effects-block">
+            <div class="submenu-label">Effects</div>
+            <div class="effects-row">
+              ${effects.map(e=>`<span class="effect-chip">${e}</span>`).join('')}
+            </div>
+          </div>
+          <div class="ratings-block">
+            <div class="submenu-label">Ratings</div>
+            <div class="rating-row">
+              <div class="rating-label"><b>Health risk</b><span>${d.risk}/100</span></div>
+              <div class="rating-track"><div class="rating-fill" style="width:${d.risk}%; background:${riskColor};"></div></div>
+            </div>
+            <div class="rating-row">
+              <div class="rating-label"><b>Research depth</b><span>${d.research}/100</span></div>
+              <div class="rating-track"><div class="rating-fill" style="width:${d.research}%; background:${researchColor};"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;}).join('');
+
+  ledger.querySelectorAll('.entry').forEach(el=>{
+    el.querySelector('.entry-row').addEventListener('click', ()=>{
+      const n = el.dataset.name;
+      openIdx = (openIdx === n) ? null : n;
+      render();
+    });
+  });
+
+  ledger.querySelectorAll('.pkpd-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      openPkPdModal(btn.dataset.name, btn.dataset.base);
+    });
+  });
+
+  if(openIdx){
+    const openBtn = ledger.querySelector(`.entry[data-name="${cssEscape(openIdx)}"] .pkpd-btn`);
+    if(openBtn) checkPkPdAvailability(openIdx, openBtn.dataset.base, openBtn);
+  }
+}
+
+function cssEscape(s){
+  return (window.CSS && CSS.escape) ? CSS.escape(s) : s.replace(/["\\]/g, '\\$&');
+}
+
+function updateStats(){
+  document.getElementById('stat-total').textContent = DATA.length;
+  document.getElementById('stat-classes').textContent = new Set(DATA.map(d=>d.cat)).size;
+}
+
+function openWiki(e, el){
+  e.stopPropagation();
+  e.preventDefault();
+
+  const title = el.dataset.title;
+  const webUrl = el.getAttribute('href');
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const isAndroid = /android/i.test(ua);
+
+  if(isAndroid){
+    const intentUrl = `intent://en.wikipedia.org/wiki/${title}#Intent;scheme=https;package=org.wikipedia;S.browser_fallback_url=${encodeURIComponent(webUrl)};end`;
+    window.location.href = intentUrl;
+    return false;
+  }
+
+  if(isIOS){
+    let handedOff = false;
+    const onHide = () => { handedOff = true; };
+    document.addEventListener('visibilitychange', onHide);
+    window.location.href = `wikipedia://en.wikipedia.org/wiki/${title}`;
+    setTimeout(()=>{
+      document.removeEventListener('visibilitychange', onHide);
+      if(!handedOff){ window.open(webUrl, '_blank', 'noopener,noreferrer'); }
+    }, 1200);
+    return false;
+  }
+
+  window.open(webUrl, '_blank', 'noopener,noreferrer');
+  return false;
+}
+
+document.getElementById('toggleFilters').addEventListener('click', (e)=>{
+  const row = document.getElementById('pillRow');
+  const collapsed = row.classList.toggle('collapsed');
+  e.target.textContent = collapsed ? 'Show filters' : 'Hide filters';
+});
+
+document.getElementById('sortSelect').addEventListener('change', (e)=>{ sortMode = e.target.value; render(); });
+document.getElementById('searchBox').addEventListener('input', (e)=>{ searchTerm = e.target.value; render(); });
+
+document.getElementById('pkpdModalClose').addEventListener('click', closePkPdModal);
+document.getElementById('pkpdOverlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'pkpdOverlay') closePkPdModal();
+});
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape' && !document.getElementById('pkpdOverlay').hidden) closePkPdModal();
+});
+
+document.getElementById('versionTag').textContent = `v${APP_VERSION}`;
+
+updateStats();
+buildPills();
+render();
+</script>
+</body>
+</html>
