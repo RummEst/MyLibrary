@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=980">
+<meta name="HandheldFriendly" content="false">
+<title>Materia Medica — Field Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12140f;
+    --surface:#1b1f16;
+    --surface-2:#20241a;
+    --border:#333a28;
+    --border-soft:#262b1e;
+    --ink:#e9e6db;
+    --ink-muted:#9aa08c;
+    --ink-faint:#6b715f;
+    --moss:#8aa06b;
+    --amber:#c98a4b;
+    --amber-dim:#7a5330;
+    --rust:#b06246;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at 20% -10%, rgba(138,160,107,0.07), transparent 45%),
+      radial-gradient(ellipse at 90% 0%, rgba(201,138,75,0.05), transparent 40%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    padding-bottom:56px;
+  }
+  ::selection{ background:var(--amber-dim); color:var(--ink); }
+
+  /* ---------- header ---------- */
+  header{
+    padding:34px 20px 22px;
+    border-bottom:1px solid var(--border-soft);
+    position:relative;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--moss);
+    margin:0 0 10px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(28px,7vw,38px);
+    margin:0 0 6px;
+    letter-spacing:-0.01em;
+    line-height:1.05;
+  }
+  header p.sub{
+    margin:0;
+    color:var(--ink-muted);
+    font-size:13.5px;
+    max-width:52ch;
+  }
+  header .count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-faint);
+    margin-top:14px;
+  }
+
+  /* ---------- card grid ---------- */
+  main{
+    padding:18px 16px 10px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+    max-width:920px;
+    margin:0 auto;
+  }
+  @media(min-width:680px){
+    main{ grid-template-columns:1fr 1fr; padding:22px 24px; gap:16px; }
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border-soft);
+    border-radius:14px;
+    padding:18px 18px 16px;
+    position:relative;
+    overflow:hidden;
+    transition:border-color .2s ease;
+  }
+  .card:before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:1px;
+    background:linear-gradient(90deg, transparent, rgba(138,160,107,.35), transparent);
+  }
+  .card:hover{ border-color:var(--border); }
+
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+    margin-bottom:2px;
+  }
+  .names h2{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:20px;
+    margin:0;
+    line-height:1.2;
+  }
+  .names .latin{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:13.5px;
+    color:var(--moss);
+    margin:2px 0 0;
+  }
+  .tag{
+    flex:0 0 auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:9.5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    padding:4px 8px;
+    border-radius:20px;
+    border:1px solid;
+    white-space:nowrap;
+    margin-top:2px;
+  }
+  .tag.psy{ color:var(--amber); border-color:var(--amber-dim); background:rgba(201,138,75,.08); }
+  .tag.calm{ color:var(--moss); border-color:#3c4a30; background:rgba(138,160,107,.08); }
+
+  /* potency vial gauge */
+  .potency{ margin:14px 0 15px; }
+  .potency-label{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin-bottom:6px;
+  }
+  .potency-label .val{ color:var(--ink-muted); font-size:11px; letter-spacing:0; }
+  .gauge{
+    position:relative;
+    height:16px;
+    background:var(--surface-2);
+    border:1px solid var(--border-soft);
+    border-radius:3px;
+    overflow:hidden;
+  }
+  .gauge-fill{
+    position:absolute; top:0; left:0; bottom:0;
+    background:linear-gradient(90deg, #6d4726, var(--amber));
+    border-radius:2px 0 0 2px;
+    transition:width .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .gauge-ticks{
+    position:absolute; inset:0;
+    display:flex;
+  }
+  .gauge-ticks i{
+    flex:1;
+    border-right:1px solid rgba(0,0,0,.35);
+  }
+  .gauge-ticks i:last-child{ border-right:none; }
+
+  .effects{
+    font-size:13.5px;
+    line-height:1.55;
+    color:var(--ink);
+    margin:0 0 6px;
+  }
+  .compounds{
+    font-size:12px;
+    line-height:1.5;
+    color:var(--ink-faint);
+    margin:0 0 14px;
+  }
+  .compounds b{ color:var(--ink-muted); font-weight:500; }
+
+  /* receptor table, grouped by substance */
+  .receptors-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin:0 0 8px;
+  }
+  .rtable{
+    width:100%;
+    border-collapse:collapse;
+    border:1px solid var(--border-soft);
+    border-radius:8px;
+    overflow:hidden;
+    font-size:12px;
+  }
+  .rtable thead th{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:9.5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    text-align:left;
+    background:var(--surface-2);
+    padding:7px 9px;
+    font-weight:500;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .rtable tbody tr.rrow{
+    cursor:pointer;
+    transition:background .15s ease;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .rtable tbody tr.rrow:last-child{ border-bottom:none; }
+  .rtable tbody tr.rrow:hover{ background:#28311f; }
+  .rtable tbody tr.rrow:active{ background:#2c3722; }
+  .rtable tbody tr.rrow.inert{ cursor:default; }
+  .rtable tbody tr.rrow.inert:hover{ background:none; }
+  .rtable td{
+    padding:8px 9px 8px 16px;
+    color:var(--ink);
+    vertical-align:top;
+  }
+  .rtable td.rname{
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--ink);
+    font-size:11.5px;
+  }
+  .rtable td.ractivity{
+    color:var(--moss);
+  }
+  .rtable td.raffinity{
+    color:var(--ink-faint);
+    font-size:11px;
+  }
+  /* substance divider row */
+  .rtable tr.substance-row td{
+    padding:8px 9px;
+    background:var(--surface-2);
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:12.5px;
+    color:var(--amber);
+    border-bottom:1px solid var(--border-soft);
+    border-top:1px solid var(--border-soft);
+  }
+  .rtable tr.substance-row:first-child td{ border-top:none; }
+  .rtable.empty-table td{
+    color:var(--ink-faint);
+    font-style:italic;
+    cursor:default;
+    padding:10px 9px;
+  }
+
+  /* ---------- modal ---------- */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(8,9,6,.72);
+    backdrop-filter:blur(2px);
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease;
+    z-index:50;
+    padding:0;
+  }
+  @media(min-width:680px){
+    .overlay{ align-items:center; padding:20px; }
+  }
+  .overlay.open{ opacity:1; pointer-events:auto; }
+
+  .modal{
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-top:1px solid #3c4430;
+    width:100%;
+    max-width:480px;
+    max-height:82vh;
+    overflow-y:auto;
+    border-radius:18px 18px 0 0;
+    padding:22px 22px 28px;
+    transform:translateY(16px);
+    transition:transform .25s cubic-bezier(.2,.8,.2,1);
+  }
+  @media(min-width:680px){
+    .modal{ border-radius:16px; transform:translateY(8px) scale(.98); }
+  }
+  .overlay.open .modal{ transform:translateY(0) scale(1); }
+
+  .modal-handle{
+    width:36px; height:4px;
+    background:var(--border);
+    border-radius:4px;
+    margin:0 auto 16px;
+  }
+  @media(min-width:680px){ .modal-handle{ display:none; } }
+
+  .modal-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom:4px;
+  }
+  .modal h3{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:21px;
+    margin:0;
+    line-height:1.2;
+  }
+  .modal-activity{
+    flex:0 0 auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--bg);
+    background:var(--moss);
+    padding:5px 9px;
+    border-radius:20px;
+    margin-top:3px;
+  }
+  .modal-source{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:.03em;
+    color:var(--ink-faint);
+    margin:6px 0 0;
+  }
+  .modal-subtitle{
+    font-size:12.5px;
+    color:var(--amber);
+    margin:8px 0 16px;
+    line-height:1.5;
+    border-bottom:1px solid var(--border-soft);
+    padding-bottom:14px;
+  }
+  .modal-body{
+    font-size:14px;
+    line-height:1.68;
+    color:var(--ink);
+    white-space:pre-line;
+  }
+  .modal-close{
+    margin-top:22px;
+    width:100%;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--ink-muted);
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    padding:11px;
+    border-radius:9px;
+    cursor:pointer;
+  }
+  .modal-close:hover{ border-color:var(--moss); color:var(--ink); }
+
+  footer{
+    text-align:center;
+    color:var(--ink-faint);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:.06em;
+    padding:26px 20px 10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Personal Field Index</p>
+  <h1>Materia Medica</h1>
+  <p class="sub">A working reference of botanicals, their traditional effects, and the receptor systems thought to mediate them. Sorted most → least psychoactive.</p>
+  <p class="count" id="herbCount"></p>
+</header>
+
+<main id="cardGrid"></main>
+
+<footer>Compiled from field & literature notes · tap a receptor row to read more</footer>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <h3 id="modalTitle"></h3>
+      <span class="modal-activity" id="modalActivity"></span>
+    </div>
+    <p class="modal-subtitle" id="modalSubtitle"></p>
+    <div class="modal-body" id="modalBody"></div>
+    <button class="modal-close" id="modalClose">Close</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DATA — receptor/activity descriptions (for popups)
+   ============================================================ */
+const RECEPTORS = {
+  "5HT3A_antagonist": { title:"5-HT3A Receptor", activity:"Antagonist",
+    subtitle:"Serotonin — Ligand-gated cation channel (ionotropic receptor)",
+    body:"Located on vagal afferents, brainstem nuclei, limbic regions, and terminals of several neurotransmitter systems, this receptor rapidly depolarizes neurons and regulates serotonin release, nausea, visceral signaling, and cortical–limbic activity.\n\nAntagonism reduces emetic and visceral sensory signaling and may produce anxiolytic, anti-nausea, and cognition-supporting effects by altering serotonin, dopamine, and acetylcholine release." },
+  "GABAA_weak": { title:"GABA-A Receptor", activity:"Weak modulator",
+    subtitle:"GABA — Ligand-gated chloride channel (ionotropic receptor); weak allosteric modulator",
+    body:"Widely distributed throughout the brain and spinal cord, GABA-A receptors mediate fast inhibitory neurotransmission and regulate neuronal excitability, sensory processing, muscle tone, and network oscillations.\n\nWeak modulation produces a modest increase or alteration in inhibitory tone, potentially reducing anxiety, excitability, and seizure susceptibility with less sedation, amnesia, motor impairment, and dependence liability than stronger positive modulation." },
+  "GABAA_PAM": { title:"GABA-A Receptor", activity:"Positive allosteric modulator",
+    subtitle:"GABA — Ligand-gated chloride channel (ionotropic receptor); positive allosteric modulator",
+    body:"Found throughout the central nervous system, GABA-A receptors rapidly inhibit neurons by increasing chloride conductance and help coordinate sleep, anxiety, muscle tone, and seizure control.\n\nPositive allosteric modulation enhances responses to endogenous GABA and can cause anxiolytic, sedative, anticonvulsant, muscle-relaxant, and amnestic effects, with stronger modulation increasing motor impairment and respiratory-depression risk." },
+  "GABAA_antagonist": { title:"GABA-A Receptor", activity:"Antagonist",
+    subtitle:"GABA — Ligand-gated chloride channel (ionotropic receptor)",
+    body:"GABA-A receptors are broadly expressed in cortical, hippocampal, thalamic, cerebellar, and spinal circuits, where they provide rapid synaptic and tonic inhibition.\n\nAntagonism decreases inhibitory control, increasing neuronal excitability and potentially causing anxiety, agitation, insomnia, tremor, seizures, sensory hypersensitivity, and motor hyperactivity." },
+  "5HT2A_agonist": { title:"5-HT2A Receptor", activity:"Agonist",
+    subtitle:"Serotonin — Gq/11-coupled GPCR",
+    body:"Located prominently in the cerebral cortex, especially on layer V pyramidal neurons, as well as in thalamic and vascular tissues, 5-HT2A receptors regulate glutamate release, cortical network activity, perception, and vascular tone.\n\nAgonism can produce altered perception, hallucination-like effects, cognitive and emotional changes, and behavioral activation; it may also increase cortical glutamatergic signaling and sympathetic or vascular responses." },
+  "TAAR1_agonist": { title:"TAAR1 Receptor", activity:"Agonist",
+    subtitle:"Trace amines, including tyramine and β-phenethylamine — Gs/Golf-coupled intracellular GPCR",
+    body:"TAAR1 is expressed in monoaminergic neurons and several brain regions, including midbrain dopamine circuits, where it modulates dopamine, norepinephrine, and serotonin transporter and receptor function.\n\nAgonism generally dampens excessive monoamine neuron firing and may reduce psychostimulant-related hyperactivity, impulsivity, and psychosis-like signaling while potentially improving attention and cognitive control." },
+  "MAO_inhibitor": { title:"Monoamine Oxidase (MAO)", activity:"Inhibitor",
+    subtitle:"Monoamines, including serotonin, dopamine, and norepinephrine — Mitochondrial flavin-dependent enzyme; not a classical receptor",
+    body:"MAO-A and MAO-B are located on the outer mitochondrial membrane in neurons, glia, peripheral tissues, and platelets, where they metabolize monoamine neurotransmitters and dietary or cellular amines.\n\nInhibition increases monoamine availability and can produce antidepressant, anxiolytic, motivational, or antiparkinsonian effects, but excessive monoamine accumulation may cause insomnia, agitation, hypertension, or dangerous interactions with serotonergic and sympathomimetic drugs." },
+  "5HT5A_partial": { title:"5-HT5A Receptor", activity:"Partial agonist",
+    subtitle:"Serotonin — Gi/o-coupled GPCR",
+    body:"5-HT5A receptors are expressed in the cerebral cortex, hippocampus, thalamus, and other limbic and cognitive regions, where they regulate neuronal excitability, circadian signaling, and neurotransmitter release.\n\nPartial agonism may moderately reduce neuronal signaling and alter serotonin, dopamine, and glutamate transmission, with possible effects on anxiety, mood, cognition, sleep, and sensorimotor processing." },
+  "SERT_reuptake": { title:"Serotonin Transporter (SERT)", activity:"Reuptake inhibitor",
+    subtitle:"Serotonin — Na⁺/Cl⁻-dependent neurotransmitter transporter; not a receptor",
+    body:"SERT is located primarily on presynaptic serotonin neurons in the raphe nuclei and their projections throughout the cortex, hippocampus, limbic system, and periphery, where it clears serotonin from the synaptic space.\n\nReuptake inhibition increases extracellular serotonin and gradually alters downstream receptor signaling, supporting antidepressant and anxiolytic effects while sometimes causing nausea, sleep or sexual effects, emotional blunting, or initial agitation." },
+  "PDE4_inhibitor": { title:"Phosphodiesterase 4 (PDE4)", activity:"Inhibitor",
+    subtitle:"Cyclic AMP — cAMP-hydrolyzing intracellular enzyme; not a classical receptor",
+    body:"PDE4 is widely expressed in neurons, immune cells, smooth muscle, and other tissues, where it limits cAMP signaling downstream of many neurotransmitter and hormone receptors.\n\nInhibition elevates intracellular cAMP and can enhance synaptic plasticity, memory-related signaling, and anti-inflammatory responses, but excessive activity commonly produces nausea, vomiting, restlessness, insomnia, or mood activation." },
+  "CB1_agonist": { title:"CB1 Receptor", activity:"Agonist",
+    subtitle:"Endocannabinoids, especially anandamide and 2-AG — Gi/o-coupled GPCR",
+    body:"CB1 receptors are abundant in the cerebral cortex, hippocampus, basal ganglia, cerebellum, and peripheral nerves, where they presynaptically suppress release of GABA, glutamate, and other neurotransmitters.\n\nAgonism can produce euphoria, relaxation, analgesia, altered time perception, impaired short-term memory, reduced coordination, appetite stimulation, and autonomic changes such as tachycardia." },
+  "D1_antagonist": { title:"Dopamine D1 Receptor", activity:"Antagonist",
+    subtitle:"Dopamine — Gs/olf-coupled GPCR",
+    body:"D1 receptors are concentrated in the striatum, nucleus accumbens, cortex, and other basal-ganglia circuits, where they enhance excitability of direct-pathway neurons and support reward, motivation, cognition, and movement.\n\nAntagonism reduces D1-mediated facilitation and may blunt reward, motivation, and cognitive or motor activation while potentially impairing working memory and contributing to reduced spontaneous movement." },
+  "D2_agonist": { title:"Dopamine D2 Receptor", activity:"Agonist",
+    subtitle:"Dopamine — Gi/o-coupled GPCR; pre- and postsynaptic receptor",
+    body:"D2 receptors are located in the striatum, limbic system, pituitary, and midbrain dopamine neurons, where they inhibit neuronal activity, regulate indirect-pathway motor circuits, and provide autoreceptor feedback on dopamine release.\n\nAgonism can reduce prolactin secretion, facilitate some dopaminergic motor functions, and alter reward and motivation; excessive stimulation may produce impulsivity, reinforcement, stereotypy, or psychosis-like behavioral activation." },
+  "DA_5HT_mixed": { title:"Dopamine / 5-HT Receptors", activity:"Mixed modulator",
+    subtitle:"Dopamine and serotonin — Mixed GPCR activity across dopamine and serotonin receptor families",
+    body:"Dopamine and serotonin receptors are distributed throughout cortical, limbic, striatal, hypothalamic, and brainstem circuits, where their interacting systems regulate mood, salience, cognition, reward, motor control, appetite, and autonomic function.\n\nMixed modulation can rebalance dopaminergic and serotonergic signaling, potentially affecting psychosis, anxiety, depression, motivation, cognition, movement, and sleep; the behavioral outcome depends strongly on the receptor subtypes and direction of modulation involved." },
+  "COX2_inhibitor": { title:"Cyclooxygenase-2 (COX-2)", activity:"Inhibitor",
+    subtitle:"Arachidonic acid — Prostaglandin-synthesizing enzyme; not a classical receptor",
+    body:"COX-2 is inducible in inflammatory cells and peripheral tissues and is also constitutively expressed in parts of the brain, where it converts arachidonic acid into prostaglandin precursors involved in pain, fever, inflammation, and synaptic signaling.\n\nInhibition reduces prostaglandin production and can lessen inflammatory pain, fever, edema, and sickness behavior, while potentially affecting gastrointestinal, renal, cardiovascular, and neuroinflammatory processes." },
+  "CCR6_CCR4_modulator": { title:"CCR6 / CCR4 Receptors", activity:"Modulator",
+    subtitle:"CCL20 for CCR6; CCL17 and CCL22 for CCR4 — Gi/o-coupled chemokine GPCRs",
+    body:"CCR6 and CCR4 are expressed on subsets of T cells, dendritic cells, epithelial and immune tissues, and sometimes glial or tumor-associated cells, where they guide leukocyte migration and tissue-specific immune surveillance.\n\nModulation can alter immune-cell recruitment, neuroinflammation, allergy, and autoimmune signaling, with indirect effects on pain, fatigue, mood, and sickness behavior rather than direct classical neurotransmitter effects." },
+  "Aromatase_inhibitor": { title:"Aromatase (CYP19A1)", activity:"Inhibitor",
+    subtitle:"Androgen substrates and estrogen products — Cytochrome P450 steroidogenic enzyme; not a classical receptor",
+    body:"Aromatase is present in ovarian and placental tissues, adipose tissue, brain regions, and other steroidogenic sites, where it converts androgens into estrogens such as estradiol.\n\nInhibition lowers local and circulating estrogen formation, potentially affecting reproductive physiology, bone maintenance, thermoregulation, cognition, mood, and sex-related behavior." },
+  "NFkB_MAPK_modulator": { title:"NF-κB / MAPK Signaling", activity:"Modulator",
+    subtitle:"Inflammatory cytokines, growth factors, and cellular stress signals — Intracellular transcriptional and kinase signaling pathways; not a receptor",
+    body:"NF-κB and MAPK pathways operate across immune, neural, epithelial, and other tissues to translate inflammatory, stress, and growth signals into changes in gene expression, cytokine production, survival, and plasticity.\n\nModulation can reduce or reshape inflammatory and stress-responsive gene programs, potentially influencing neuroinflammation, pain, immune activation, cellular survival, cognition, mood, and sickness behavior." },
+  "BZD_site_ligand": { title:"Benzodiazepine Site on GABA-A Receptor", activity:"Ligand",
+    subtitle:"Endogenous neurosteroids and GABAergic inhibitory system — Allosteric ligand-binding site on a ligand-gated chloride channel; not a separate receptor",
+    body:"The benzodiazepine site lies at subunit interfaces on specific GABA-A receptor assemblies throughout the brain, especially in cortical, limbic, thalamic, and cerebellar circuits.\n\nLigand binding can enhance or alter GABA-A signaling and thereby produce anxiolytic, sedative, anticonvulsant, muscle-relaxant, and amnestic effects; the precise profile depends on receptor subtype and whether the ligand is a positive, negative, or neutral modulator." },
+  "GABA_Glu_balance_modulator": { title:"GABA / Glutamate Balance", activity:"Modulator",
+    subtitle:"GABA and glutamate — Integrated inhibitory/excitatory neurotransmitter system; not a single receptor or molecular target",
+    body:"GABAergic and glutamatergic neurons are distributed throughout the brain and spinal cord, where their balance controls network excitability, sensory processing, learning, memory, motor output, and seizure threshold.\n\nModulation toward greater inhibition may reduce anxiety, excitability, seizures, and arousal, whereas modulation toward greater excitation may enhance plasticity, attention, or activation but can increase agitation, insomnia, excitotoxicity, or seizure risk." },
+  "Estrogen_modulator": { title:"Estrogen Receptor", activity:"Modulator",
+    subtitle:"Estradiol and other estrogens — Nuclear transcription factor and membrane-associated signaling receptor",
+    body:"Estrogen receptors ERα and ERβ are expressed in reproductive tissues, hypothalamus, hippocampus, cortex, limbic regions, bone, and cardiovascular tissues, where they regulate gene transcription, neuronal plasticity, metabolism, and reproductive physiology.\n\nModulation can affect reproductive behavior, mood, cognition, thermoregulation, bone and cardiovascular function, and neuroprotection, with effects depending on receptor subtype, tissue, and whether signaling is agonized or blocked." },
+  "a7_nAChR_antagonist": { title:"α7 Nicotinic Acetylcholine Receptor", activity:"Antagonist",
+    subtitle:"Acetylcholine — Homopentameric ligand-gated cation channel (ionotropic receptor)",
+    body:"α7-nAChRs are found in the cortex, hippocampus, thalamus, autonomic ganglia, immune cells, and other tissues, where they mediate rapid cholinergic signaling and influence attention, learning, sensory gating, synaptic plasticity, and inflammatory regulation.\n\nAntagonism reduces fast cholinergic excitation and can impair attention, memory, sensory processing, and cognitive flexibility while potentially decreasing cholinergic modulation of inflammation." },
+  "AChE_inhibitor": { title:"Acetylcholinesterase (AChE)", activity:"Inhibitor",
+    subtitle:"Acetylcholine — Synaptic hydrolase enzyme; not a classical receptor",
+    body:"AChE is concentrated in cholinergic synapses and neuromuscular junctions, where it rapidly hydrolyzes acetylcholine to terminate neurotransmission and regulate central and peripheral cholinergic tone.\n\nInhibition increases acetylcholine signaling and may improve attention, memory, and neuromuscular transmission, but excessive inhibition can cause salivation, sweating, gastrointestinal activation, bradycardia, muscle fasciculations, confusion, or seizures." },
+  "MuOpioid_indirect": { title:"Mu-Opioid Receptor", activity:"Indirect agonist",
+    subtitle:"Endogenous opioids, especially endorphins and enkephalins — Gi/o-coupled GPCR",
+    body:"Mu-opioid receptors are abundant in pain pathways, the brainstem, limbic reward circuits, gastrointestinal tract, and peripheral sensory neurons, where they inhibit neurotransmitter release and neuronal excitability.\n\nIndirect agonism, such as increasing endogenous opioid release or reducing its breakdown, can produce analgesia, stress relief, sedation, and reward-related effects, while excessive activation may cause constipation, respiratory depression, tolerance, dependence, and altered motivation." },
+  "NET_ionchannels_inhibitor": { title:"Ion Channels / Norepinephrine Transporter (NET)", activity:"Inhibitor",
+    subtitle:"Norepinephrine; ionic electrochemical gradients — Na⁺/Cl⁻-dependent transporter plus ion-channel targets; not a single classical receptor",
+    body:"NET is located on noradrenergic terminals in the locus coeruleus and throughout the cortex, hippocampus, sympathetic nerves, and peripheral organs, where it clears norepinephrine and also contributes to dopamine clearance in some brain regions.\n\nNET inhibition increases extracellular norepinephrine and can enhance arousal, attention, vigilance, and sympathetic tone; concurrent ion-channel inhibition may alter neuronal firing, pain signaling, seizure threshold, heart rate, or motor function depending on the channels affected." }
+};
+
+/* ============================================================
+   DATA — herbs, each broken down by substance → receptor hits
+   ============================================================ */
+const HERBS = [
+  { name:"Siberian Motherwort", latin:"Leonurus sibiricus", psychoactive:false, potency:1.0,
+    effects:"Calming, mild anxiolytic/sedative, anti-inflammatory, cardiovascular support (vasorelaxant).",
+    compounds:"Leonurine, leosibirin-type diterpenes, flavonoids, phenolic acids",
+    substances:[
+      { name:"Leonurine", hits:[
+        { key:"5HT3A_antagonist", receptor:"5-HT3A", activity:"High affinity (antagonist/modulator)", affinity:"Not quantified (Ki not documented)" },
+        { key:"GABAA_weak", receptor:"GABA-A", activity:"Weak binding", affinity:"—" }
+      ]}
+    ] },
+  { name:"Wild Lettuce", latin:"Lactuca virosa", psychoactive:true, potency:2.0,
+    effects:"Sedative, mild analgesic, relaxant; dream-enhancing in some anecdotal reports.",
+    compounds:"Lactucin, lactucopicrin, lactucic acid",
+    substances:[
+      { name:"Lactucin / Lactucopicrin", hits:[
+        { key:"AChE_inhibitor", receptor:"Acetylcholinesterase", activity:"Inhibitor", affinity:"Not quantified" },
+        { key:"MuOpioid_indirect", receptor:"Mu-opioid receptor (indirect)", activity:"Downstream GABA suppression", affinity:"Speculative / mechanistic inference" },
+        { key:"GABAA_weak", receptor:"GABA-A", activity:"Indirectly modulated via opioid pathway", affinity:"Speculative" }
+      ]}
+    ] },
+  { name:"Damiana", latin:"Turnera diffusa", psychoactive:true, potency:1.5,
+    effects:"Mild euphoria, relaxation, reputed aphrodisiac, mood lift.",
+    compounds:"Damianin, apigenin, arbutin, thymol",
+    substances:[
+      { name:"Damianin", hits:[
+        { key:"Estrogen_modulator", receptor:"Estrogen receptor / aromatase", activity:"Proposed inhibitor (indirect, via apigenin co-occurrence)", affinity:"Not quantified — weak/traditional-use based" }
+      ]}
+    ] },
+  { name:"Jurema", latin:"Mimosa tenuiflora", psychoactive:true, potency:9.5,
+    effects:"Psychedelic (visionary) when combined with a MAOI; orally inactive alone due to gut MAO breakdown.",
+    compounds:"DMT (root bark ~1–1.7%), yuremamine, tannins",
+    substances:[
+      { name:"DMT", hits:[
+        { key:"5HT2A_agonist", receptor:"5-HT2A", activity:"Agonist", affinity:"Primary target, not quantified" },
+        { key:"TAAR1_agonist", receptor:"TAAR (trace amine receptors)", activity:"Agonist (proposed)", affinity:"Emerging / preliminary" }
+      ]},
+      { name:"Yuremamine", hits:[
+        { key:"MAO_inhibitor", receptor:"MAO (monoamine oxidase)", activity:"Proposed inhibitor", affinity:"Isoform/Ki unknown — hypothesis, unconfirmed" }
+      ]}
+    ] },
+  { name:"Kava Kava", latin:"Piper methysticum", psychoactive:true, potency:4.0,
+    effects:"Relaxation, mild euphoria, muscle relaxation, sociability, anxiolytic.",
+    compounds:"Kavalactones — kavain, dihydrokavain, methysticin, dihydromethysticin, yangonin, desmethoxyyangonin",
+    substances:[
+      { name:"Kavain", hits:[
+        { key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive modulator", affinity:"Low-micromolar" }
+      ]},
+      { name:"Dihydrokavain", hits:[
+        { key:"NET_ionchannels_inhibitor", receptor:"Ion channels / NET", activity:"Inhibitor", affinity:"Not quantified" }
+      ]},
+      { name:"Methysticin", hits:[
+        { key:"GABAA_PAM", receptor:"GABA-A", activity:"Enhanced ligand binding", affinity:"Micromolar" }
+      ]},
+      { name:"Dihydromethysticin", hits:[
+        { key:"GABAA_PAM", receptor:"GABA-A / neuroprotective pathways", activity:"Modulator", affinity:"Not quantified" }
+      ]},
+      { name:"Yangonin", hits:[
+        { key:"CB1_agonist", receptor:"CB1 (cannabinoid)", activity:"Ligand binding", affinity:"Not quantified" }
+      ]},
+      { name:"Desmethoxyyangonin", hits:[
+        { key:"CB1_agonist", receptor:"CB1 (grouped with yangonin)", activity:"Ligand binding", affinity:"Not quantified" }
+      ]}
+    ] },
+  { name:"Blue Lotus", latin:"Nymphaea caerulea", psychoactive:true, potency:3.5,
+    effects:"Mild euphoria, relaxation, sensuality, dream enhancement.",
+    compounds:"Aporphine, nuciferine",
+    substances:[
+      { name:"Aporphine", hits:[
+        { key:"D1_antagonist", receptor:"Dopamine D1", activity:"Antagonist", affinity:"Not quantified" }
+      ]},
+      { name:"Nuciferine", hits:[
+        { key:"DA_5HT_mixed", receptor:"Dopamine + 5-HT (multi-target)", activity:"Mixed antagonist/modulator", affinity:"Ki not found — data gap" }
+      ]}
+    ] },
+  { name:"Kanna", latin:"Sceletium tortuosum", psychoactive:true, potency:5.0,
+    effects:"Mood elevation, mild euphoria, empathogenic, anxiolytic, appetite suppression.",
+    compounds:"Mesembrine, mesembrenone, mesembrenol",
+    substances:[
+      { name:"Mesembrine", hits:[
+        { key:"SERT_reuptake", receptor:"SERT", activity:"Reuptake inhibitor", affinity:"Ki 1.4 nM (potent)" }
+      ]},
+      { name:"Mesembrenone", hits:[
+        { key:"SERT_reuptake", receptor:"SERT", activity:"Reuptake inhibitor", affinity:"IC50 below threshold (not fully specified)" },
+        { key:"PDE4_inhibitor", receptor:"PDE4", activity:"Inhibitor", affinity:"IC50 below threshold (not fully specified)" }
+      ]},
+      { name:"Mesembrenol", hits:[
+        { key:"SERT_reuptake", receptor:"SERT", activity:"Reuptake inhibitor", affinity:"1.4 nM range (possible source conflation)" },
+        { key:"PDE4_inhibitor", receptor:"PDE4", activity:"Inhibitor", affinity:"1.4 nM range (possible source conflation)" }
+      ]}
+    ] },
+  { name:"Sakae Naa", latin:"Combretum quadrangulare", psychoactive:true, potency:2.0,
+    effects:"Mild stimulation, mood enhancement, mental clarity; used as a kratom substitute. Mechanism disputed.",
+    compounds:"Combretol, combretine (flavonoids), triterpenes",
+    substances:[
+      { name:"Combretol / Combretine", hits:[
+        { key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No data located" }
+      ]}
+    ] },
+  { name:"Wormwood", latin:"Artemisia absinthium", psychoactive:true, potency:3.0,
+    effects:"Historically linked to mild hallucinogenic/stimulant lore (absinthe); primarily a bitter digestive and vermifuge.",
+    compounds:"Thujone, absinthin",
+    substances:[
+      { name:"Thujone", hits:[
+        { key:"GABAA_antagonist", receptor:"GABA-A", activity:"Competitive antagonist", affinity:"IC50 21 µM" },
+        { key:"a7_nAChR_antagonist", receptor:"α7-nicotinic ACh receptor", activity:"Reversible inhibitor", affinity:"IC50 24.7 µM" }
+      ]}
+    ] },
+  { name:"Valerijana (Valerian)", latin:"Valeriana officinalis", psychoactive:false, potency:1.5,
+    effects:"Sedative, anxiolytic, sleep aid.",
+    compounds:"Valerenic acid, valepotriates (valtrate, didrovaltrate)",
+    substances:[
+      { name:"Valerenic acid", hits:[
+        { key:"GABAA_PAM", receptor:"GABA-A (β2/β3 subunit)", activity:"Positive allosteric modulator", affinity:"Nanomolar affinity" },
+        { key:"5HT5A_partial", receptor:"5-HT5a", activity:"Partial agonist", affinity:"Ki 10.7 µM; IC50 17.2 µM; 80% binding at 50 µg/mL" }
+      ]},
+      { name:"Valepotriates (valtrate, didrovaltrate, acevaltrate)", hits:[
+        { key:"GABAA_PAM", receptor:"GABA-A", activity:"Facilitates GABA binding", affinity:"Not isolated from mixture data" }
+      ]}
+    ] },
+  { name:"American Skullcap", latin:"Scutellaria lateriflora", psychoactive:false, potency:1.0,
+    effects:"Anxiolytic, sedative, muscle relaxant.",
+    compounds:"Baicalin, scutellarin, wogonin",
+    substances:[
+      { name:"Baicalin", hits:[
+        { key:"NFkB_MAPK_modulator", receptor:"NF-κB / MAPK pathways", activity:"Modulator", affinity:"Pathway-level, not binding data" }
+      ]},
+      { name:"Wogonin", hits:[
+        { key:"BZD_site_ligand", receptor:"Benzodiazepine receptor site", activity:"Ligand", affinity:"Not quantified" }
+      ]},
+      { name:"Scutellarin", hits:[
+        { key:"GABA_Glu_balance_modulator", receptor:"GABA/glutamate balance", activity:"Modulator (indirect)", affinity:"No IC50 located" }
+      ]}
+    ] },
+  { name:"Galangal", latin:"Alpinia officinarum", psychoactive:false, potency:0.5,
+    effects:"Digestive aid, anti-inflammatory, mild warming/stimulant sensation.",
+    compounds:"Galangin, gingerols, essential oils (cineole)",
+    substances:[
+      { name:"Gingerols / Shogaols", hits:[
+        { key:"COX2_inhibitor", receptor:"COX-2", activity:"Inhibitor", affinity:"Not quantified" },
+        { key:"CCR6_CCR4_modulator", receptor:"CCR6/CCR4", activity:"Modulator", affinity:"—" }
+      ]},
+      { name:"Galangin", hits:[
+        { key:"Aromatase_inhibitor", receptor:"Aromatase (CYP19)", activity:"Proposed inhibitor", affinity:"No IC50 found (ketoconazole benchmark only)" },
+        { key:"COX2_inhibitor", receptor:"COX", activity:"Proposed inhibitor", affinity:"No IC50 found (ketoconazole benchmark only)" }
+      ]}
+    ] },
+  { name:"Koningskaars (Mullein)", latin:"Verbascum thapsus", psychoactive:false, potency:0.5,
+    effects:"Respiratory/expectorant, demulcent, anti-inflammatory.",
+    compounds:"Saponins, mucilage, verbascoside",
+    substances:[
+      { name:"Verbascoside", hits:[
+        { key:null, receptor:"—", activity:"—", affinity:"No specific receptor data located" }
+      ]}
+    ] }
+];
+
+HERBS.sort((a,b)=> b.potency - a.potency);
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const grid = document.getElementById('cardGrid');
+document.getElementById('herbCount').textContent = HERBS.length + ' entries logged';
+
+function gaugeTicks(){
+  let s='';
+  for(let i=0;i<10;i++) s += '<i></i>';
+  return s;
+}
+
+function receptorTable(substances){
+  if(!substances || !substances.length){
+    return `<table class="rtable empty-table"><tbody>
+      <tr><td>Mechanism unconfirmed — no characterized receptor targets</td></tr>
+    </tbody></table>`;
+  }
+  const body = substances.map(sub=>{
+    const subRow = `<tr class="substance-row"><td colspan="3">${sub.name}</td></tr>`;
+    const rows = sub.hits.map(hit=>{
+      const r = hit.key ? RECEPTORS[hit.key] : null;
+      const clickable = !!r;
+      return `<tr class="rrow${clickable ? '' : ' inert'}" ${clickable ? `data-key="${hit.key}" tabindex="0" role="button" aria-haspopup="dialog"` : ''}>
+        <td class="rname">${hit.receptor}</td>
+        <td class="ractivity">${hit.activity}</td>
+        <td class="raffinity">${hit.affinity}</td>
+      </tr>`;
+    }).join('');
+    return subRow + rows;
+  }).join('');
+
+  return `<table class="rtable">
+    <thead><tr><th>Receptor</th><th>Activity</th><th>Affinity</th></tr></thead>
+    <tbody>${body}</tbody>
+  </table>`;
+}
+
+function cardHTML(h){
+  const pct = Math.min(100, (h.potency/10)*100);
+  const tableHTML = receptorTable(h.substances);
+
+  return `
+  <article class="card">
+    <div class="card-top">
+      <div class="names">
+        <h2>${h.name}</h2>
+        <p class="latin">${h.latin}</p>
+      </div>
+      <span class="tag ${h.psychoactive ? 'psy' : 'calm'}">${h.psychoactive ? 'Psychoactive' : 'Non-psychoactive'}</span>
+    </div>
+
+    <div class="potency">
+      <div class="potency-label">
+        <span>Potency</span>
+        <span class="val">${h.potency.toFixed(1)} / 10</span>
+      </div>
+      <div class="gauge">
+        <div class="gauge-fill" style="width:${pct}%"></div>
+        <div class="gauge-ticks">${gaugeTicks()}</div>
+      </div>
+    </div>
+
+    <p class="effects">${h.effects}</p>
+    <p class="compounds"><b>Compounds:</b> ${h.compounds}</p>
+
+    <p class="receptors-label">Receptors</p>
+    ${tableHTML}
+  </article>`;
+}
+
+grid.innerHTML = HERBS.map(cardHTML).join('');
+
+/* ---------- modal logic ---------- */
+const overlay = document.getElementById('overlay');
+const modalTitle = document.getElementById('modalTitle');
+const modalActivity = document.getElementById('modalActivity');
+const modalSubtitle = document.getElementById('modalSubtitle');
+const modalBody = document.getElementById('modalBody');
+
+function openModal(key){
+  const r = RECEPTORS[key];
+  if(!r) return;
+  modalTitle.textContent = r.title;
+  modalActivity.textContent = r.activity;
+  modalSubtitle.textContent = r.subtitle;
+  modalBody.textContent = r.body;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+grid.addEventListener('click', (e)=>{
+  const row = e.target.closest('tr[data-key]');
+  if(row) openModal(row.dataset.key);
+});
+grid.addEventListener('keydown', (e)=>{
+  if(e.key !== 'Enter' && e.key !== ' ') return;
+  const row = e.target.closest('tr[data-key]');
+  if(row){ e.preventDefault(); openModal(row.dataset.key); }
+});
+document.getElementById('modalClose').addEventListener('click', closeModal);
+overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeModal(); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
