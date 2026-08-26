@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binding Profile Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#111318;
+    --surface:#171a21;
+    --surface-2:#1d2129;
+    --border:#282d38;
+    --border-soft:#20242d;
+    --ink:#e9e8e2;
+    --ink-muted:#b3b3ab;
+    --ink-faint:#6d7280;
+    --paper:#e9e8e2;
+
+    --c-ag:#6fd8c4;    /* agonist-class: AG, PA */
+    --c-ant:#e2735b;   /* antagonist-class: ANT, INV, NAM */
+    --c-mod:#d9a94a;   /* modulator-class: PAM */
+    --c-trans:#9c8df2; /* transporter-class: RI, RA, RU */
+    --c-enz:#7fa8d9;   /* enzyme-class: INH */
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -5%, #1b2230 0%, transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'JetBrains Mono',monospace;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:60px;
+    overflow-x:hidden;
+  }
+
+  /* ---------- header ---------- */
+  header{
+    padding:34px 20px 22px;
+    max-width:900px;
+    margin:0 auto;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .eyebrow{
+    font-size:10px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin:0 0 10px;
+  }
+  h1{
+    font-family:'Newsreader',serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:32px;
+    margin:0 0 8px;
+    color:var(--paper);
+    letter-spacing:-.01em;
+  }
+  header p.sub{
+    font-size:12.5px;
+    color:var(--ink-muted);
+    line-height:1.6;
+    margin:0;
+    max-width:560px;
+  }
+
+  /* ---------- category index ---------- */
+  .cat-index-wrap{
+    max-width:900px;
+    margin:18px auto 0;
+    padding:0 20px;
+  }
+  .cat-index-label{
+    font-size:10px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin:0 0 8px;
+  }
+  .cat-index{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+  }
+  .cat-index-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--ink-muted);
+    background:var(--surface);
+    border:1px solid var(--border);
+    padding:6px 11px 6px 9px;
+    border-radius:20px;
+    cursor:pointer;
+    transition:all .12s ease;
+  }
+  .cat-index-item:hover{
+    color:var(--ink);
+    border-color:#3a4152;
+    transform:translateY(-1px);
+  }
+  .cat-index-item .swatch{
+    width:7px; height:7px;
+    border-radius:50%;
+    flex:0 0 auto;
+  }
+
+  /* ---------- controls ---------- */
+  .controls{
+    max-width:900px;
+    margin:20px auto 0;
+    padding:0 20px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  #search{
+    width:100%;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--ink);
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    padding:11px 14px;
+    border-radius:8px;
+    outline:none;
+  }
+  #search::placeholder{ color:var(--ink-faint); }
+  #search:focus{ border-color:#3a4152; }
+
+  .chipbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:.03em;
+    color:var(--ink-muted);
+    background:var(--surface);
+    border:1px solid var(--border);
+    padding:5px 10px;
+    border-radius:20px;
+    cursor:pointer;
+    user-select:none;
+    transition:all .12s ease;
+  }
+  .chip:hover{ border-color:#3a4152; }
+  .chip.active{
+    color:var(--bg);
+    background:var(--ink-muted);
+    border-color:var(--ink-muted);
+  }
+  .chip .dot{
+    display:inline-block;
+    width:6px; height:6px;
+    border-radius:50%;
+    margin-right:6px;
+    position:relative; top:-1px;
+  }
+
+  /* ---------- categories ---------- */
+  main{
+    max-width:900px;
+    margin:0 auto;
+    padding:8px 20px 0;
+  }
+  .category{
+    margin-top:30px;
+    border:1px solid var(--border-soft);
+    border-radius:10px;
+    overflow:hidden;
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--cat-color) 7%, var(--surface)) 0%, var(--surface) 140px);
+    border-top:1px solid color-mix(in srgb, var(--cat-color) 45%, var(--border-soft));
+  }
+  .cat-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 16px;
+    cursor:pointer;
+    background:color-mix(in srgb, var(--cat-color) 13%, var(--surface-2));
+    border-bottom:1px solid var(--border-soft);
+    border-left:3px solid var(--cat-color);
+  }
+  .cat-head h2{
+    font-family:'Newsreader',serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:17px;
+    margin:0;
+    color:var(--paper);
+  }
+  .cat-count{
+    font-size:10px;
+    color:var(--ink-faint);
+    letter-spacing:.06em;
+    white-space:nowrap;
+  }
+  .cat-note{
+    font-size:11px;
+    color:var(--ink-faint);
+    padding:0 16px;
+    margin:10px 0 0;
+    line-height:1.5;
+  }
+  .cat-body{ padding:6px 16px 14px; }
+  .cat-body.hidden{ display:none; }
+
+  .trow{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    row-gap:8px;
+    column-gap:14px;
+    padding:10px 0;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .trow:last-child{ border-bottom:none; }
+  .trow.hidden{ display:none; }
+  .trow-main{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex:1 1 180px;
+    min-width:0;
+  }
+  .tcode{
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink);
+    flex:0 0 auto;
+  }
+  .tname{
+    font-family:'Newsreader',serif;
+    font-size:12.5px;
+    font-style:italic;
+    color:var(--ink-muted);
+    flex:1 1 auto;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .abadges{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    flex:0 1 auto;
+    max-width:100%;
+  }
+  .abadge{
+    font-size:10.5px;
+    letter-spacing:.03em;
+    padding:4px 9px;
+    border-radius:6px;
+    cursor:pointer;
+    border:1px solid transparent;
+    background:var(--surface-2);
+    color:var(--ink);
+    transition:transform .1s ease, background .12s ease;
+  }
+  .abadge:hover{ transform:translateY(-1px); }
+  .abadge.hidden{ display:none; }
+
+  .empty-note{
+    font-size:12px;
+    color:var(--ink-faint);
+    font-style:italic;
+    padding:16px 0;
+    text-align:center;
+    display:none;
+  }
+  .empty-note.show{ display:block; }
+
+  /* ---------- modal ---------- */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(8,9,12,.72);
+    backdrop-filter:blur(2px);
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .18s ease;
+    z-index:50;
+  }
+  @media(min-width:680px){ .overlay{ align-items:center; padding:20px; } }
+  .overlay.open{ opacity:1; pointer-events:auto; }
+
+  .modal{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-top:1px solid #333a48;
+    width:100%;
+    max-width:460px;
+    max-height:86vh;
+    overflow-y:auto;
+    border-radius:18px 18px 0 0;
+    padding:22px 22px 26px;
+    transform:translateY(16px);
+    transition:transform .22s cubic-bezier(.2,.8,.2,1);
+  }
+  @media(min-width:680px){ .modal{ border-radius:14px; transform:translateY(8px) scale(.98); } }
+  .overlay.open .modal{ transform:translateY(0) scale(1); }
+
+  .modal-handle{
+    width:36px; height:4px;
+    background:var(--border);
+    border-radius:4px;
+    margin:0 auto 18px;
+    flex:0 0 auto;
+  }
+  @media(min-width:680px){ .modal-handle{ display:none; } }
+
+  .modal-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom:4px;
+  }
+  .modal h3{
+    font-family:'Newsreader',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:19px;
+    margin:0;
+    color:var(--paper);
+    line-height:1.25;
+  }
+  .modal-code{
+    font-size:11px;
+    color:var(--ink-faint);
+    margin:0 0 14px;
+  }
+  .modal-pill{
+    flex:0 0 auto;
+    font-size:10px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--bg);
+    padding:5px 10px;
+    border-radius:20px;
+    font-weight:600;
+    white-space:nowrap;
+  }
+  .modal-family{
+    font-size:11px;
+    color:var(--ink-faint);
+    letter-spacing:.02em;
+    margin:0 0 16px;
+    padding-bottom:14px;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .modal-section-label{
+    font-size:9.5px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin:0 0 6px;
+  }
+  .modal-location{
+    font-size:12.5px;
+    color:var(--ink-muted);
+    line-height:1.65;
+    margin:0 0 16px;
+  }
+  .modal-effects{
+    font-size:12.5px;
+    color:var(--ink);
+    line-height:1.65;
+    margin:0;
+  }
+  .modal-diagram{
+    margin:16px 0 0;
+    padding-top:16px;
+    border-top:1px solid var(--border-soft);
+  }
+  .modal-diagram.hidden{ display:none; }
+  .diagram-flow{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:stretch;
+    gap:6px;
+    row-gap:10px;
+  }
+  .diagram-node{
+    flex:1 1 auto;
+    min-width:96px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:8px 9px;
+    font-size:10.5px;
+    line-height:1.4;
+    color:var(--ink-muted);
+    display:flex;
+    align-items:center;
+    text-align:center;
+    justify-content:center;
+  }
+  .diagram-arrow{
+    flex:0 0 auto;
+    align-self:center;
+    color:var(--ink-faint);
+    font-size:13px;
+  }
+  .diagram-status{
+    flex:1 1 auto;
+    min-width:120px;
+    border-radius:8px;
+    padding:8px 10px;
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:.02em;
+    display:flex;
+    align-items:center;
+    text-align:center;
+    justify-content:center;
+    color:var(--bg);
+  }
+
+  .modal-close{
+    margin-top:20px;
+    width:100%;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    color:var(--ink-muted);
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    padding:10px;
+    border-radius:8px;
+    cursor:pointer;
+  }
+  .modal-close:hover{ color:var(--ink); border-color:#3a4152; }
+
+  footer{
+    max-width:900px;
+    margin:36px auto 0;
+    padding:16px 20px 0;
+    font-size:10.5px;
+    color:var(--ink-faint);
+    border-top:1px solid var(--border-soft);
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Binding profile reference</p>
+  <h1>Receptor & Target Index</h1>
+  <p class="sub">A categorized index of receptor/transporter/enzyme targets and the activity types recorded against each. Tap any activity badge for its full profile.</p>
+</header>
+
+<div class="cat-index-wrap">
+  <p class="cat-index-label">Jump to category</p>
+  <nav class="cat-index" id="catIndex"></nav>
+</div>
+
+<div class="controls">
+  <input id="search" type="text" placeholder="Search by target code, name, or category…" autocomplete="off">
+  <div class="chipbar" id="activityFilters"></div>
+</div>
+
+<main id="categoryGrid"></main>
+
+<p class="empty-note" id="emptyNote">No targets match your search or filters.</p>
+
+<footer>Legend: AG agonist · PA partial agonist · ANT antagonist · INV inverse agonist · PAM/NAM allosteric modulator · INH enzyme inhibitor · RI/RA/RU reuptake inhibitor / releasing agent / reuptake enhancer</footer>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <div>
+        <h3 id="modalTitle"></h3>
+        <p class="modal-code" id="modalCode"></p>
+      </div>
+      <span class="modal-pill" id="modalPill"></span>
+    </div>
+    <p class="modal-family" id="modalFamily"></p>
+    <p class="modal-section-label">Distribution & normal function</p>
+    <p class="modal-location" id="modalLocation"></p>
+    <p class="modal-section-label" id="modalEffectsLabel">Effect of this activity</p>
+    <p class="modal-effects" id="modalEffects"></p>
+    <div class="modal-diagram hidden" id="modalDiagram">
+      <p class="modal-section-label">Downstream signaling</p>
+      <div class="diagram-flow" id="diagramFlow"></div>
+    </div>
+    <button class="modal-close" id="modalClose">Close</button>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   DATA — activity code legend
+================================================================= */
+const LEGEND = {
+  AG:   { label:"Agonist",                 cls:"ag",    def:"Binds and activates the target, mimicking the endogenous ligand's effect." },
+  PA:   { label:"Partial agonist",         cls:"ag",    def:"Binds and activates the target, but with lower maximal efficacy than a full agonist." },
+  ANT:  { label:"Antagonist",              cls:"ant",   def:"Binds the target (typically at the orthosteric/competitive site) and blocks activation without producing an effect itself." },
+  INV:  { label:"Inverse agonist",         cls:"ant",   def:"Binds the target and actively suppresses its baseline (constitutive) activity, producing an effect opposite to an agonist." },
+  PAM:  { label:"Positive allosteric modulator", cls:"mod", def:"Binds a site separate from the primary ligand pocket and enhances the target's response to its natural ligand." },
+  NAM:  { label:"Negative allosteric modulator", cls:"ant", def:"Binds a site separate from the primary ligand pocket and reduces the target's response to its natural ligand." },
+  INH:  { label:"Enzyme inhibitor",        cls:"enz",   def:"Blocks the catalytic activity of an enzyme target, slowing or stopping its normal reaction." },
+  RI:   { label:"Reuptake inhibitor",      cls:"trans", def:"Blocks transporter-mediated reuptake of the neurotransmitter, raising extracellular levels." },
+  RA:   { label:"Releasing agent",         cls:"trans", def:"Triggers transporter-mediated efflux, actively releasing neurotransmitter from the presynaptic terminal." },
+  RU:   { label:"Reuptake enhancer",       cls:"trans", def:"Accelerates transporter-mediated reuptake, lowering extracellular neurotransmitter levels." },
+};
+
+/* ================================================================
+   DATA — categories, each with a list of targets and the activity
+   codes recorded for that target (codes reference LEGEND above).
+================================================================= */
+const CATEGORIES = [
+  {
+    name: "Monoamine Transporters",
+    note: "Presynaptic reuptake proteins rather than receptors, included here as core monoamine targets.",
+    targets: [
+      { code:"NET",  name:"Norepinephrine Transporter", activities:["RI","RA"] },
+      { code:"DAT",  name:"Dopamine Transporter",        activities:["RI","RA"] },
+      { code:"SERT", name:"Serotonin Transporter",       activities:["RI","RA"] },
+    ]
+  },
+  {
+    name: "Dopamine Receptors",
+    targets: [
+      { code:"D1", name:"D1 Receptor", activities:["AG","ANT"] },
+      { code:"D2", name:"D2 Receptor", activities:["AG","PA","ANT"] },
+      { code:"D3", name:"D3 Receptor", activities:["PA","ANT"] },
+      { code:"D4", name:"D4 Receptor", activities:["ANT"] },
+    ]
+  },
+  {
+    name: "Serotonin (5-HT) Receptors",
+    targets: [
+      { code:"5HT1A", name:"5-HT1A Receptor", activities:["AG","PA"] },
+      { code:"5HT1B", name:"5-HT1B Receptor", activities:["AG"] },
+      { code:"5HT1D", name:"5-HT1D Receptor", activities:["AG"] },
+      { code:"5HT2A", name:"5-HT2A Receptor", activities:["AG","ANT","INV"] },
+      { code:"5HT2B", name:"5-HT2B Receptor", activities:["AG","ANT"] },
+      { code:"5HT2C", name:"5-HT2C Receptor", activities:["AG","ANT","INV"] },
+      { code:"5HT3",  name:"5-HT3 Receptor",  activities:["ANT"] },
+      { code:"5HT4",  name:"5-HT4 Receptor",  activities:["AG"] },
+      { code:"5HT6",  name:"5-HT6 Receptor",  activities:["ANT"] },
+      { code:"5HT7",  name:"5-HT7 Receptor",  activities:["ANT"] },
+    ]
+  },
+  {
+    name: "Adrenergic Receptors",
+    targets: [
+      { code:"A1", name:"α1 Adrenergic Receptor", activities:["AG","ANT"] },
+      { code:"A2", name:"α2 Adrenergic Receptor", activities:["AG","ANT"] },
+      { code:"B1", name:"β1 Adrenergic Receptor", activities:["AG","ANT"] },
+      { code:"B2", name:"β2 Adrenergic Receptor", activities:["AG","ANT"] },
+      { code:"B3", name:"β3 Adrenergic Receptor", activities:["AG"] },
+    ]
+  },
+  {
+    name: "Opioid Receptors",
+    targets: [
+      { code:"MOR", name:"μ-Opioid Receptor", activities:["AG","PA","ANT"] },
+      { code:"DOR", name:"δ-Opioid Receptor", activities:["AG"] },
+      { code:"KOR", name:"κ-Opioid Receptor", activities:["AG","ANT"] },
+      { code:"NOP", name:"Nociceptin/Orphanin FQ Receptor", activities:["AG"] },
+    ]
+  },
+  {
+    name: "Cannabinoid & Related Lipid Targets",
+    targets: [
+      { code:"CB1",   name:"Cannabinoid Receptor 1", activities:["AG","INV"] },
+      { code:"CB2",   name:"Cannabinoid Receptor 2", activities:["AG"] },
+      { code:"TRPV1", name:"Transient Receptor Potential Vanilloid 1", activities:["AG"] },
+      { code:"FAAH",  name:"Fatty Acid Amide Hydrolase", activities:["INH"] },
+    ]
+  },
+  {
+    name: "Muscarinic Acetylcholine Receptors",
+    targets: [
+      { code:"M1", name:"M1 Receptor", activities:["AG","ANT","PAM"] },
+      { code:"M2", name:"M2 Receptor", activities:["ANT"] },
+      { code:"M3", name:"M3 Receptor", activities:["ANT"] },
+      { code:"M4", name:"M4 Receptor", activities:["AG","PAM"] },
+    ]
+  },
+  {
+    name: "Nicotinic Acetylcholine Receptors",
+    targets: [
+      { code:"A4B2", name:"α4β2 Nicotinic Receptor", activities:["AG","PA","ANT"] },
+      { code:"A7",   name:"α7 Nicotinic Receptor",   activities:["AG","PAM"] },
+      { code:"A3B4", name:"α3β4 Nicotinic Receptor", activities:["AG"] },
+      { code:"NMJ",  name:"Neuromuscular Junction (Muscle-Type) Receptor", activities:["AG","ANT"] },
+    ]
+  },
+  {
+    name: "Glutamate — NMDA Receptor Sites",
+    targets: [
+      { code:"NMDA-GluN2B", name:"GluN2B Subunit Site",        activities:["ANT"] },
+      { code:"NMDA-GLY",    name:"Glycine Co-agonist Site",    activities:["AG","PA"] },
+      { code:"NMDA-PCP",    name:"PCP / Channel Site",         activities:["ANT"] },
+    ]
+  },
+  {
+    name: "GABA Receptors",
+    targets: [
+      { code:"GABAA-BZD",   name:"GABA-A — Benzodiazepine Site",   activities:["AG","PA","ANT","INV"] },
+      { code:"GABAA-BARB",  name:"GABA-A — Barbiturate Site",      activities:["AG"] },
+      { code:"GABAA-NS",    name:"GABA-A — Neurosteroid Site",     activities:["PAM"] },
+      { code:"GABAA-ETOH",  name:"GABA-A — Ethanol-Sensitive Site",activities:["PAM"] },
+      { code:"GABAA-ORTHO", name:"GABA-A — Orthosteric (GABA) Site",activities:["AG","ANT"] },
+      { code:"GABAB",       name:"GABA-B Receptor",                activities:["AG","PAM"] },
+    ]
+  },
+];
+
+/* ================================================================
+   DATA — per-target descriptions: family/class line, a shared
+   distribution & function paragraph, and one effect paragraph per
+   recorded activity on that target.
+================================================================= */
+const DESC = {
+  NET:  { family:"Norepinephrine — SLC6 transporter",
+    location:"Expressed on noradrenergic presynaptic terminals throughout the peripheral sympathetic nervous system and in noradrenergic nuclei of the brainstem, particularly the locus coeruleus, where it clears norepinephrine from the synaptic cleft back into the presynaptic neuron.",
+    activities:{
+      RI:"Reuptake inhibition raises synaptic norepinephrine, producing increased alertness, energy, blood pressure, and heart rate; this is a mechanism shared by many stimulants and antidepressants.",
+      RA:"Releasing agents trigger transporter-mediated efflux of norepinephrine into the synapse, producing pronounced sympathomimetic effects including elevated heart rate, blood pressure, and arousal."
+    }},
+  DAT:  { family:"Dopamine — SLC6 transporter",
+    location:"Concentrated on dopaminergic terminals in the striatum, nucleus accumbens, and prefrontal cortex, where it is the primary mechanism for clearing synaptic dopamine and terminating dopaminergic signaling.",
+    activities:{
+      RI:"Blocking reuptake elevates striatal and mesolimbic dopamine, producing increased motivation, focus, and reward salience, and underlies the reinforcing effects of many stimulant drugs.",
+      RA:"Releasing agents reverse transporter flow to actively efflux dopamine into the synapse, producing strong euphoric, reward, and psychomotor stimulant effects with high abuse liability."
+    }},
+  SERT: { family:"Serotonin — SLC6 transporter",
+    location:"Distributed on serotonergic terminals originating from the raphe nuclei and projecting broadly throughout the cortex, limbic system, and brainstem, as well as peripherally in the gut and platelets.",
+    activities:{
+      RI:"Reuptake inhibition raises extracellular serotonin, the mechanism underlying most modern antidepressants, and is associated with mood elevation, anxiolysis over time, and GI/sexual side effects.",
+      RA:"Releasing agents evoke serotonin efflux, producing prosocial, empathogenic, and mood-elevating effects, with a risk of serotonin syndrome at high exposure or in combination with other serotonergic agents."
+    }},
+
+  D1:  { family:"Dopamine — Gs-coupled GPCR (D1-like)",
+    location:"The most abundant dopamine receptor in the CNS, densely expressed in the striatum, nucleus accumbens, and prefrontal cortex, where it couples to Gs to stimulate adenylyl cyclase and cAMP production.",
+    activities:{
+      AG:"Agonism increases cAMP signaling in striatal medium spiny neurons, contributing to reward, motor facilitation, and enhancement of working memory at moderate activation.",
+      ANT:"Antagonism blunts dopaminergic reward and motor-facilitating signaling; D1 blockade contributes to some antipsychotic and antidyskinetic effects, though most clinical antipsychotics act predominantly at D2-like receptors."
+    }},
+  D2:  { family:"Dopamine — Gi/o-coupled GPCR (D2-like)",
+    location:"Densely expressed in the striatum (both pre- and postsynaptically), nucleus accumbens, and pituitary lactotrophs, coupling to Gi/o to inhibit adenylyl cyclase and central to mesolimbic/mesocortical signaling.",
+    activities:{
+      AG:"Full agonism strongly stimulates dopaminergic signaling, producing euphoria and psychomotor activation, and, at pituitary D2 autoreceptors, suppresses prolactin release.",
+      PA:"Partial agonism stabilizes dopaminergic tone, acting as a functional antagonist in hyperdopaminergic states and a functional agonist in hypodopaminergic states — the mechanism behind aripiprazole/cariprazine-class antipsychotics.",
+      ANT:"Antagonism reduces dopaminergic signaling, underlying the antipsychotic efficacy of D2 blockers against positive symptoms, along with extrapyramidal side effects and prolactin elevation from pituitary blockade."
+    }},
+  D3:  { family:"Dopamine — Gi/o-coupled GPCR (D2-like subfamily)",
+    location:"A more restricted distribution than D2, concentrated in limbic areas including the nucleus accumbens shell, islands of Calleja, and ventral striatum — regions linked to motivation and reward rather than motor control.",
+    activities:{
+      PA:"Partial agonism at D3 is implicated in modulating reward-related and impulse-control circuits, a target of interest in addiction and impulsivity research.",
+      ANT:"Antagonism/partial antagonism at D3 is being explored for reducing drug-seeking behavior and enhancing cognitive/impulse control, with fewer motor side effects than D2 blockade."
+    }},
+  D4:  { family:"Dopamine — Gi/o-coupled GPCR (D2-like subfamily)",
+    location:"A lower-density receptor concentrated in prefrontal cortex, limbic structures, and retina, with comparatively little striatal expression, implicated in cognition and attention rather than motor function.",
+    activities:{
+      ANT:"Antagonism at D4 has been explored for effects on attention and impulsivity; D4 blockade contributes to the atypical antipsychotic profile of agents like clozapine, with a lower risk of extrapyramidal effects than D2-selective blockers."
+    }},
+
+  "5HT1A": { family:"Serotonin — Gi/o-coupled GPCR",
+    location:"Densely expressed as a somatodendritic autoreceptor on raphe serotonergic neurons, where it inhibits serotonin firing/release, and postsynaptically in the hippocampus, cortex, and amygdala.",
+    activities:{
+      AG:"Agonism at somatodendritic autoreceptors suppresses serotonergic neuron firing acutely; postsynaptic agonism is anxiolytic and contributes to the delayed antidepressant effect of SSRIs via autoreceptor desensitization, and is the mechanism of buspirone.",
+      PA:"Partial agonism produces a milder, better-tolerated anxiolytic effect than full agonism, buffering serotonergic tone rather than fully suppressing or activating it."
+    }},
+  "5HT1B": { family:"Serotonin — Gi/o-coupled GPCR",
+    location:"Found on serotonergic and other neuronal terminals as an inhibitory autoreceptor/heteroreceptor, and on cranial blood vessels.",
+    activities:{
+      AG:"Agonism inhibits neurotransmitter release at nerve terminals and produces vasoconstriction in cranial vessels — the mechanism underlying triptan antimigraine drugs."
+    }},
+  "5HT1D": { family:"Serotonin — Gi/o-coupled GPCR",
+    location:"Co-localized with 5-HT1B on trigeminal and cranial vascular tissue and as a presynaptic autoreceptor.",
+    activities:{
+      AG:"Agonism produces cranial vasoconstriction and inhibits trigeminal neuropeptide release, contributing to antimigraine efficacy."
+    }},
+  "5HT2A": { family:"Serotonin — Gq/11-coupled GPCR",
+    location:"Located prominently in the cerebral cortex, especially on layer V pyramidal neurons, as well as in thalamic and vascular tissues; 5-HT2A receptors regulate glutamate release, cortical network activity, perception, and vascular tone.",
+    activities:{
+      AG:"Agonism can produce altered perception, hallucination-like effects, cognitive and emotional changes, and behavioral activation; it may also increase cortical glutamatergic signaling and sympathetic or vascular responses.",
+      ANT:"Antagonism dampens cortical excitability and glutamate release, contributing to the antipsychotic and sleep-promoting effects of 5-HT2A blockers and to reduced vasospastic/serotonergic side effects.",
+      INV:"Inverse agonism suppresses constitutive receptor signaling below baseline, producing pronounced antipsychotic and sedative-hypnotic effects with minimal risk of perceptual side effects (e.g., pimavanserin)."
+    }},
+  "5HT2B": { family:"Serotonin — Gq/11-coupled GPCR",
+    location:"Expressed in cardiac valve tissue, vasculature, and the gut, with more limited CNS distribution; implicated in valvular fibrosis when chronically stimulated.",
+    activities:{
+      AG:"Chronic agonism can drive proliferative signaling in cardiac valve tissue, associated with valvulopathy seen with some ergot-derived and serotonergic drugs.",
+      ANT:"Antagonism is generally considered cardioprotective by avoiding valvulopathic proliferative signaling; 5-HT2B selectivity is a key safety consideration when screening serotonergic compounds."
+    }},
+  "5HT2C": { family:"Serotonin — Gq/11-coupled GPCR",
+    location:"Expressed in the choroid plexus, hypothalamus, and limbic structures, involved in appetite regulation, mood, and control of dopamine/norepinephrine release in mesolimbic pathways.",
+    activities:{
+      AG:"Agonism suppresses appetite and can reduce dopaminergic tone in reward circuits, the basis for 5-HT2C agonists as weight-loss agents.",
+      ANT:"Antagonism increases appetite and disinhibits dopamine/norepinephrine release, contributing to weight gain seen with many antipsychotics and antidepressants that block this receptor.",
+      INV:"Inverse agonism produces a more pronounced increase in appetite and mesolimbic dopaminergic tone than neutral antagonism, given the receptor's high constitutive activity."
+    }},
+  "5HT3": { family:"Serotonin — ligand-gated ion channel (ionotropic)",
+    location:"Expressed on vagal afferents in the gut, the area postrema (chemoreceptor trigger zone), and some CNS neurons, mediating fast excitatory serotonergic transmission.",
+    activities:{
+      ANT:"Antagonism blocks nausea and emesis signaling from the gut and brainstem, the mechanism of ondansetron-class antiemetics, and can also modestly reduce GI motility."
+    }},
+  "5HT4": { family:"Serotonin — Gs-coupled GPCR",
+    location:"Expressed in the gut myenteric plexus, heart, and hippocampus/cortex, where it modulates GI motility, cardiac conduction, and cognition.",
+    activities:{
+      AG:"Agonism enhances GI motility (used for prokinetic effects) and has procognitive effects in the hippocampus via enhanced acetylcholine release."
+    }},
+  "5HT6": { family:"Serotonin — Gs-coupled GPCR",
+    location:"Almost exclusively expressed in the CNS, concentrated in the striatum, cortex, and hippocampus, where it modulates GABAergic and cholinergic interneuron activity.",
+    activities:{
+      ANT:"Antagonism disinhibits cortical glutamatergic and cholinergic signaling, an approach explored for procognitive effects in dementia and as an adjunct in some atypical antipsychotics."
+    }},
+  "5HT7": { family:"Serotonin — Gs-coupled GPCR",
+    location:"Expressed in the thalamus, hypothalamus (including the suprachiasmatic nucleus), and hippocampus, involved in circadian rhythm regulation, thermoregulation, and mood.",
+    activities:{
+      ANT:"Antagonism has antidepressant and circadian rhythm-modulating effects, and contributes to the pharmacology of several atypical antipsychotics and antidepressants."
+    }},
+
+  A1: { family:"Norepinephrine/epinephrine — Gq/11-coupled GPCR",
+    location:"Expressed on vascular smooth muscle and the genitourinary tract, and postsynaptically in CNS regions involved in arousal, mediating peripheral vasoconstriction.",
+    activities:{
+      AG:"Agonism causes vasoconstriction, increased blood pressure, and pupil dilation; central activation can increase arousal and anxiety-like signaling.",
+      ANT:"Antagonism causes vasodilation and lowers blood pressure, used therapeutically for hypertension and benign prostatic hyperplasia, with sedation and orthostatic hypotension as common side effects."
+    }},
+  A2: { family:"Norepinephrine — Gi/o-coupled GPCR",
+    location:"Located presynaptically on noradrenergic terminals as an inhibitory autoreceptor, and postsynaptically in the prefrontal cortex and locus coeruleus.",
+    activities:{
+      AG:"Agonism reduces sympathetic outflow, producing sedation, hypotension, and analgesia; postsynaptic PFC activation improves attention and working memory (mechanism of guanfacine).",
+      ANT:"Antagonism at the presynaptic autoreceptor disinhibits norepinephrine release, increasing noradrenergic tone — a mechanism used by some antidepressants (e.g., mirtazapine)."
+    }},
+  B1: { family:"Norepinephrine/epinephrine — Gs-coupled GPCR",
+    location:"The predominant adrenergic receptor in cardiac tissue, also present in the kidney where it stimulates renin release.",
+    activities:{
+      AG:"Agonism increases heart rate and contractility and stimulates renin release, raising blood pressure and cardiac output.",
+      ANT:"Antagonism (beta-blockade) reduces heart rate, contractility, and renin release, used for hypertension, arrhythmia, and reducing physiological symptoms of anxiety."
+    }},
+  B2: { family:"Norepinephrine/epinephrine — Gs-coupled GPCR",
+    location:"Predominant in bronchial and vascular smooth muscle, skeletal muscle, and the liver.",
+    activities:{
+      AG:"Agonism relaxes bronchial and vascular smooth muscle (bronchodilation, used in asthma) and promotes glycogenolysis and skeletal-muscle anabolism/tremor.",
+      ANT:"Antagonism causes bronchoconstriction and is generally avoided in asthmatics; nonselective beta-blockade blunts these receptors alongside B1."
+    }},
+  B3: { family:"Norepinephrine/epinephrine — Gs-coupled GPCR",
+    location:"Concentrated in adipose tissue (brown and white) and the detrusor muscle of the bladder.",
+    activities:{
+      AG:"Agonism stimulates lipolysis and thermogenesis in adipose tissue and relaxes bladder detrusor muscle, the latter used therapeutically for overactive bladder."
+    }},
+
+  MOR: { family:"Endogenous opioids (endorphins) — Gi/o-coupled GPCR",
+    location:"Widely distributed in the periaqueductal gray, spinal dorsal horn, brainstem respiratory centers, and mesolimbic reward circuitry.",
+    activities:{
+      AG:"Full agonism produces strong analgesia, euphoria, sedation, and respiratory depression, with high dependence and overdose liability — the mechanism of morphine, fentanyl, and heroin.",
+      PA:"Partial agonism produces analgesia and euphoria with a ceiling effect on respiratory depression, giving a wider safety margin than full agonists (e.g., buprenorphine).",
+      ANT:"Antagonism blocks opioid effects and precipitates withdrawal in dependent individuals; used for overdose reversal (naloxone) and relapse prevention (naltrexone)."
+    }},
+  DOR: { family:"Endogenous opioids (enkephalins) — Gi/o-coupled GPCR",
+    location:"Distributed in the cortex, olfactory bulb, and spinal cord, with a role distinct from MOR in mood regulation and analgesia.",
+    activities:{
+      AG:"Agonism produces analgesia and antidepressant/anxiolytic-like effects in preclinical models, with lower respiratory depression and abuse liability than MOR agonism, though seizure risk has limited clinical development."
+    }},
+  KOR: { family:"Dynorphins — Gi/o-coupled GPCR",
+    location:"Expressed in the spinal cord, hypothalamus, and limbic areas including the dynorphin-rich nucleus accumbens and amygdala.",
+    activities:{
+      AG:"Agonism produces analgesia without significant respiratory depression, but commonly causes dysphoria, sedation, and hallucinogen-like effects, limiting therapeutic use.",
+      ANT:"Antagonism blocks stress-induced dysphoria and is being explored for antidepressant and anti-addiction effects by dampening dynorphin/KOR-mediated aversive signaling."
+    }},
+  NOP: { family:"Nociceptin/orphanin FQ — Gi/o-coupled GPCR",
+    location:"Widely distributed in cortex, limbic structures, and spinal cord — a distinct opioid-related system that does not share the analgesic profile of classical opioids.",
+    activities:{
+      AG:"Agonism modulates anxiety, stress response, and pain processing in a complex, often anti-opioid or biphasic manner; buprenorphine's partial NOP agonism is thought to contribute to its favorable safety profile."
+    }},
+
+  CB1: { family:"Endocannabinoids (anandamide, 2-AG) — Gi/o-coupled GPCR",
+    location:"One of the most abundant GPCRs in the CNS, densely expressed in the cortex, hippocampus, basal ganglia, and cerebellum, and presynaptically where it retrogradely inhibits neurotransmitter release.",
+    activities:{
+      AG:"Agonism produces euphoria, altered perception of time, appetite stimulation, analgesia, and impaired short-term memory — the primary mechanism of THC's psychoactive effects.",
+      INV:"Inverse agonism suppresses appetite and produces effects opposite to cannabinoid intoxication; CB1 inverse agonists (e.g., rimonabant) were explored for weight loss but withdrawn due to psychiatric side effects."
+    }},
+  CB2: { family:"Endocannabinoids (anandamide, 2-AG) — Gi/o-coupled GPCR",
+    location:"Predominantly expressed on immune cells (microglia, macrophages, lymphocytes) with limited neuronal expression, mainly upregulated during neuroinflammation.",
+    activities:{
+      AG:"Agonism modulates immune function and inflammation without the psychoactive effects of CB1 activation, an area of interest for anti-inflammatory and neuroprotective therapeutics."
+    }},
+  TRPV1: { family:"Capsaicin/heat receptor — ligand-gated nonselective cation channel",
+    location:"Expressed on peripheral nociceptive sensory neurons and some CNS regions, activated by capsaicin, heat (>43°C), and low pH.",
+    activities:{
+      AG:"Agonism initially produces burning pain and neurogenic inflammation, followed by desensitization and depletion of substance P, producing longer-term analgesia — the basis of capsaicin-based topical analgesics."
+    }},
+  FAAH: { family:"Enzyme — fatty acid amide hydrolase",
+    location:"An intracellular enzyme expressed in postsynaptic neurons throughout the CNS and in peripheral tissues, responsible for degrading anandamide and related fatty acid amides.",
+    activities:{
+      INH:"Inhibition elevates endogenous anandamide levels, producing mild analgesic, anxiolytic, and endocannabinoid-potentiating effects without direct CB1 activation or the full intoxicating profile of THC."
+    }},
+
+  M1: { family:"Acetylcholine — Gq/11-coupled GPCR",
+    location:"The predominant muscarinic subtype in the cortex and hippocampus, central to learning and memory circuits.",
+    activities:{
+      AG:"Agonism enhances cortical/hippocampal cholinergic signaling, improving cognition, and is explored for Alzheimer's disease and schizophrenia, though it can cause peripheral cholinergic side effects.",
+      ANT:"Antagonism impairs memory and cognition (anticholinergic effect); historically used for motion sickness and as a mitigator of some antiparkinsonian/antipsychotic side effects.",
+      PAM:"Positive allosteric modulation selectively boosts M1 signaling only in the presence of endogenous acetylcholine, offering procognitive benefit with fewer peripheral side effects than orthosteric agonism."
+    }},
+  M2: { family:"Acetylcholine — Gi/o-coupled GPCR",
+    location:"The predominant cardiac muscarinic subtype, located on the sinoatrial and atrioventricular nodes.",
+    activities:{
+      ANT:"Antagonism blocks vagal slowing of the heart, increasing heart rate — used to treat bradycardia (e.g., atropine) and contributing to the tachycardia seen with anticholinergic drugs."
+    }},
+  M3: { family:"Acetylcholine — Gq/11-coupled GPCR",
+    location:"Predominant in smooth muscle (bronchial, GI, bladder) and exocrine glands (salivary, sweat).",
+    activities:{
+      ANT:"Antagonism relaxes smooth muscle (bronchodilation, reduced GI motility, reduced bladder contraction) and reduces glandular secretion — used for COPD and overactive bladder, and a cause of dry mouth/constipation side effects."
+    }},
+  M4: { family:"Acetylcholine — Gi/o-coupled GPCR",
+    location:"Concentrated in the striatum, where it opposes dopaminergic signaling in striatal circuits.",
+    activities:{
+      AG:"Agonism dampens striatal dopaminergic hyperactivity, an emerging antipsychotic mechanism (e.g., xanomeline) that does not act via direct dopamine receptor blockade.",
+      PAM:"Positive allosteric modulation selectively enhances M4 signaling in cholinergically active striatal circuits, offering an antipsychotic-like effect with reduced peripheral cholinergic burden."
+    }},
+
+  A4B2: { family:"Acetylcholine/nicotine — ligand-gated ion channel (ionotropic, heteromeric)",
+    location:"The most abundant high-affinity nicotinic subtype in the CNS, widely distributed and central to nicotine reward and cognitive-enhancing effects.",
+    activities:{
+      AG:"Agonism drives dopamine release in mesolimbic reward pathways and enhances attention, underlying nicotine's reinforcing and cognitive-enhancing effects.",
+      PA:"Partial agonism provides milder dopaminergic stimulation while also blocking full nicotine effects at the receptor — the mechanism behind varenicline for smoking cessation.",
+      ANT:"Antagonism blocks nicotine's reinforcing effects at this receptor, reducing the reward derived from smoking."
+    }},
+  A7: { family:"Acetylcholine — ligand-gated ion channel (ionotropic, homomeric, highly Ca2+ permeable)",
+    location:"Expressed in the hippocampus and cortex, and on immune cells, linked to fast excitatory transmission, synaptic plasticity, and anti-inflammatory signaling.",
+    activities:{
+      AG:"Agonism enhances cognition and synaptic plasticity and produces anti-inflammatory effects via the cholinergic anti-inflammatory pathway, an area explored for cognitive impairment in schizophrenia.",
+      PAM:"Positive allosteric modulation amplifies endogenous cholinergic signaling at this receptor without directly activating it, offering procognitive potential with less receptor desensitization than direct agonism."
+    }},
+  A3B4: { family:"Acetylcholine — ligand-gated ion channel (ionotropic, heteromeric)",
+    location:"The predominant nicotinic subtype in autonomic ganglia (sympathetic and parasympathetic) and the adrenal medulla.",
+    activities:{
+      AG:"Agonism at ganglionic nicotinic receptors stimulates the autonomic nervous system broadly, contributing to nicotine's cardiovascular and GI side effects."
+    }},
+  NMJ: { family:"Acetylcholine — ligand-gated ion channel (ionotropic, muscle-type)",
+    location:"Located at the neuromuscular junction on skeletal muscle fibers, mediating the final step of motor nerve-to-muscle signal transmission.",
+    activities:{
+      AG:"Agonism (as by acetylcholine itself, or depolarizing blockers like succinylcholine) initially triggers muscle contraction, followed by depolarizing blockade and paralysis with sustained exposure.",
+      ANT:"Antagonism (nondepolarizing neuromuscular blockers) prevents acetylcholine from triggering muscle contraction, producing flaccid paralysis used for surgical muscle relaxation."
+    }},
+
+  "NMDA-GluN2B": { family:"Glutamate — ligand-gated ion channel, subunit-selective site",
+    location:"The GluN2B subunit is enriched in forebrain regions including the cortex, hippocampus, and amygdala, and is more prominent in early development, contributing to synaptic plasticity.",
+    activities:{
+      ANT:"Antagonism at this subunit-selective site reduces excitotoxic glutamatergic signaling with more regional/functional selectivity than pore-blocking NMDA antagonists, and is explored for depression and neuroprotection."
+    }},
+  "NMDA-GLY": { family:"Glycine co-agonist site — ligand-gated ion channel allosteric site",
+    location:"Located on the NMDA receptor complex itself; glycine (or D-serine) binding here is required alongside glutamate for the channel to open.",
+    activities:{
+      AG:"Agonism (glycine/D-serine or partial agonists) facilitates NMDA receptor function, enhancing glutamatergic neurotransmission relevant to learning and memory, and as an adjunct approach in schizophrenia.",
+      PA:"Partial agonism at the glycine site modestly facilitates NMDA signaling while limiting excessive glutamatergic activation, balancing efficacy against excitotoxicity risk."
+    }},
+  "NMDA-PCP": { family:"PCP/channel site — ligand-gated ion channel, open-channel blocking site",
+    location:"Located within the ion-channel pore of the NMDA receptor, accessible only when the channel is open, which makes block use-dependent.",
+    activities:{
+      ANT:"Antagonism (channel block) by agents like ketamine or PCP produces dissociative, anesthetic, and (at subanesthetic doses) rapid antidepressant effects, along with dissociative and psychotomimetic side effects."
+    }},
+
+  "GABAA-BZD": { family:"GABA — ligand-gated ion channel (Cl⁻ channel), allosteric site",
+    location:"The benzodiazepine site sits at the interface of alpha and gamma subunits of the GABA-A receptor pentamer, distinct from the GABA orthosteric site, and is broadly distributed in the CNS.",
+    activities:{
+      AG:"Full agonism (classic benzodiazepines) strongly potentiates GABAergic inhibition, producing anxiolysis, sedation, muscle relaxation, and anticonvulsant effects, with dependence liability.",
+      PA:"Partial agonism produces milder anxiolytic/sedative effects with a better side-effect and dependence profile than full benzodiazepine agonists.",
+      ANT:"Antagonism (e.g., flumazenil) blocks benzodiazepine-site ligands without altering baseline GABAergic tone, used to reverse benzodiazepine overdose/sedation.",
+      INV:"Inverse agonism reduces GABAergic inhibition below baseline, producing anxiogenic and proconvulsant effects — the opposite profile of benzodiazepines."
+    }},
+  "GABAA-BARB": { family:"GABA — ligand-gated ion channel, allosteric site",
+    location:"A distinct allosteric site on the GABA-A receptor from the benzodiazepine site, able to directly gate the channel at higher concentrations.",
+    activities:{
+      AG:"Agonism potentiates and, at sufficient concentration, directly opens the chloride channel independent of GABA, producing strong sedative-hypnotic, anesthetic, and anticonvulsant effects with a narrower safety margin than benzodiazepines due to a lack of ceiling effect on channel opening."
+    }},
+  "GABAA-NS": { family:"GABA — ligand-gated ion channel, allosteric (neurosteroid) site",
+    location:"Site for endogenous neurosteroids (e.g., allopregnanolone) on the GABA-A receptor, particularly relevant to extrasynaptic, delta-subunit-containing receptors mediating tonic inhibition.",
+    activities:{
+      PAM:"Positive allosteric modulation potentiates both synaptic and tonic GABAergic inhibition, producing anxiolytic, sedative, and rapid antidepressant effects (e.g., neurosteroid-based postpartum-depression treatments)."
+    }},
+  "GABAA-ETOH": { family:"GABA — ligand-gated ion channel, allosteric (ethanol-sensitive) site",
+    location:"Associated with certain GABA-A receptor subunit combinations (notably delta-subunit-containing) that are sensitive to ethanol at pharmacologically relevant concentrations, contributing to extrasynaptic tonic inhibition.",
+    activities:{
+      PAM:"Positive allosteric modulation at ethanol-sensitive configurations contributes to alcohol's sedative, anxiolytic, and motor-impairing effects, and to tolerance/dependence with chronic exposure."
+    }},
+  "GABAA-ORTHO": { family:"GABA — ligand-gated ion channel, orthosteric site",
+    location:"The primary GABA-binding site at the beta/alpha subunit interface of the GABA-A receptor pentamer, through which endogenous GABA directly gates the chloride channel.",
+    activities:{
+      AG:"Agonism directly opens the chloride channel, producing the full spectrum of GABAergic inhibition — sedation, anxiolysis, muscle relaxation, and anesthesia at high activation.",
+      ANT:"Antagonism at the orthosteric site (e.g., bicuculline) blocks GABA from opening the channel, removing inhibitory tone and producing anxiogenic and strongly proconvulsant effects."
+    }},
+  GABAB: { family:"GABA — Gi/o-coupled GPCR (metabotropic)",
+    location:"Widely distributed pre- and postsynaptically throughout the CNS, mediating slower, longer-lasting inhibition than the ionotropic GABA-A receptor, notably in the spinal cord and brainstem.",
+    activities:{
+      AG:"Agonism produces muscle relaxation and antispastic effects (baclofen), along with sedation; presynaptic activation inhibits release of GABA and other neurotransmitters.",
+      PAM:"Positive allosteric modulation enhances GABAB signaling only where endogenous GABA is present, offering a potentially better side-effect profile than direct agonism for spasticity and addiction-related applications."
+    }},
+};
+
+/* ================================================================
+   DATA — simplified downstream signaling cascades for the most
+   commonly referenced targets (D1-D4, core 5-HT, opioid, and
+   cannabinoid receptors). Each entry is a fixed chain of nodes;
+   the modal appends a status pill describing what the current
+   activity type does to that cascade.
+================================================================= */
+const PATHWAY = {
+  D1:  ["D1 receptor","Gs protein","↑ Adenylyl cyclase","↑ cAMP → PKA","Increased neuronal excitability"],
+  D2:  ["D2 receptor","Gi/o protein","↓ Adenylyl cyclase","↓ cAMP → PKA","Decreased neuronal excitability"],
+  D3:  ["D3 receptor","Gi/o protein","↓ Adenylyl cyclase","↓ cAMP → PKA","Reduced limbic dopaminergic tone"],
+  D4:  ["D4 receptor","Gi/o protein","↓ Adenylyl cyclase","↓ cAMP → PKA","Reduced prefrontal dopaminergic tone"],
+
+  "5HT1A": ["5-HT1A receptor","Gi/o protein","↓ Adenylyl cyclase + ↑ GIRK (K⁺) channels","↓ cAMP, hyperpolarization","Reduced neuronal firing"],
+  "5HT2A": ["5-HT2A receptor","Gq/11 protein","↑ Phospholipase C","↑ IP3/DAG → Ca²⁺ release","Increased cortical excitability / glutamate release"],
+  "5HT2C": ["5-HT2C receptor","Gq/11 protein","↑ Phospholipase C","↑ IP3/DAG → Ca²⁺ release","Altered hypothalamic POMC neuron firing (appetite)"],
+
+  MOR: ["μ-opioid receptor","Gi/o protein","↓ Adenylyl cyclase + ↑K⁺ / ↓Ca²⁺ channels","↓ cAMP, hyperpolarization","Reduced neurotransmitter release / analgesia"],
+  DOR: ["δ-opioid receptor","Gi/o protein","↓ Adenylyl cyclase + ↑K⁺ / ↓Ca²⁺ channels","↓ cAMP, hyperpolarization","Reduced neurotransmitter release / analgesia"],
+  KOR: ["κ-opioid receptor","Gi/o protein","↓ Adenylyl cyclase + ↑K⁺ / ↓Ca²⁺ channels","↓ cAMP, hyperpolarization","Reduced neurotransmitter release / dysphoria"],
+  NOP: ["NOP receptor","Gi/o protein","↓ Adenylyl cyclase + ↑K⁺ / ↓Ca²⁺ channels","↓ cAMP, hyperpolarization","Modulation of stress/pain circuits"],
+
+  CB1: ["CB1 receptor","Gi/o protein","↓ Adenylyl cyclase + ↓Ca²⁺ / ↑K⁺ channels","↓ cAMP, hyperpolarization","Reduced presynaptic neurotransmitter release"],
+  CB2: ["CB2 receptor","Gi/o protein","↓ Adenylyl cyclase","↓ cAMP → PKA","Reduced immune cell activation / cytokine release"],
+};
+
+function pathwayStatus(code){
+  switch(code){
+    case "AG":  return { text:"Pathway activated",                         cls:"ag"   };
+    case "PA":  return { text:"Pathway partially activated",               cls:"ag"   };
+    case "ANT": return { text:"Pathway blocked — no activation",           cls:"ant"  };
+    case "INV": return { text:"Baseline signaling suppressed",             cls:"ant"  };
+    case "PAM": return { text:"Response to endogenous ligand amplified",   cls:"mod"  };
+    case "NAM": return { text:"Response to endogenous ligand dampened",    cls:"ant"  };
+    default:    { const l = LEGEND[code]; return { text:l.label, cls:l.cls }; }
+  }
+}
+
+/* ================================================================
+   Category color palette (cycled)
+================================================================= */
+const CAT_COLORS = ["#9c8df2","#6fd8c4","#e2735b","#d9a94a","#7fa8d9","#e08fc0","#8fbf6b","#c9a6f5","#5fb8d9","#e0a15b"];
+
+/* ================================================================
+   RENDER
+================================================================= */
+const grid = document.getElementById('categoryGrid');
+const filterBar = document.getElementById('activityFilters');
+const emptyNote = document.getElementById('emptyNote');
+let activeFilter = null;
+
+// build the activity filter chip bar from LEGEND
+filterBar.innerHTML = Object.entries(LEGEND).map(([code,l])=>
+  `<span class="chip" data-code="${code}"><span class="dot" style="background:var(--c-${l.cls})"></span>${code}</span>`
+).join('');
+
+function catHTML(cat, idx){
+  const rows = cat.targets.map(t=>{
+    const badges = t.activities.map(code=>{
+      const l = LEGEND[code];
+      return `<span class="abadge" data-code="${code}" data-target="${t.code}" data-name="${t.name}" style="background:color-mix(in srgb, var(--c-${l.cls}) 18%, var(--surface-2)); color:var(--c-${l.cls})">${code}</span>`;
+    }).join('');
+    return `<div class="trow" data-search="${(t.code+' '+t.name+' '+cat.name).toLowerCase()}">
+      <span class="trow-main">
+        <span class="tcode">${t.code}</span>
+        <span class="tname">${t.name}</span>
+      </span>
+      <span class="abadges">${badges}</span>
+    </div>`;
+  }).join('');
+
+  const color = CAT_COLORS[idx % CAT_COLORS.length];
+  return `<section class="category" id="cat-${idx}" data-cat="${idx}" style="--cat-color:${color}">
+    <div class="cat-head" data-toggle="${idx}">
+      <h2>${cat.name}</h2>
+      <span class="cat-count">${cat.targets.length} targets</span>
+    </div>
+    ${cat.note ? `<p class="cat-note">${cat.note}</p>` : ''}
+    <div class="cat-body" id="catBody${idx}">${rows}</div>
+  </section>`;
+}
+
+grid.innerHTML = CATEGORIES.map(catHTML).join('');
+
+/* ---------- category index nav ---------- */
+const catIndex = document.getElementById('catIndex');
+catIndex.innerHTML = CATEGORIES.map((cat, idx)=>{
+  const color = CAT_COLORS[idx % CAT_COLORS.length];
+  return `<span class="cat-index-item" data-scroll="${idx}"><span class="swatch" style="background:${color}"></span>${cat.name}</span>`;
+}).join('');
+
+catIndex.addEventListener('click', (e)=>{
+  const item = e.target.closest('.cat-index-item');
+  if(!item) return;
+  const idx = item.dataset.scroll;
+  const body = document.getElementById('catBody'+idx);
+  if(body) body.classList.remove('hidden');
+  const section = document.getElementById('cat-'+idx);
+  if(section) section.scrollIntoView({ behavior:'smooth', block:'start' });
+});
+
+/* ---------- collapse / expand categories ---------- */
+grid.addEventListener('click', (e)=>{
+  const head = e.target.closest('.cat-head');
+  if(head){
+    const idx = head.dataset.toggle;
+    document.getElementById('catBody'+idx).classList.toggle('hidden');
+  }
+});
+
+/* ---------- search ---------- */
+const searchInput = document.getElementById('search');
+function applySearch(){
+  const q = searchInput.value.trim().toLowerCase();
+  let anyVisible = false;
+  document.querySelectorAll('.category').forEach(cat=>{
+    let catHasVisible = false;
+    cat.querySelectorAll('.trow').forEach(row=>{
+      const match = !q || row.dataset.search.includes(q);
+      row.classList.toggle('hidden', !match);
+      if(match) catHasVisible = true;
+    });
+    cat.style.display = catHasVisible ? '' : 'none';
+    if(catHasVisible) anyVisible = true;
+  });
+  emptyNote.classList.toggle('show', !anyVisible);
+}
+searchInput.addEventListener('input', applySearch);
+
+/* ---------- activity filter chips ---------- */
+filterBar.addEventListener('click', (e)=>{
+  const chip = e.target.closest('.chip');
+  if(!chip) return;
+  const code = chip.dataset.code;
+  if(activeFilter === code){
+    activeFilter = null;
+    chip.classList.remove('active');
+  } else {
+    filterBar.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    activeFilter = code;
+    chip.classList.add('active');
+  }
+  document.querySelectorAll('.abadge').forEach(b=>{
+    b.classList.toggle('hidden', !!activeFilter && b.dataset.code !== activeFilter);
+  });
+  document.querySelectorAll('.trow').forEach(row=>{
+    if(!activeFilter){ row.style.opacity=''; return; }
+    const has = row.querySelector(`.abadge[data-code="${activeFilter}"]`);
+    row.style.opacity = has ? '' : '.28';
+  });
+});
+
+/* ---------- modal ---------- */
+const overlay = document.getElementById('overlay');
+const modalTitle = document.getElementById('modalTitle');
+const modalCode = document.getElementById('modalCode');
+const modalPill = document.getElementById('modalPill');
+const modalFamily = document.getElementById('modalFamily');
+const modalLocation = document.getElementById('modalLocation');
+const modalEffects = document.getElementById('modalEffects');
+const modalEffectsLabel = document.getElementById('modalEffectsLabel');
+const modalDiagram = document.getElementById('modalDiagram');
+const diagramFlow = document.getElementById('diagramFlow');
+
+function openModal(code, target, name){
+  const l = LEGEND[code];
+  if(!l) return;
+  const d = DESC[target];
+
+  modalTitle.textContent = name;
+  modalCode.textContent = `${target} · ${code}`;
+  modalPill.textContent = l.label;
+  modalPill.style.background = `var(--c-${l.cls})`;
+
+  if(d){
+    modalFamily.textContent = d.family;
+    modalLocation.textContent = d.location;
+    const effect = d.activities && d.activities[code];
+    modalEffectsLabel.textContent = `Effect of ${l.label.toLowerCase()}`;
+    modalEffects.textContent = effect || l.def;
+  } else {
+    modalFamily.textContent = "";
+    modalLocation.textContent = "";
+    modalEffectsLabel.textContent = "Definition";
+    modalEffects.textContent = l.def;
+  }
+
+  const chain = PATHWAY[target];
+  if(chain){
+    const status = pathwayStatus(code);
+    const nodeHTML = chain.map(n=>`<div class="diagram-node">${n}</div>`).join('<span class="diagram-arrow">→</span>');
+    const statusHTML = `<span class="diagram-arrow">→</span><div class="diagram-status" style="background:var(--c-${status.cls})">${status.text}</div>`;
+    diagramFlow.innerHTML = nodeHTML + statusHTML;
+    modalDiagram.classList.remove('hidden');
+  } else {
+    diagramFlow.innerHTML = '';
+    modalDiagram.classList.add('hidden');
+  }
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+grid.addEventListener('click', (e)=>{
+  const badge = e.target.closest('.abadge');
+  if(badge) openModal(badge.dataset.code, badge.dataset.target, badge.dataset.name);
+});
+document.getElementById('modalClose').addEventListener('click', closeModal);
+overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeModal(); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>

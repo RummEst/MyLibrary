@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=980">
+<meta name="HandheldFriendly" content="false">
+<title>Gaia Materia Medica — Field Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12140f;
+    --surface:#1b1f16;
+    --surface-2:#20241a;
+    --border:#333a28;
+    --border-soft:#262b1e;
+    --ink:#e9e6db;
+    --ink-muted:#9aa08c;
+    --ink-faint:#6b715f;
+    --moss:#8aa06b;
+    --amber:#c98a4b;
+    --amber-dim:#7a5330;
+    --rust:#b06246;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at 20% -10%, rgba(138,160,107,0.07), transparent 45%),
+      radial-gradient(ellipse at 90% 0%, rgba(201,138,75,0.05), transparent 40%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    padding-bottom:56px;
+  }
+  ::selection{ background:var(--amber-dim); color:var(--ink); }
+
+  /* ---------- header ---------- */
+  header{
+    padding:34px 20px 22px;
+    border-bottom:1px solid var(--border-soft);
+    position:relative;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--moss);
+    margin:0 0 10px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(28px,7vw,38px);
+    margin:0 0 6px;
+    letter-spacing:-0.01em;
+    line-height:1.05;
+  }
+  header p.sub{
+    margin:0;
+    color:var(--ink-muted);
+    font-size:13.5px;
+    max-width:52ch;
+  }
+  header .count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-faint);
+    margin-top:14px;
+  }
+
+  /* ---------- card grid ---------- */
+  main{
+    padding:18px 16px 10px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+    max-width:920px;
+    margin:0 auto;
+  }
+  @media(min-width:680px){
+    main{ grid-template-columns:1fr 1fr; padding:22px 24px; gap:16px; }
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border-soft);
+    border-radius:14px;
+    padding:18px 18px 16px;
+    position:relative;
+    overflow:hidden;
+    transition:border-color .2s ease;
+  }
+  .card:before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:1px;
+    background:linear-gradient(90deg, transparent, rgba(138,160,107,.35), transparent);
+  }
+  .card:hover{ border-color:var(--border); }
+
+  /* ---------- card top: meta column + square image ---------- */
+  .card-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:12px;
+  }
+  .card-meta{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    padding-top:2px;
+  }
+  .stock-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:9.5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    padding:4px 8px;
+    border-radius:20px;
+    border:1px solid;
+    white-space:nowrap;
+    width:fit-content;
+  }
+  .stock-badge:before{
+    content:"";
+    width:5px; height:5px;
+    border-radius:50%;
+    background:currentColor;
+    flex:0 0 auto;
+  }
+  .stock-badge.in{ color:var(--moss); border-color:#3c4a30; background:rgba(138,160,107,.08); }
+  .stock-badge.out{ color:var(--rust); border-color:#5a3a2e; background:rgba(176,98,70,.08); }
+  .price{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:15px;
+    font-weight:500;
+    color:var(--ink);
+    letter-spacing:.01em;
+  }
+  .card-image{
+    flex:0 0 auto;
+    width:78px;
+    aspect-ratio:1/1;
+    border-radius:10px;
+    overflow:hidden;
+    border:1px solid var(--border-soft);
+    background:var(--surface-2);
+  }
+  .card-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+
+  /* ---------- buy / view-product button ---------- */
+  .buy-btn{
+    display:block;
+    width:100%;
+    text-align:center;
+    text-decoration:none;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--bg);
+    background:var(--amber);
+    padding:10px;
+    border-radius:9px;
+    margin:2px 0 16px;
+    transition:background .15s ease;
+  }
+  .buy-btn:hover{ background:#d89a5c; }
+  .buy-btn:active{ background:#b97a3e; }
+
+  .names h2{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:20px;
+    margin:0;
+    line-height:1.2;
+  }
+  .names .latin{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:13.5px;
+    color:var(--moss);
+    margin:2px 0 0;
+  }
+
+  /* ---------- hashtag tags (replaces psychoactive pill) ---------- */
+  .tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 10px;
+    margin:8px 0 0;
+  }
+  .hashtag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.02em;
+    color:var(--amber);
+  }
+
+  /* potency vial gauge */
+  .potency{ margin:14px 0 15px; }
+  .potency-label{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin-bottom:6px;
+  }
+  .potency-label .val{ color:var(--ink-muted); font-size:11px; letter-spacing:0; }
+  .gauge{
+    position:relative;
+    height:16px;
+    background:var(--surface-2);
+    border:1px solid var(--border-soft);
+    border-radius:3px;
+    overflow:hidden;
+  }
+  .gauge-fill{
+    position:absolute; top:0; left:0; bottom:0;
+    background:linear-gradient(90deg, #6d4726, var(--amber));
+    border-radius:2px 0 0 2px;
+    transition:width .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .gauge-ticks{
+    position:absolute; inset:0;
+    display:flex;
+  }
+  .gauge-ticks i{
+    flex:1;
+    border-right:1px solid rgba(0,0,0,.35);
+  }
+  .gauge-ticks i:last-child{ border-right:none; }
+
+  .effects{
+    font-size:13.5px;
+    line-height:1.55;
+    color:var(--ink);
+    margin:0 0 6px;
+  }
+  .compounds{
+    font-size:12px;
+    line-height:1.5;
+    color:var(--ink-faint);
+    margin:0 0 14px;
+  }
+  .compounds b{ color:var(--ink-muted); font-weight:500; }
+
+  /* receptor table, grouped by substance */
+  .receptors-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin:0 0 8px;
+  }
+  .rtable{
+    width:100%;
+    border-collapse:collapse;
+    border:1px solid var(--border-soft);
+    border-radius:8px;
+    overflow:hidden;
+    font-size:12px;
+  }
+  .rtable thead th{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:9.5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    text-align:left;
+    background:var(--surface-2);
+    padding:7px 9px;
+    font-weight:500;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .rtable tbody tr.rrow{
+    cursor:pointer;
+    transition:background .15s ease;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .rtable tbody tr.rrow:last-child{ border-bottom:none; }
+  .rtable tbody tr.rrow:hover{ background:#28311f; }
+  .rtable tbody tr.rrow:active{ background:#2c3722; }
+  .rtable tbody tr.rrow.inert{ cursor:default; }
+  .rtable tbody tr.rrow.inert:hover{ background:none; }
+  .rtable td{
+    padding:8px 9px 8px 16px;
+    color:var(--ink);
+    vertical-align:top;
+  }
+  .rtable td.rname{
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--ink);
+    font-size:11.5px;
+  }
+  .rtable td.ractivity{
+    color:var(--moss);
+  }
+  .rtable td.raffinity{
+    color:var(--ink-faint);
+    font-size:11px;
+  }
+  /* substance divider row */
+  .rtable tr.substance-row td{
+    padding:8px 9px;
+    background:var(--surface-2);
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:12.5px;
+    color:var(--amber);
+    border-bottom:1px solid var(--border-soft);
+    border-top:1px solid var(--border-soft);
+  }
+  .rtable tr.substance-row:first-child td{ border-top:none; }
+  .rtable.empty-table td{
+    color:var(--ink-faint);
+    font-style:italic;
+    cursor:default;
+    padding:10px 9px;
+  }
+
+  /* ---------- modal ---------- */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(8,9,6,.72);
+    backdrop-filter:blur(2px);
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease;
+    z-index:50;
+    padding:0;
+  }
+  @media(min-width:680px){
+    .overlay{ align-items:center; padding:20px; }
+  }
+  .overlay.open{ opacity:1; pointer-events:auto; }
+
+  .modal{
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-top:1px solid #3c4430;
+    width:100%;
+    max-width:480px;
+    max-height:82vh;
+    overflow-y:auto;
+    border-radius:18px 18px 0 0;
+    padding:22px 22px 28px;
+    transform:translateY(16px);
+    transition:transform .25s cubic-bezier(.2,.8,.2,1);
+  }
+  @media(min-width:680px){
+    .modal{ border-radius:16px; transform:translateY(8px) scale(.98); }
+  }
+  .overlay.open .modal{ transform:translateY(0) scale(1); }
+
+  .modal-handle{
+    width:36px; height:4px;
+    background:var(--border);
+    border-radius:4px;
+    margin:0 auto 16px;
+  }
+  @media(min-width:680px){ .modal-handle{ display:none; } }
+
+  .modal-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom:4px;
+  }
+  .modal h3{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:21px;
+    margin:0;
+    line-height:1.2;
+  }
+  .modal-activity{
+    flex:0 0 auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--bg);
+    background:var(--moss);
+    padding:5px 9px;
+    border-radius:20px;
+    margin-top:3px;
+  }
+  .modal-source{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:.03em;
+    color:var(--ink-faint);
+    margin:6px 0 0;
+  }
+  .modal-subtitle{
+    font-size:12.5px;
+    color:var(--amber);
+    margin:8px 0 16px;
+    line-height:1.5;
+    border-bottom:1px solid var(--border-soft);
+    padding-bottom:14px;
+  }
+  .modal-body{
+    font-size:14px;
+    line-height:1.68;
+    color:var(--ink);
+    white-space:pre-line;
+  }
+  .modal-close{
+    margin-top:22px;
+    width:100%;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--ink-muted);
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    padding:11px;
+    border-radius:9px;
+    cursor:pointer;
+  }
+  .modal-close:hover{ border-color:var(--moss); color:var(--ink); }
+
+  footer{
+    text-align:center;
+    color:var(--ink-faint);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:.06em;
+    padding:26px 20px 10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Gaia Store Field Index</p>
+  <h1>Materia Medica</h1>
+  <p class="sub">A working reference of Gaia Store's entheogens and relaxants, their traditional effects, and the receptor systems thought to mediate them. Sorted most → least psychoactive.</p>
+  <p class="count" id="herbCount"></p>
+</header>
+
+<main id="cardGrid"></main>
+
+<footer>Compiled from field & literature notes · tap a receptor row to read more</footer>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <h3 id="modalTitle"></h3>
+      <span class="modal-activity" id="modalActivity"></span>
+    </div>
+    <p class="modal-subtitle" id="modalSubtitle"></p>
+    <div class="modal-body" id="modalBody"></div>
+    <button class="modal-close" id="modalClose">Close</button>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   HOW TO EDIT THIS FILE (read this first — for humans and AI agents)
+   ================================================================
+
+   This page has TWO data blocks below: RECEPTORS and HERBS.
+   Everything else (CSS, HTML skeleton, render/modal logic) is
+   generic and should NOT need to change when you add entries.
+
+   ----------------------------------------------------------------
+   BLOCK 1 — RECEPTORS
+   ----------------------------------------------------------------
+   A dictionary of receptor/target "glossary entries". Each key is
+   a short machine-friendly ID (referenced later from HERBS[].
+   substances[].hits[].key). Each value is:
+
+     {
+       title:    "Human-readable receptor/target name",
+       activity: "Short activity label shown as a pill in the modal
+                  (e.g. 'Agonist', 'Antagonist', 'Inhibitor',
+                  'Positive allosteric modulator', 'Modulator')",
+       subtitle: "One line: <endogenous ligand(s)> — <receptor/
+                  molecule class, e.g. 'Gq/11-coupled GPCR' or
+                  'Ligand-gated ion channel'>",
+       body:     "1-3 short paragraphs, separated by \\n\\n.
+                  Paragraph 1: where the target is located/expressed
+                  and what it normally does.
+                  Paragraph 2: what happens functionally when this
+                  specific activity (agonism/antagonism/inhibition/
+                  etc.) occurs — effects and risks."
+     }
+
+   Add one new RECEPTORS entry PER UNIQUE (target + activity)
+   combination you reference. Reuse an existing key if an item
+   hits the exact same target with the exact same activity type.
+
+   ----------------------------------------------------------------
+   BLOCK 2 — HERBS
+   ----------------------------------------------------------------
+   An array of item entries (herb / substance / product cards).
+   Each entry is:
+
+     {
+       name:         "Common name",
+       latin:        "Latin/scientific name (or other subtitle ID)",
+       image:        "URL of a 1:1 (square) product/reference image",
+       inStock:      true | false,   // drives the stock badge
+       price:        "Display string, e.g. '$24.00'",
+       tags:         ["Tag1","Tag2"],// shown as #Tag1 #Tag2 under the name
+       link:         "URL the 'View Product →' button opens
+                      (in a new tab)",
+       potency:      0.0–10.0,       // drives the gauge bar fill;
+                                      // list auto-sorts high→low
+       effects:      "One sentence, comma-separated list of
+                      effects/traditional uses.",
+       compounds:    "Comma-separated list of key active compounds.",
+       substances: [
+         {
+           name: "Compound name (groups related receptor hits
+                  under one sub-heading in the table)",
+           hits: [
+             {
+               key:      "RECEPTORS_key_or_null",
+               // null = mechanism unknown/unconfirmed (renders as
+               // a non-clickable row); otherwise must exactly match
+               // a key in RECEPTORS above so the row is clickable
+               // and opens the matching modal.
+               receptor: "Receptor/target name AS SHOWN IN THE TABLE
+                          ROW (can differ slightly in wording from
+                          RECEPTORS[key].title, e.g. to add a
+                          parenthetical)",
+               activity: "Short activity phrase shown in the table
+                          row (can be more specific/hedged than the
+                          RECEPTORS activity pill, e.g. 'Proposed
+                          inhibitor')",
+               affinity: "Binding/potency data if known (Ki, IC50,
+                          etc.), or a hedge string like
+                          'Not quantified', 'No data located',
+                          'Speculative', or '—' if nothing applies."
+             }
+             // ...one object per receptor/target this compound hits
+           ]
+         }
+         // ...one object per named active compound in this item.
+         // If NO receptor data exists at all for the item, use:
+         // substances: [] — the renderer shows an "unconfirmed
+         // mechanism" placeholder row.
+       ]
+     }
+
+   CHECKLIST FOR ADDING A NEW ITEM:
+   1. Pick/confirm a `potency` 0–10 (10 = most psychoactive/potent).
+   2. Provide a square (1:1) `image` URL, `inStock` boolean, and
+      `price` display string.
+   3. Add 1-4 short `tags` (no leading "#" needed — it's added by
+      the renderer). These replace the old psychoactive/calm pill.
+   4. Provide a `link` URL — this powers the "View Product →"
+      button, which opens in a new tab.
+   5. Write `effects` and `compounds` as short plain sentences.
+   6. For each active compound, list every receptor/target hit.
+   7. For each hit, either point `key` at an EXISTING RECEPTORS
+      entry, or add a NEW RECEPTORS entry first, then reference it.
+   8. Do not edit gaugeTicks(), tagsHTML(), receptorTable(),
+      cardHTML(), or the modal logic below — they are generic and
+      read from the data.
+   ================================================================ */
+
+
+/* ============================================================
+   DATA — receptor/activity descriptions (for popups)
+   Add one entry per unique (target, activity) pair referenced
+   by any hit.key in HERBS below.
+   ============================================================ */
+const RECEPTORS = {
+  "SERT_reuptake": {
+    title: "Serotonin Transporter (SERT)",
+    activity: "Reuptake inhibitor",
+    subtitle: "Serotonin — Na⁺/Cl⁻-dependent neurotransmitter transporter; not a receptor",
+    body: "SERT is located primarily on presynaptic serotonin neurons in the raphe nuclei and their projections throughout the cortex, hippocampus, limbic system, and periphery, where it clears serotonin from the synaptic space.\n\nReuptake inhibition increases extracellular serotonin and gradually alters downstream receptor signaling, supporting antidepressant and anxiolytic effects while sometimes causing nausea, sleep or sexual effects, emotional blunting, or initial agitation."
+  },
+  "PDE4_inhibitor": {
+    title: "Phosphodiesterase 4 (PDE4)",
+    activity: "Inhibitor",
+    subtitle: "Cyclic AMP — cAMP-hydrolyzing intracellular enzyme; not a classical receptor",
+    body: "PDE4 is widely expressed in neurons, immune cells, smooth muscle, and other tissues, where it limits cAMP signaling downstream of many neurotransmitter and hormone receptors.\n\nInhibition elevates intracellular cAMP and can enhance synaptic plasticity, memory-related signaling, and anti-inflammatory responses, but excessive activity commonly produces nausea, vomiting, restlessness, insomnia, or mood activation."
+  },
+  "GABAA_PAM": {
+    title: "GABA-A Receptor",
+    activity: "Positive allosteric modulator",
+    subtitle: "GABA — Ligand-gated chloride channel (ionotropic receptor); positive allosteric modulator",
+    body: "Found throughout the central nervous system, GABA-A receptors rapidly inhibit neurons by increasing chloride conductance and help coordinate sleep, anxiety, muscle tone, and seizure control.\n\nPositive allosteric modulation enhances responses to endogenous GABA and can cause anxiolytic, sedative, anticonvulsant, muscle-relaxant, and amnestic effects, with stronger modulation increasing motor impairment and respiratory-depression risk."
+  },
+  "NET_ionchannels_inhibitor": {
+    title: "Ion Channels / Norepinephrine Transporter (NET)",
+    activity: "Inhibitor",
+    subtitle: "Norepinephrine; ionic electrochemical gradients — Na⁺/Cl⁻-dependent transporter plus ion-channel targets; not a single classical receptor",
+    body: "NET is located on noradrenergic terminals in the locus coeruleus and throughout the cortex, hippocampus, sympathetic nerves, and peripheral organs, where it clears norepinephrine and also contributes to dopamine clearance in some brain regions.\n\nNET inhibition increases extracellular norepinephrine and can enhance arousal, attention, vigilance, and sympathetic tone; concurrent ion-channel inhibition may alter neuronal firing, pain signaling, seizure threshold, heart rate, or motor function depending on the channels affected."
+  },
+  "DA_5HT_mixed": {
+    title: "Dopamine / 5-HT Receptors",
+    activity: "Mixed modulator",
+    subtitle: "Dopamine and serotonin — Mixed GPCR activity across dopamine and serotonin receptor families",
+    body: "Dopamine and serotonin receptors are distributed throughout cortical, limbic, striatal, hypothalamic, and brainstem circuits, where their interacting systems regulate mood, salience, cognition, reward, motor control, appetite, and autonomic function.\n\nMixed modulation can rebalance dopaminergic and serotonergic signaling, potentially affecting psychosis, anxiety, depression, motivation, cognition, movement, and sleep; the behavioral outcome depends strongly on the receptor subtypes and direction of modulation involved."
+  },
+  "D2_agonist": {
+    title: "Dopamine D2 Receptor",
+    activity: "Agonist",
+    subtitle: "Dopamine — Gi/o-coupled GPCR; pre- and postsynaptic receptor",
+    body: "D2 receptors are located in the striatum, limbic system, pituitary, and midbrain dopamine neurons, where they inhibit neuronal activity, regulate indirect-pathway motor circuits, and provide autoreceptor feedback on dopamine release.\n\nAgonism can reduce prolactin secretion, facilitate some dopaminergic motor functions, and alter reward and motivation; excessive stimulation may produce impulsivity, reinforcement, stereotypy, or psychosis-like behavioral activation."
+  },
+  "nAChR_agonist": {
+    title: "Nicotinic Acetylcholine Receptor (nAChR)",
+    activity: "Agonist",
+    subtitle: "Acetylcholine — Ligand-gated cation channel (ionotropic receptor); multiple subtypes (α4β2, α7, ganglionic)",
+    body: "nAChRs are distributed across the cortex, midbrain dopamine circuits, autonomic ganglia, neuromuscular junctions, and peripheral tissues, where they mediate fast excitatory cholinergic transmission and modulate dopamine, norepinephrine, and acetylcholine release.\n\nAgonism increases cation influx and neuronal excitability, producing stimulant-like alertness, autonomic activation (heart rate, blood pressure), and reward-related dopamine release; with repeated exposure, receptor desensitization and tolerance are common, and high doses can cause nausea or autonomic overstimulation."
+  },
+  "MAO_inhibitor": {
+    title: "Monoamine Oxidase (MAO)",
+    activity: "Inhibitor",
+    subtitle: "Monoamines, including serotonin, dopamine, and norepinephrine — Mitochondrial flavin-dependent enzyme; not a classical receptor",
+    body: "MAO-A and MAO-B are located on the outer mitochondrial membrane in neurons, glia, peripheral tissues, and platelets, where they metabolize monoamine neurotransmitters and dietary or cellular amines.\n\nInhibition increases monoamine availability and can produce antidepressant, anxiolytic, motivational, or antiparkinsonian effects, but excessive monoamine accumulation may cause insomnia, agitation, hypertension, or dangerous interactions with serotonergic and sympathomimetic drugs."
+  },
+  "MuOpioid_partial": {
+    title: "Mu-Opioid Receptor",
+    activity: "Partial agonist",
+    subtitle: "Endogenous opioids, especially endorphins and enkephalins — Gi/o-coupled GPCR",
+    body: "Mu-opioid receptors are concentrated in pain-processing circuits, the brainstem, limbic reward structures, and the gastrointestinal tract, where they inhibit neurotransmitter release and dampen pain signaling and neuronal excitability.\n\nPartial agonism produces a capped analgesic and mood-elevating effect that plateaus at higher doses, generally with a lower risk of respiratory depression than full agonists, though tolerance, constipation, and dependence can still develop with regular use."
+  },
+  "BZD_site_ligand": {
+    title: "Benzodiazepine Site on GABA-A Receptor",
+    activity: "Ligand",
+    subtitle: "Endogenous neurosteroids and GABAergic inhibitory system — Allosteric ligand-binding site on a ligand-gated chloride channel; not a separate receptor",
+    body: "The benzodiazepine site lies at subunit interfaces on specific GABA-A receptor assemblies throughout the brain, especially in cortical, limbic, thalamic, and cerebellar circuits.\n\nLigand binding can enhance or alter GABA-A signaling and thereby produce anxiolytic, sedative, anticonvulsant, muscle-relaxant, and amnestic effects; the precise profile depends on receptor subtype and whether the ligand is a positive, negative, or neutral modulator."
+  },
+  "GABAA_agonist": {
+    title: "GABA-A Receptor",
+    activity: "Agonist",
+    subtitle: "GABA — Ligand-gated chloride channel (ionotropic receptor); orthosteric agonist",
+    body: "GABA-A receptors are distributed throughout the cortex, thalamus, cerebellum, and spinal cord, where they mediate the brain's primary fast inhibitory neurotransmission and regulate arousal, muscle tone, and sensory processing.\n\nDirect orthosteric agonism produces strong, dose-dependent central depression — sedation, altered perception, ataxia, and at higher doses, delirium-like confusion or loss of consciousness — with a narrower margin between desired and adverse effects than allosteric (benzodiazepine-like) modulation."
+  },
+  "NMDA_agonist": {
+    title: "NMDA Receptor (Glutamate Site)",
+    activity: "Agonist",
+    subtitle: "Glutamate — Ligand-gated cation channel (ionotropic receptor); voltage- and ligand-gated",
+    body: "NMDA receptors are widely expressed in the cortex, hippocampus, and other regions supporting synaptic plasticity, learning, and memory, and require both glutamate binding and postsynaptic depolarization to open.\n\nAgonism at the glutamate-recognition site increases excitatory calcium influx and can produce neuroexcitation, altered perception, and at high concentrations, excitotoxic stress; this is distinct from and generally opposes the inhibitory, sedating effects of GABAergic agonism occurring in parallel."
+  }
+};
+
+/* ============================================================
+   DATA — items, each broken down by substance → receptor hits
+   Add one object per item, same shape as the two examples below.
+   ============================================================ */
+const HERBS = [
+  {
+    name:"Kanna - crushed herb", latin:"Sceletium tortuosum",
+    image:"https://gaiastore.eu/wp-content/uploads/2019/08/KANNA-PRASEK-MAIN-e1594723272299-330x330.jpg",
+    inStock:true, price:"€4.53",
+    tags:["Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/kanna-prasek-z-byliny/",
+    potency:5.0,
+    effects:"Mood elevation, calming, anxiolytic, relaxation",
+    compounds:"Mesembrine, mesembrenone, mesembrenol",
+    substances:[
+      { name:"Mesembrine", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Reuptake inhibitor", affinity:"Ki ~1.4 nM (potent)" }] },
+      { name:"Mesembrenone", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Reuptake inhibitor", affinity:"Sub-micromolar, less potent than mesembrine" }, { key:"PDE4_inhibitor", receptor:"PDE4", activity:"Inhibitor", affinity:"IC50 not fully characterized" }] },
+      { name:"Mesembrenol", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Reuptake inhibitor", affinity:"Comparable range to mesembrenone (possible source conflation)" }, { key:"PDE4_inhibitor", receptor:"PDE4", activity:"Inhibitor", affinity:"Comparable range to mesembrenone (possible source conflation)" }] }
+    ]
+  },
+  {
+    name:"Kava Kava Fiji Loa Waka - micronized powder", latin:"Piper methysticum",
+    image:"https://gaiastore.eu/wp-content/uploads/2019/11/KAVA-LOA-WAKA-MICRONIZED-MAIN-1-e1594721853281-330x330.jpg",
+    inStock:true, price:"€44.41",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/kava-kava-fiji-loa-waka-mikronizovany-prasek/",
+    potency:5.0,
+    effects:"Calming, anxiolytic, muscle relaxation, sedative",
+    compounds:"Kavain, dihydrokavain, methysticin, dihydromethysticin",
+    substances:[
+      { name:"Kavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Low-micromolar" }] },
+      { name:"Dihydrokavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Not quantified" }, { key:"NET_ionchannels_inhibitor", receptor:"Ion channels / NET", activity:"Inhibitor", affinity:"Not quantified" }] },
+      { name:"Methysticin", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Enhanced ligand binding", affinity:"Micromolar" }] },
+      { name:"Dihydromethysticin", hits:[{ key:"GABAA_PAM", receptor:"GABA-A / neuroprotective pathways", activity:"Modulator", affinity:"Not quantified" }] }
+    ]
+  },
+  {
+    name:"Kanna Premium Extreme Strong – extract 1g", latin:"Sceletium tortuosum",
+    image:"https://gaiastore.eu/wp-content/uploads/2025/11/kanna-premium-extreme-strong-extract-1g-330x330.jpg",
+    inStock:true, price:"€25.52",
+    tags:["Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/kanna-premium-extreme-strong-extrakt-1g/",
+    potency:8.0,
+    effects:"Strong mood elevation, calming, anxiolytic, relaxation",
+    compounds:"Mesembrine, mesembrenone, mesembrenol",
+    substances:[
+      { name:"Mesembrine", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Reuptake inhibitor", affinity:"Ki ~1.4 nM (potent)" }] },
+      { name:"Mesembrenone", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Reuptake inhibitor", affinity:"Sub-micromolar, less potent than mesembrine" }, { key:"PDE4_inhibitor", receptor:"PDE4", activity:"Inhibitor", affinity:"IC50 not fully characterized" }] },
+      { name:"Mesembrenol", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Reuptake inhibitor", affinity:"Comparable range to mesembrenone (possible source conflation)" }, { key:"PDE4_inhibitor", receptor:"PDE4", activity:"Inhibitor", affinity:"Comparable range to mesembrenone (possible source conflation)" }] }
+    ]
+  },
+  {
+    name:"Kava Kava Fiji Loa Waka - Root Powder", latin:"Piper methysticum",
+    image:"https://gaiastore.eu/wp-content/uploads/2019/11/KAVA-LOA-WAKA-PRASEK-MAIN-1-e1594722124548-330x330.jpg",
+    inStock:true, price:"€25.94",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/kava-kava-fiji-loa-waka-prasek-z-korene/",
+    potency:5.0,
+    effects:"Calming, anxiolytic, muscle relaxation, sedative",
+    compounds:"Kavain, dihydrokavain, methysticin, dihydromethysticin",
+    substances:[
+      { name:"Kavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Low-micromolar" }] },
+      { name:"Dihydrokavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Not quantified" }, { key:"NET_ionchannels_inhibitor", receptor:"Ion channels / NET", activity:"Inhibitor", affinity:"Not quantified" }] },
+      { name:"Methysticin", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Enhanced ligand binding", affinity:"Micromolar" }] },
+      { name:"Dihydromethysticin", hits:[{ key:"GABAA_PAM", receptor:"GABA-A / neuroprotective pathways", activity:"Modulator", affinity:"Not quantified" }] }
+    ]
+  },
+  {
+    name:"Blue lotus - whole flowers", latin:"Nymphaea caerulea",
+    image:"https://gaiastore.eu/wp-content/uploads/2023/04/blue.lotus_.whole_.front_-330x330.jpg",
+    inStock:true, price:"€9.57",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/modry-leknin-cele-kvety/",
+    potency:2.5,
+    effects:"Relaxation, mild sedation, mood elevation",
+    compounds:"Nuciferine, apomorphine, flavonoids",
+    substances:[
+      { name:"Nuciferine", hits:[{ key:"DA_5HT_mixed", receptor:"Dopamine + 5-HT (multi-target)", activity:"Mixed antagonist/modulator", affinity:"Ki not found — data gap" }] },
+      { name:"Apomorphine", hits:[{ key:"D2_agonist", receptor:"Dopamine D1/D2 (non-selective)", activity:"Agonist", affinity:"Nanomolar range across D1/D2 family" }] },
+      { name:"Flavonoids", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] }
+    ]
+  },
+  {
+    name:"Kanna Ultimate Krystal Extract 1g", latin:"Sceletium tortuosum",
+    image:"https://gaiastore.eu/wp-content/uploads/2025/11/kanna-ultimate-krystal-extract-1g-330x330.jpg",
+    inStock:false, price:"€24.68",
+    tags:["Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/kanna-ultimate-krystal-extract-1g/",
+    potency:8.0,
+    effects:"Strong mood elevation, calming, anxiolytic",
+    compounds:"Mesembrine, mesembrenone, mesembrenol",
+    substances:[
+      { name:"Mesembrine", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Reuptake inhibitor", affinity:"Ki ~1.4 nM (potent)" }] },
+      { name:"Mesembrenone", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Reuptake inhibitor", affinity:"Sub-micromolar, less potent than mesembrine" }, { key:"PDE4_inhibitor", receptor:"PDE4", activity:"Inhibitor", affinity:"IC50 not fully characterized" }] },
+      { name:"Mesembrenol", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Reuptake inhibitor", affinity:"Comparable range to mesembrenone (possible source conflation)" }, { key:"PDE4_inhibitor", receptor:"PDE4", activity:"Inhibitor", affinity:"Comparable range to mesembrenone (possible source conflation)" }] }
+    ]
+  },
+  {
+    name:"Kava Kava - 30% root extract", latin:"Piper methysticum",
+    image:"https://gaiastore.eu/wp-content/uploads/2020/09/KAVA-EXTR-FINAL-e1599848918231-330x330.jpg",
+    inStock:false, price:"€5.37",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/kava-kava-30-extrakt-z-korene/",
+    potency:4.0,
+    effects:"Calming, anxiolytic, muscle relaxation",
+    compounds:"Kavain, dihydrokavain, methysticin",
+    substances:[
+      { name:"Kavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Low-micromolar" }] },
+      { name:"Dihydrokavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Not quantified" }, { key:"NET_ionchannels_inhibitor", receptor:"Ion channels / NET", activity:"Inhibitor", affinity:"Not quantified" }] },
+      { name:"Methysticin", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Enhanced ligand binding", affinity:"Micromolar" }] }
+    ]
+  },
+  {
+    name:"Mapacho Peru", latin:"Nicotiana rustica",
+    image:"https://gaiastore.eu/wp-content/uploads/2025/10/mapachoperu.front_-330x330.jpg",
+    inStock:true, price:"€16.71",
+    tags:["Entheogens"],
+    link:"https://gaiastore.eu/en/obchod/mapacho-peru/",
+    potency:6.0,
+    effects:"Stimulation, alertness, autonomic effects",
+    compounds:"Nicotine, anatabine, anabasine",
+    substances:[
+      { name:"Nicotine", hits:[{ key:"nAChR_agonist", receptor:"Nicotinic ACh receptor", activity:"Agonist", affinity:"High affinity, subtype dependent" }] },
+      { name:"Anatabine", hits:[{ key:"nAChR_agonist", receptor:"Nicotinic ACh receptor", activity:"Weak agonist", affinity:"Lower affinity than nicotine" }] },
+      { name:"Anabasine", hits:[{ key:"nAChR_agonist", receptor:"Nicotinic ACh receptor", activity:"Agonist", affinity:"Comparable to nicotine at some subtypes" }] }
+    ]
+  },
+  {
+    name:"Calea Zacatechichi – crushed leaves", latin:"Calea ternifolia",
+    image:"https://gaiastore.eu/wp-content/uploads/2019/08/CALEA-MAIN-e1594808062718-330x330.jpg",
+    inStock:true, price:"€6.55",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/calea-zacatechichi-drcene-listy/",
+    potency:2.0,
+    effects:"Relaxation, bitter tonic, traditionally associated with dreaming",
+    compounds:"Sesquiterpene lactones, germacranolides, flavonoids",
+    substances:[
+      { name:"Sesquiterpene lactones", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] },
+      { name:"Germacranolides", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] },
+      { name:"Flavonoids", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] }
+    ]
+  },
+  {
+    name:"Kava Kava Vanuatu Borongoru - Root Powder", latin:"Piper methysticum",
+    image:"https://gaiastore.eu/wp-content/uploads/2019/11/KAVA-BORONGORU-MAIN-e1594721960150-330x330.jpg",
+    inStock:true, price:"€26.36",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/kava-kava-vanuatu-borongoru-prasek-z-korene/",
+    potency:5.0,
+    effects:"Calming, anxiolytic, muscle relaxation",
+    compounds:"Kavain, dihydrokavain, methysticin, dihydromethysticin",
+    substances:[
+      { name:"Kavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Low-micromolar" }] },
+      { name:"Dihydrokavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Not quantified" }, { key:"NET_ionchannels_inhibitor", receptor:"Ion channels / NET", activity:"Inhibitor", affinity:"Not quantified" }] },
+      { name:"Methysticin", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Enhanced ligand binding", affinity:"Micromolar" }] },
+      { name:"Dihydromethysticin", hits:[{ key:"GABAA_PAM", receptor:"GABA-A / neuroprotective pathways", activity:"Modulator", affinity:"Not quantified" }] }
+    ]
+  },
+  {
+    name:"Peganum harmala – seeds", latin:"Peganum harmala",
+    image:"https://gaiastore.eu/wp-content/uploads/2019/08/HARMALA-MAIN-e1594723357203-330x330.jpg",
+    inStock:true, price:"€5.37",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/harmala-mnohodilna-seminka/",
+    potency:7.0,
+    effects:"MAO-A inhibition, CNS effects, altered perception",
+    compounds:"Harmine, harmaline, tetrahydroharmine",
+    substances:[
+      { name:"Harmine", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] },
+      { name:"Harmaline", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] },
+      { name:"Tetrahydroharmine", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Weak reuptake inhibitor", affinity:"Weak/micromolar; less potent than SSRIs" }, { key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Weak inhibitor", affinity:"Weaker than harmine/harmaline" }] }
+    ]
+  },
+  {
+    name:"Banisteriopsis Caapi Yellow Vine – crushed leaves", latin:"Banisteriopsis caapi",
+    image:"https://gaiastore.eu/wp-content/uploads/2019/08/CAAPI-LISTY-MAIN-1-e1594722485768-330x330.jpg",
+    inStock:true, price:"€7.05",
+    tags:["Entheogens"],
+    link:"https://gaiastore.eu/en/obchod/banisteriopsis-caapi-yellow-vine-drcene-listy/",
+    potency:5.0,
+    effects:"MAO-A inhibition, relaxation, altered perception",
+    compounds:"Harmine, harmaline, tetrahydroharmine",
+    substances:[
+      { name:"Harmine", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] },
+      { name:"Harmaline", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] },
+      { name:"Tetrahydroharmine", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Weak reuptake inhibitor", affinity:"Weak/micromolar; less potent than SSRIs" }, { key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Weak inhibitor", affinity:"Weaker than harmine/harmaline" }] }
+    ]
+  },
+  {
+    name:"Mitragyna Hirsuta – 50x extract", latin:"Mitragyna hirsuta",
+    image:"https://gaiastore.eu/wp-content/uploads/2026/01/hirsuta.extract.front_-330x330.jpg",
+    inStock:true, price:"€9.15",
+    tags:["Entheogens"],
+    link:"https://gaiastore.eu/en/obchod/mitragyna-hirsuta-50x-extrakt-3g/",
+    potency:6.0,
+    effects:"Relaxation, analgesia, sedation-like effects",
+    compounds:"Mitragynine-related alkaloids, hirsutine",
+    substances:[
+      { name:"Mitragynine-related alkaloids", hits:[{ key:"MuOpioid_partial", receptor:"Mu-opioid receptor", activity:"Partial agonist", affinity:"Not quantified for this extract" }] },
+      { name:"Hirsutine", hits:[{ key:"MuOpioid_partial", receptor:"Mu-opioid receptor (weak) / Ca2+ channels", activity:"Weak partial agonist / channel blocker", affinity:"Not quantified" }] }
+    ]
+  },
+  {
+    name:"Harmala Freebase Isolate 99%", latin:"Peganum harmala alkaloids",
+    image:"https://gaiastore.eu/wp-content/uploads/2020/08/harmine.harmaline-330x330.jpg",
+    inStock:true, price:"€16.79",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/harmala-freebase-izolat-99/",
+    potency:8.0,
+    effects:"MAO-A inhibition, psychoactive potentiation",
+    compounds:"Harmine, harmaline",
+    substances:[
+      { name:"Harmine", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] },
+      { name:"Harmaline", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] }
+    ]
+  },
+  {
+    name:"Kava Kava Just Tonga - Root Powder", latin:"Piper methysticum",
+    image:"https://gaiastore.eu/wp-content/uploads/2019/11/KAVA-POUNI-ONO-MAIN-1-e1594722053775-330x330.jpg",
+    inStock:true, price:"€24.68",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/kava-kava-tonga-pouni-ono-prasek-z-korene/",
+    potency:5.0,
+    effects:"Calming, anxiolytic, muscle relaxation",
+    compounds:"Kavain, dihydrokavain, methysticin",
+    substances:[
+      { name:"Kavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Low-micromolar" }] },
+      { name:"Dihydrokavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Not quantified" }, { key:"NET_ionchannels_inhibitor", receptor:"Ion channels / NET", activity:"Inhibitor", affinity:"Not quantified" }] },
+      { name:"Methysticin", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Enhanced ligand binding", affinity:"Micromolar" }] }
+    ]
+  },
+  {
+    name:"Blue lotus - 20:1 extract", latin:"Nymphaea caerulea",
+    image:"https://gaiastore.eu/wp-content/uploads/2023/04/blue.lotus_.resin_.front_-330x330.jpg",
+    inStock:true, price:"€13.35",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/modry-leknin-201-extrakt-5g/",
+    potency:4.0,
+    effects:"Relaxation, mild sedation, mood elevation",
+    compounds:"Nuciferine, apomorphine",
+    substances:[
+      { name:"Nuciferine", hits:[{ key:"DA_5HT_mixed", receptor:"Dopamine + 5-HT (multi-target)", activity:"Mixed antagonist/modulator", affinity:"Ki not found — data gap" }] },
+      { name:"Apomorphine", hits:[{ key:"D2_agonist", receptor:"Dopamine D1/D2 (non-selective)", activity:"Agonist", affinity:"Nanomolar range across D1/D2 family" }] }
+    ]
+  },
+  {
+    name:"Tetrahydroharmine HCl", latin:"Banisteriopsis caapi alkaloid",
+    image:"https://gaiastore.eu/wp-content/uploads/2021/01/THH-330x330.jpg",
+    inStock:false, price:"€19.23",
+    tags:["Entheogens"],
+    link:"https://gaiastore.eu/en/obchod/tetrahydroharmin-hcl/",
+    potency:7.0,
+    effects:"Serotonergic effects, altered perception, potentiation",
+    compounds:"Tetrahydroharmine",
+    substances:[
+      { name:"Tetrahydroharmine", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Weak reuptake inhibitor", affinity:"Weak/micromolar; less potent than SSRIs" }, { key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Weak inhibitor", affinity:"Weaker than harmine/harmaline" }] }
+    ]
+  },
+  {
+    name:"Kava Kava Night Blend - micronized powder", latin:"Piper methysticum",
+    image:"https://gaiastore.eu/wp-content/uploads/2022/03/NIGHTBLEND.KAVA_-e1648143600445-330x330.jpg",
+    inStock:false, price:"€44.41",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/kava-kava-night-blend-mikronizovany-prasek/",
+    potency:5.5,
+    effects:"Relaxation, anxiolysis, sedation",
+    compounds:"Kavain, dihydrokavain, methysticin",
+    substances:[
+      { name:"Kavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Low-micromolar" }] },
+      { name:"Dihydrokavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Not quantified" }, { key:"NET_ionchannels_inhibitor", receptor:"Ion channels / NET", activity:"Inhibitor", affinity:"Not quantified" }] },
+      { name:"Methysticin", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Enhanced ligand binding", affinity:"Micromolar" }] }
+    ]
+  },
+  {
+    name:"Harmala HCl Isolate 98%", latin:"Peganum harmala alkaloids",
+    image:"https://gaiastore.eu/wp-content/uploads/2020/08/harmine.harmaline-330x330.jpg",
+    inStock:true, price:"€16.79",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/harmala-hcl-izolat-98/",
+    potency:8.0,
+    effects:"MAO-A inhibition, psychoactive potentiation",
+    compounds:"Harmine, harmaline",
+    substances:[
+      { name:"Harmine", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] },
+      { name:"Harmaline", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] }
+    ]
+  },
+  {
+    name:"Passionflower – crushed leaves", latin:"Passiflora incarnata",
+    image:"https://gaiastore.eu/wp-content/uploads/2022/02/muc-front1-e1645966717790-330x330.jpg",
+    inStock:true, price:"€4.11",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/mucenka-pletni-drcena-nat/",
+    potency:3.0,
+    effects:"Calming, mild anxiolytic, sedative",
+    compounds:"Flavonoids, harman alkaloids, vitexin, chrysin",
+    substances:[
+      { name:"Flavonoids", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] },
+      { name:"Harman alkaloids", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (class effect)", activity:"Weak/reversible inhibitor", affinity:"Much weaker than harmine/harmaline" }] },
+      { name:"Vitexin", hits:[{ key:"GABAA_PAM", receptor:"GABA-A (proposed)", activity:"Weak positive modulator (proposed)", affinity:"Not quantified" }] },
+      { name:"Chrysin", hits:[{ key:"BZD_site_ligand", receptor:"Benzodiazepine site on GABA-A", activity:"Ligand (weak partial agonist, proposed)", affinity:"Not quantified" }] }
+    ]
+  },
+  {
+    name:"Kava Kava - 70% root extract", latin:"Piper methysticum",
+    image:"https://gaiastore.eu/wp-content/uploads/2020/09/KAVA-EXTR-FINAL-e1599848918231-330x330.jpg",
+    inStock:true, price:"€8.31",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/kava-kava-70-extrakt-z-korene/",
+    potency:6.0,
+    effects:"Stronger calming, anxiolytic, muscle relaxation",
+    compounds:"Kavain, dihydrokavain, methysticin",
+    substances:[
+      { name:"Kavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Low-micromolar" }] },
+      { name:"Dihydrokavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Not quantified" }, { key:"NET_ionchannels_inhibitor", receptor:"Ion channels / NET", activity:"Inhibitor", affinity:"Not quantified" }] },
+      { name:"Methysticin", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Enhanced ligand binding", affinity:"Micromolar" }] }
+    ]
+  },
+  {
+    name:"Banisteriopsis Muricata Red Vine - crushed vine", latin:"Banisteriopsis muricata",
+    image:"https://gaiastore.eu/wp-content/uploads/2020/09/CAAPI-DRCENA-RED-MAIN-e1599848896546-330x330.jpg",
+    inStock:true, price:"€13.77",
+    tags:["Entheogens"],
+    link:"https://gaiastore.eu/en/obchod/banisteriopsis-caapi-red-vine-drcena-liana/",
+    potency:5.0,
+    effects:"Relaxation, MAO-A inhibition, altered perception",
+    compounds:"β-carboline alkaloids, harmine-type compounds",
+    substances:[
+      { name:"Β-carboline alkaloids", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (class effect)", activity:"Reversible inhibitor", affinity:"Not quantified for this vine" }] },
+      { name:"Harmine-type compounds", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (class effect)", activity:"Reversible inhibitor", affinity:"Not quantified" }] }
+    ]
+  },
+  {
+    name:"Banisteriopsis Caapi Yellow Vine - crushed vine", latin:"Banisteriopsis caapi",
+    image:"https://gaiastore.eu/wp-content/uploads/2019/08/CAAPI-YELLOW-DRCENA-MAIN-e1594723312708-330x330.jpg",
+    inStock:true, price:"€13.77",
+    tags:["Entheogens"],
+    link:"https://gaiastore.eu/en/obchod/banisteriopsis-caapi-yellow-vine-drcena-liana/",
+    potency:5.0,
+    effects:"MAO-A inhibition, relaxation, altered perception",
+    compounds:"Harmine, harmaline, tetrahydroharmine",
+    substances:[
+      { name:"Harmine", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] },
+      { name:"Harmaline", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] },
+      { name:"Tetrahydroharmine", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Weak reuptake inhibitor", affinity:"Weak/micromolar; less potent than SSRIs" }, { key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Weak inhibitor", affinity:"Weaker than harmine/harmaline" }] }
+    ]
+  },
+  {
+    name:"Bobinsana – 30:1 extract", latin:"Calliandra angustifolia",
+    image:"https://gaiastore.eu/wp-content/uploads/2023/04/bobinsana.extrakt-330x330.jpg",
+    inStock:true, price:"€23.84",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/bobinsana-extrakt/",
+    potency:2.5,
+    effects:"Calming, mood support, traditional anti-inflammatory use",
+    compounds:"Flavonoids, saponins, phenolic compounds",
+    substances:[
+      { name:"Flavonoids", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] },
+      { name:"Saponins", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] },
+      { name:"Phenolic compounds", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] }
+    ]
+  },
+  {
+    name:"Bobinsana - Tincture 10 ml", latin:"Calliandra angustifolia",
+    image:"https://gaiastore.eu/wp-content/uploads/2025/02/Bobinsana-Munay.png-330x330.webp",
+    inStock:true, price:"€17.97",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/bobinsana-tinktura-10-ml/",
+    potency:2.0,
+    effects:"Calming, mood support, traditional anti-inflammatory use",
+    compounds:"Flavonoids, saponins, phenolics",
+    substances:[
+      { name:"Flavonoids", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] },
+      { name:"Saponins", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] },
+      { name:"Phenolics", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] }
+    ]
+  },
+  {
+    name:"Blue lotus - Tincture 10 ml", latin:"Nymphaea caerulea",
+    image:"https://gaiastore.eu/wp-content/uploads/2025/02/Bluelotus-Munay.png-330x330.webp",
+    inStock:true, price:"€17.97",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/modry-leknin-tinktura-10-ml/",
+    potency:3.0,
+    effects:"Relaxation, mild sedation, mood elevation",
+    compounds:"Nuciferine, apomorphine, flavonoids",
+    substances:[
+      { name:"Nuciferine", hits:[{ key:"DA_5HT_mixed", receptor:"Dopamine + 5-HT (multi-target)", activity:"Mixed antagonist/modulator", affinity:"Ki not found — data gap" }] },
+      { name:"Apomorphine", hits:[{ key:"D2_agonist", receptor:"Dopamine D1/D2 (non-selective)", activity:"Agonist", affinity:"Nanomolar range across D1/D2 family" }] },
+      { name:"Flavonoids", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] }
+    ]
+  },
+  {
+    name:"Calea Zacatechichi - 10:1 extract 1g", latin:"Calea ternifolia",
+    image:"https://gaiastore.eu/wp-content/uploads/2022/10/calea-zacatechichi-extract-330x330.jpg",
+    inStock:true, price:"€6.63",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/calea-zacatechichi-101-extrakt-1g/",
+    potency:3.0,
+    effects:"Relaxation, traditional dream-related use",
+    compounds:"Sesquiterpene lactones, germacranolides",
+    substances:[
+      { name:"Sesquiterpene lactones", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] },
+      { name:"Germacranolides", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] }
+    ]
+  },
+  {
+    name:"Passion flower – 50x extract", latin:"Passiflora incarnata",
+    image:"https://gaiastore.eu/wp-content/uploads/2026/01/mucenka.extract.front_-330x330.jpg",
+    inStock:true, price:"€8.31",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/mucenka-pletni-50x-extrakt-3g/",
+    potency:5.0,
+    effects:"Calming, anxiolytic, sedative",
+    compounds:"Flavonoids, vitexin, chrysin, harman alkaloids",
+    substances:[
+      { name:"Flavonoids", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] },
+      { name:"Vitexin", hits:[{ key:"GABAA_PAM", receptor:"GABA-A (proposed)", activity:"Weak positive modulator (proposed)", affinity:"Not quantified" }] },
+      { name:"Chrysin", hits:[{ key:"BZD_site_ligand", receptor:"Benzodiazepine site on GABA-A", activity:"Ligand (weak partial agonist, proposed)", affinity:"Not quantified" }] },
+      { name:"Harman alkaloids", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (class effect)", activity:"Weak/reversible inhibitor", affinity:"Much weaker than harmine/harmaline" }] }
+    ]
+  },
+  {
+    name:"Banisteriopsis Caapi - Tincture 10 ml", latin:"Banisteriopsis caapi",
+    image:"https://gaiastore.eu/wp-content/uploads/2025/02/Caapi-Munay.png-330x330.webp",
+    inStock:true, price:"€17.97",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/banisteriopsis-caapi-tinktura-10-ml/",
+    potency:4.0,
+    effects:"MAO-A inhibition, relaxation, altered perception",
+    compounds:"Harmine, harmaline, tetrahydroharmine",
+    substances:[
+      { name:"Harmine", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] },
+      { name:"Harmaline", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] },
+      { name:"Tetrahydroharmine", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Weak reuptake inhibitor", affinity:"Weak/micromolar; less potent than SSRIs" }, { key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Weak inhibitor", affinity:"Weaker than harmine/harmaline" }] }
+    ]
+  },
+  {
+    name:"Bobinsana - bark", latin:"Calliandra angustifolia",
+    image:"https://gaiastore.eu/wp-content/uploads/2023/08/bobinsana.kura_-e1691242610213-330x330.jpg",
+    inStock:true, price:"€6.63",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/bobinsana-kura/",
+    potency:2.0,
+    effects:"Calming, traditional anti-inflammatory use",
+    compounds:"Flavonoids, saponins, phenolics",
+    substances:[
+      { name:"Flavonoids", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] },
+      { name:"Saponins", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] },
+      { name:"Phenolics", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] }
+    ]
+  },
+  {
+    name:"Kava Kava Day Blend - micronized powder", latin:"Piper methysticum",
+    image:"https://gaiastore.eu/wp-content/uploads/2022/03/DAYBLEND.KAVA_-e1648143572396-330x330.jpg",
+    inStock:false, price:"€42.73",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/kava-kava-day-blend-mikronizovany-prasek/",
+    potency:5.0,
+    effects:"Calming, relaxation, anxiolytic effects",
+    compounds:"Kavain, dihydrokavain, methysticin",
+    substances:[
+      { name:"Kavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Low-micromolar" }] },
+      { name:"Dihydrokavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Not quantified" }, { key:"NET_ionchannels_inhibitor", receptor:"Ion channels / NET", activity:"Inhibitor", affinity:"Not quantified" }] },
+      { name:"Methysticin", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Enhanced ligand binding", affinity:"Micromolar" }] }
+    ]
+  },
+  {
+    name:"Amanita Muscaria - powder", latin:"Amanita muscaria",
+    image:"https://gaiastore.eu/wp-content/uploads/2025/06/amanita.powder-330x330.jpg",
+    inStock:true, price:"€16.71",
+    tags:["Entheogens"],
+    link:"https://gaiastore.eu/en/obchod/amanita-muscaria-prasek/",
+    potency:7.0,
+    effects:"Sedation, altered perception, dissociation, CNS effects",
+    compounds:"Muscimol, ibotenic acid",
+    substances:[
+      { name:"Muscimol", hits:[{ key:"GABAA_agonist", receptor:"GABA-A (orthosteric site)", activity:"Agonist", affinity:"Low micromolar" }] },
+      { name:"Ibotenic acid", hits:[{ key:"NMDA_agonist", receptor:"NMDA receptor (glutamate site)", activity:"Agonist", affinity:"Micromolar; also mGluR activity" }] }
+    ]
+  },
+  {
+    name:"Blue lotus - 10:1 extract", latin:"Nymphaea caerulea",
+    image:"https://gaiastore.eu/wp-content/uploads/2023/04/blue.lotus_.extr_.powder.front_-330x330.jpg",
+    inStock:true, price:"€10.83",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/modry-leknin-101-extrakt/",
+    potency:3.5,
+    effects:"Relaxation, mild sedation, mood elevation",
+    compounds:"Nuciferine, apomorphine",
+    substances:[
+      { name:"Nuciferine", hits:[{ key:"DA_5HT_mixed", receptor:"Dopamine + 5-HT (multi-target)", activity:"Mixed antagonist/modulator", affinity:"Ki not found — data gap" }] },
+      { name:"Apomorphine", hits:[{ key:"D2_agonist", receptor:"Dopamine D1/D2 (non-selective)", activity:"Agonist", affinity:"Nanomolar range across D1/D2 family" }] }
+    ]
+  },
+  {
+    name:"Mapacho Brasil", latin:"Nicotiana rustica",
+    image:"https://gaiastore.eu/wp-content/uploads/2025/10/mapacho.brasil.front_-330x330.jpg",
+    inStock:false, price:"€16.71",
+    tags:["Entheogens"],
+    link:"https://gaiastore.eu/en/obchod/mapacho-brasil/",
+    potency:6.0,
+    effects:"Stimulation, alertness, autonomic effects",
+    compounds:"Nicotine, anatabine, anabasine",
+    substances:[
+      { name:"Nicotine", hits:[{ key:"nAChR_agonist", receptor:"Nicotinic ACh receptor", activity:"Agonist", affinity:"High affinity, subtype dependent" }] },
+      { name:"Anatabine", hits:[{ key:"nAChR_agonist", receptor:"Nicotinic ACh receptor", activity:"Weak agonist", affinity:"Lower affinity than nicotine" }] },
+      { name:"Anabasine", hits:[{ key:"nAChR_agonist", receptor:"Nicotinic ACh receptor", activity:"Agonist", affinity:"Comparable to nicotine at some subtypes" }] }
+    ]
+  },
+  {
+    name:"Peganum harmala 10:1 extract", latin:"Peganum harmala",
+    image:"https://gaiastore.eu/wp-content/uploads/2026/01/harmala.extract.front_-330x330.jpg",
+    inStock:true, price:"€9.57",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/harmala-mnohodilna-101-extrakt/",
+    potency:8.0,
+    effects:"MAO-A inhibition, altered perception, potentiation",
+    compounds:"Harmine, harmaline, tetrahydroharmine",
+    substances:[
+      { name:"Harmine", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] },
+      { name:"Harmaline", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] },
+      { name:"Tetrahydroharmine", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Weak reuptake inhibitor", affinity:"Weak/micromolar; less potent than SSRIs" }, { key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Weak inhibitor", affinity:"Weaker than harmine/harmaline" }] }
+    ]
+  },
+  {
+    name:"Tetrahydroharmine Freebase", latin:"Banisteriopsis caapi alkaloid",
+    image:"https://gaiastore.eu/wp-content/uploads/2021/01/THH-330x330.jpg",
+    inStock:false, price:"€19.23",
+    tags:["Entheogens"],
+    link:"https://gaiastore.eu/en/obchod/tetrahydroharmin-freebase/",
+    potency:7.0,
+    effects:"Serotonergic effects, altered perception, potentiation",
+    compounds:"Tetrahydroharmine",
+    substances:[
+      { name:"Tetrahydroharmine", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Weak reuptake inhibitor", affinity:"Weak/micromolar; less potent than SSRIs" }, { key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Weak inhibitor", affinity:"Weaker than harmine/harmaline" }] }
+    ]
+  },
+  {
+    name:"Harmine HCl Isolate 98%", latin:"Peganum harmala alkaloid",
+    image:"https://gaiastore.eu/wp-content/uploads/2025/12/harmine-330x330.jpg",
+    inStock:true, price:"€16.79",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/harmine-hcl-izolat-98/",
+    potency:8.0,
+    effects:"Potent MAO-A inhibition, psychoactive potentiation",
+    compounds:"Harmine",
+    substances:[
+      { name:"Harmine", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] }
+    ]
+  },
+  {
+    name:"Harmaline Freebase Isolate 98%", latin:"Peganum harmala alkaloid",
+    image:"https://gaiastore.eu/wp-content/uploads/2025/12/harmaline-330x330.jpg",
+    inStock:false, price:"€24.68",
+    tags:["Entheogens"],
+    link:"https://gaiastore.eu/en/obchod/harmaline-freebase-izolat-98/",
+    potency:8.0,
+    effects:"MAO-A inhibition, CNS effects, psychoactive potentiation",
+    compounds:"Harmaline",
+    substances:[
+      { name:"Harmaline", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] }
+    ]
+  },
+  {
+    name:"Harmine Freebase Isolate 98%", latin:"Peganum harmala alkaloid",
+    image:"https://gaiastore.eu/wp-content/uploads/2025/12/harmine-330x330.jpg",
+    inStock:true, price:"€17.63",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/harmine-freebase-izolat-98/",
+    potency:8.0,
+    effects:"MAO-A inhibition, psychoactive potentiation",
+    compounds:"Harmine",
+    substances:[
+      { name:"Harmine", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] }
+    ]
+  },
+  {
+    name:"Harmaline HCl Isolate 98%", latin:"Peganum harmala alkaloid",
+    image:"https://gaiastore.eu/wp-content/uploads/2025/12/harmaline-330x330.jpg",
+    inStock:true, price:"€24.68",
+    tags:["Entheogens", "Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/harmaline-hcl-izolat-98/",
+    potency:8.0,
+    effects:"MAO-A inhibition, CNS effects, psychoactive potentiation",
+    compounds:"Harmaline",
+    substances:[
+      { name:"Harmaline", hits:[{ key:"MAO_inhibitor", receptor:"MAO-A (monoamine oxidase)", activity:"Reversible inhibitor (MAO-A selective)", affinity:"Ki low nanomolar" }] }
+    ]
+  },
+  {
+    name:"Holybliss cannabis cleansing chocolate 36g", latin:"Cannabis sativa",
+    image:"https://gaiastore.eu/wp-content/uploads/2024/01/hollybliss.cannabis_.chocolate.front_-330x330.jpg",
+    inStock:true, price:"€7.47",
+    tags:["Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/holybliss-cannabis-cleansing-chocolate-36g/",
+    potency:2.0,
+    effects:"Relaxation; effects depend on actual cannabinoid content",
+    compounds:"Cannabinoids — product formulation dependent",
+    substances:[
+      { name:"Cannabinoids — product formulation dependent", hits:[{ key:null, receptor:"Unknown / unconfirmed", activity:"—", affinity:"No specific receptor data located" }] }
+    ]
+  },
+  {
+    name:"Kava Kava - NOBLENANO™ Tincture 30 ml", latin:"Piper methysticum",
+    image:"https://gaiastore.eu/wp-content/uploads/2025/02/Kava-Nano-Munay.png-330x330.webp",
+    inStock:true, price:"€17.97",
+    tags:["Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/kava-kava-noblenano-tinktura-30-ml/",
+    potency:5.0,
+    effects:"Calming, anxiolytic, muscle relaxation",
+    compounds:"Kavain, dihydrokavain, methysticin",
+    substances:[
+      { name:"Kavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Low-micromolar" }] },
+      { name:"Dihydrokavain", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Positive allosteric modulator", affinity:"Not quantified" }, { key:"NET_ionchannels_inhibitor", receptor:"Ion channels / NET", activity:"Inhibitor", affinity:"Not quantified" }] },
+      { name:"Methysticin", hits:[{ key:"GABAA_PAM", receptor:"GABA-A", activity:"Enhanced ligand binding", affinity:"Micromolar" }] }
+    ]
+  },
+  {
+    name:"Kanna Happy Calming – extract 1g", latin:"Sceletium tortuosum",
+    image:"https://gaiastore.eu/wp-content/uploads/2025/11/kanna-happy-calming-extract-1g-330x330.jpg",
+    inStock:true, price:"€24.68",
+    tags:["Relaxants"],
+    link:"https://gaiastore.eu/en/obchod/kanna-happy-calming-extrakt-1g/",
+    potency:7.0,
+    effects:"Calming, anxiolytic, mood support",
+    compounds:"Mesembrine, mesembrenone",
+    substances:[
+      { name:"Mesembrine", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Reuptake inhibitor", affinity:"Ki ~1.4 nM (potent)" }] },
+      { name:"Mesembrenone", hits:[{ key:"SERT_reuptake", receptor:"SERT (Serotonin Transporter)", activity:"Reuptake inhibitor", affinity:"Sub-micromolar, less potent than mesembrine" }, { key:"PDE4_inhibitor", receptor:"PDE4", activity:"Inhibitor", affinity:"IC50 not fully characterized" }] }
+    ]
+  }
+];
+HERBS.sort((a,b)=> b.potency - a.potency);
+
+/* ============================================================
+   RENDER — generic, do not edit when adding data above
+   ============================================================ */
+const grid = document.getElementById('cardGrid');
+document.getElementById('herbCount').textContent = HERBS.length + ' entries logged';
+
+function gaugeTicks(){
+  let s='';
+  for(let i=0;i<10;i++) s += '<i></i>';
+  return s;
+}
+
+function receptorTable(substances){
+  if(!substances || !substances.length){
+    return `<table class="rtable empty-table"><tbody>
+      <tr><td>Mechanism unconfirmed — no characterized receptor targets</td></tr>
+    </tbody></table>`;
+  }
+  const body = substances.map(sub=>{
+    const subRow = `<tr class="substance-row"><td colspan="3">${sub.name}</td></tr>`;
+    const rows = sub.hits.map(hit=>{
+      const r = hit.key ? RECEPTORS[hit.key] : null;
+      const clickable = !!r;
+      return `<tr class="rrow${clickable ? '' : ' inert'}" ${clickable ? `data-key="${hit.key}" tabindex="0" role="button" aria-haspopup="dialog"` : ''}>
+        <td class="rname">${hit.receptor}</td>
+        <td class="ractivity">${hit.activity}</td>
+        <td class="raffinity">${hit.affinity}</td>
+      </tr>`;
+    }).join('');
+    return subRow + rows;
+  }).join('');
+
+  return `<table class="rtable">
+    <thead><tr><th>Receptor</th><th>Activity</th><th>Affinity</th></tr></thead>
+    <tbody>${body}</tbody>
+  </table>`;
+}
+
+function tagsHTML(tags){
+  if(!tags || !tags.length) return '';
+  return `<div class="tags">${tags.map(t=>`<span class="hashtag">#${t}</span>`).join('')}</div>`;
+}
+
+function cardHTML(h){
+  const pct = Math.min(100, (h.potency/10)*100);
+  const tableHTML = receptorTable(h.substances);
+
+  return `
+  <article class="card">
+    <div class="card-top">
+      <div class="card-meta">
+        <span class="stock-badge ${h.inStock ? 'in' : 'out'}">${h.inStock ? 'In Stock' : 'Out of Stock'}</span>
+        <span class="price">${h.price}</span>
+      </div>
+      <div class="card-image">
+        <img src="${h.image}" alt="${h.name}" loading="lazy">
+      </div>
+    </div>
+
+    <div class="names">
+      <h2>${h.name}</h2>
+      <p class="latin">${h.latin}</p>
+    </div>
+    ${tagsHTML(h.tags)}
+
+    <div class="potency">
+      <div class="potency-label">
+        <span>Potency</span>
+        <span class="val">${h.potency.toFixed(1)} / 10</span>
+      </div>
+      <div class="gauge">
+        <div class="gauge-fill" style="width:${pct}%"></div>
+        <div class="gauge-ticks">${gaugeTicks()}</div>
+      </div>
+    </div>
+
+    <p class="effects">${h.effects}</p>
+    <p class="compounds"><b>Compounds:</b> ${h.compounds}</p>
+
+    <a class="buy-btn" href="${h.link}" target="_blank" rel="noopener noreferrer">View Product →</a>
+
+    <p class="receptors-label">Receptors</p>
+    ${tableHTML}
+  </article>`;
+}
+
+grid.innerHTML = HERBS.map(cardHTML).join('');
+
+/* ---------- modal logic (generic, do not edit) ---------- */
+const overlay = document.getElementById('overlay');
+const modalTitle = document.getElementById('modalTitle');
+const modalActivity = document.getElementById('modalActivity');
+const modalSubtitle = document.getElementById('modalSubtitle');
+const modalBody = document.getElementById('modalBody');
+
+function openModal(key){
+  const r = RECEPTORS[key];
+  if(!r) return;
+  modalTitle.textContent = r.title;
+  modalActivity.textContent = r.activity;
+  modalSubtitle.textContent = r.subtitle;
+  modalBody.textContent = r.body;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+grid.addEventListener('click', (e)=>{
+  const row = e.target.closest('tr[data-key]');
+  if(row) openModal(row.dataset.key);
+});
+grid.addEventListener('keydown', (e)=>{
+  if(e.key !== 'Enter' && e.key !== ' ') return;
+  const row = e.target.closest('tr[data-key]');
+  if(row){ e.preventDefault(); openModal(row.dataset.key); }
+});
+document.getElementById('modalClose').addEventListener('click', closeModal);
+overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeModal(); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>

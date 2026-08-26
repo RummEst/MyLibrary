@@ -1,0 +1,60 @@
+NET:RI, NET:RA,
+DAT:RI, DAT:RA,
+SERT:RI, SERT:RA,
+
+5HT1A:AG, 5HT1A:PA,
+5HT1B:AG,
+5HT1D:AG,
+5HT2A:AG, 5HT2A:ANT, 5HT2A:INV,
+5HT2B:AG, 5HT2B:ANT,
+5HT2C:AG, 5HT2C:ANT, 5HT2C:INV,
+5HT3:ANT,
+5HT4:AG,
+5HT6:ANT,
+5HT7:ANT,
+
+D1:AG, D1:ANT,
+D2:AG, D2:PA, D2:ANT,
+D3:PA, D3:ANT,
+D4:ANT,
+
+A1:AG, A1:ANT,
+A2:AG, A2:ANT,
+B1:AG, B1:ANT,
+B2:AG, B2:ANT,
+B3:AG,
+
+MOR:AG, MOR:PA, MOR:ANT,
+DOR:AG,
+KOR:AG, KOR:ANT,
+NOP:AG,
+
+CB1:AG, CB1:INV,
+CB2:AG,
+TRPV1:AG,
+FAAH:INH,
+
+M1:AG, M1:ANT, M1:PAM,
+M2:ANT,
+M3:ANT,
+M4:AG, M4:PAM,
+
+A4B2:AG, A4B2:PA, A4B2:ANT,
+A7:AG, A7:PAM,
+A3B4:AG,
+NMJ:AG, NMJ:ANT,
+
+NMDA-GluN2B:ANT,
+NMDA-GLY:AG, NMDA-GLY:PA,
+NMDA-PCP:ANT,
+
+GABAA-BZD:AG, GABAA-BZD:PA, GABAA-BZD:ANT, GABAA-BZD:INV,
+GABAA-BARB:AG,
+GABAA-NS:PAM,
+GABAA-ETOH:PAM,
+GABAA-ORTHO:AG, GABAA-ORTHO:ANT,
+GABAB:AG, GABAB:PAM
+
+###
+
+Legend: AG=agonist, PA=partial agonist, ANT=antagonist (orthosteric/competitive), INV=inverse agonist, PAM/NAM=positive/negative allosteric modulator, INH=enzyme inhibitor, RI/RA/RU=reuptake inhibitor/releasing agent/reuptake enhancer.
