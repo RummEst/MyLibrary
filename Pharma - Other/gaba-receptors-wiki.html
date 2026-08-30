@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>GABA Receptors — A Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080B12;
+    --bg-2:#0D1220;
+    --panel:#121A2B;
+    --panel-2:#182238;
+    --line:#26314A;
+    --line-soft:#1B253A;
+    --text:#EAEDF4;
+    --muted:#8D98B3;
+    --muted-2:#5E6A85;
+
+    --alpha:#F0A94E;
+    --alpha-soft:rgba(240,169,78,0.14);
+    --beta:#E86FA6;
+    --beta-soft:rgba(232,111,166,0.14);
+    --other:#B08CF0;
+    --other-soft:rgba(176,140,240,0.14);
+    --ion:#5EC8F2;
+    --ion-soft:rgba(94,200,242,0.14);
+    --block:#EF6F82;
+    --block-soft:rgba(239,111,130,0.14);
+
+    --display:'Space Grotesk',sans-serif;
+    --body:'Newsreader',Georgia,serif;
+    --mono:'JetBrains Mono',monospace;
+    --header-h:56px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    background-image:
+      radial-gradient(ellipse 800px 500px at 15% -5%, rgba(94,200,242,0.08), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 20%, rgba(176,140,240,0.06), transparent 55%);
+    color:var(--text);
+    font-family:var(--body);
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4,.display{font-family:var(--display);letter-spacing:-0.01em;}
+  code,.mono{font-family:var(--mono);}
+  a{color:inherit;}
+  section{scroll-margin-top:calc(var(--header-h) + 14px);}
+  ::selection{background:var(--ion-soft);color:var(--text);}
+  :focus-visible{outline:2px solid var(--ion);outline-offset:2px;border-radius:4px;}
+
+  /* ---------- header / nav ---------- */
+  .site-header{
+    position:sticky;top:0;z-index:50;
+    height:var(--header-h);
+    background:rgba(8,11,18,0.86);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line-soft);
+    display:flex;align-items:center;
+    padding:0 14px;
+    gap:10px;
+  }
+  .brand{
+    display:flex;align-items:center;gap:8px;
+    font-family:var(--display);font-weight:600;font-size:14px;
+    white-space:nowrap;flex-shrink:0;
+  }
+  .brand svg{display:block;}
+  .navscroll{
+    display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;
+    padding-left:8px;border-left:1px solid var(--line-soft);
+  }
+  .navscroll::-webkit-scrollbar{display:none;}
+  .navpill{
+    flex-shrink:0;padding:7px 12px;border-radius:100px;
+    font-size:12.5px;font-family:var(--display);font-weight:500;
+    color:var(--muted);text-decoration:none;white-space:nowrap;
+    border:1px solid transparent;
+  }
+  .navpill:hover{color:var(--text);border-color:var(--line);}
+
+  .wrap{max-width:640px;margin:0 auto;padding:0 18px;}
+
+  /* ---------- hero ---------- */
+  .hero{padding:38px 0 28px;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:6px;
+    font-family:var(--display);font-size:11.5px;font-weight:600;
+    letter-spacing:0.14em;text-transform:uppercase;color:var(--ion);
+    margin-bottom:14px;
+  }
+  .eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--ion);box-shadow:0 0 8px var(--ion);}
+  .hero h1{font-size:clamp(28px,7vw,38px);line-height:1.08;margin:0 0 14px;font-weight:700;}
+  .hero h1 em{font-style:normal;color:var(--ion);}
+  .hero p{color:var(--muted);font-size:16.5px;max-width:52ch;margin:0 0 22px;}
+  .statrow{display:flex;gap:10px;flex-wrap:wrap;}
+  .stat{
+    background:var(--panel);border:1px solid var(--line-soft);
+    border-radius:12px;padding:10px 14px;flex:1;min-width:96px;
+  }
+  .stat b{display:block;font-family:var(--display);font-size:19px;color:var(--text);}
+  .stat span{font-size:11.5px;color:var(--muted-2);}
+
+  /* ---------- section framing ---------- */
+  .sec{padding:44px 0;border-top:1px solid var(--line-soft);}
+  .sec-tag{font-family:var(--display);font-size:11.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted-2);margin-bottom:8px;}
+  .sec h2{font-size:24px;margin:0 0 10px;}
+  .sec > .lede{color:var(--muted);margin:0 0 22px;max-width:56ch;}
+
+  /* ---------- callout ---------- */
+  .callout{
+    background:var(--panel);border:1px solid var(--line-soft);border-left:3px solid var(--other);
+    border-radius:14px;padding:16px 17px;margin-top:24px;
+  }
+  .callout h3{margin:0 0 6px;font-size:15px;color:var(--other);}
+  .callout p{margin:0 0 8px;font-size:14px;color:var(--muted);}
+  .callout p:last-child{margin-bottom:0;}
+  .callout .k{color:var(--text);font-weight:600;}
+
+  /* ---------- anatomy widget ---------- */
+  .subtype-pills{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:18px;scrollbar-width:none;}
+  .subtype-pills::-webkit-scrollbar{display:none;}
+  .spill{
+    flex-shrink:0;font-family:var(--display);font-size:12.5px;font-weight:500;
+    padding:8px 13px;border-radius:100px;border:1px solid var(--line);
+    background:var(--panel);color:var(--muted);cursor:pointer;
+    transition:all .18s ease;
+  }
+  .spill.active{background:var(--ion-soft);border-color:var(--ion);color:var(--ion);}
+
+  .anatomy-card{
+    background:linear-gradient(180deg,var(--panel),var(--bg-2));
+    border:1px solid var(--line-soft);border-radius:20px;
+    padding:20px 16px 22px;
+  }
+  .receptor-svg-wrap{display:flex;justify-content:center;margin-bottom:6px;}
+  .receptor-svg-wrap svg{width:100%;max-width:280px;height:auto;}
+  .subunit-node circle{transition:fill .25s ease, stroke .25s ease;cursor:pointer;stroke-width:2;}
+  .subunit-node text{font-family:var(--mono);font-size:14px;font-weight:600;fill:var(--bg);pointer-events:none;text-anchor:middle;dominant-baseline:middle;}
+  .subunit-node:hover circle{filter:brightness(1.15);}
+  .pore-ring{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:3 4;}
+  .pore{transition:r .35s ease, fill .35s ease, opacity .35s ease;}
+  .ion{opacity:0;transform-box:fill-box;transform-origin:center;}
+  svg[data-state="open"] .ion{opacity:1;animation:ionflow 1.3s linear infinite;}
+  svg[data-state="open"] .pore{fill:var(--ion);filter:drop-shadow(0 0 6px var(--ion));}
+  svg[data-state="resting"] .pore{fill:var(--line);}
+  svg[data-state="desensitized"] .pore{fill:var(--block);opacity:.55;}
+  @keyframes ionflow{
+    0%{transform:translateY(-58px);opacity:0;}
+    12%{opacity:1;}
+    85%{opacity:1;}
+    100%{transform:translateY(58px);opacity:0;}
+  }
+  .gate-toggle{display:flex;gap:6px;justify-content:center;margin:14px 0 4px;flex-wrap:wrap;}
+  .gbtn{
+    font-family:var(--display);font-size:12px;font-weight:600;padding:8px 12px;
+    border-radius:10px;border:1px solid var(--line);background:var(--bg-2);
+    color:var(--muted);cursor:pointer;
+  }
+  .gbtn.active[data-g="resting"]{background:var(--line-soft);color:var(--text);border-color:var(--line);}
+  .gbtn.active[data-g="open"]{background:var(--ion-soft);color:var(--ion);border-color:var(--ion);}
+  .gbtn.active[data-g="desensitized"]{background:var(--block-soft);color:var(--block);border-color:var(--block);}
+  .gate-note{text-align:center;font-size:13px;color:var(--muted);margin:8px auto 0;max-width:44ch;}
+
+  .legend{display:flex;gap:14px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+  .legend span{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted);font-family:var(--display);}
+  .legend i{width:9px;height:9px;border-radius:3px;display:inline-block;}
+
+  .subunit-info{
+    margin-top:16px;background:var(--bg-2);border:1px solid var(--line-soft);
+    border-radius:14px;padding:14px 16px;min-height:56px;
+  }
+  .subunit-info .si-code{font-family:var(--mono);font-weight:600;color:var(--ion);font-size:13px;}
+  .subunit-info p{margin:6px 0 0;font-size:14.5px;color:var(--text);}
+  .subunit-info .si-placeholder{color:var(--muted-2);font-size:13.5px;font-style:italic;}
+
+  .facts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px;}
+  .fact{background:var(--bg-2);border:1px solid var(--line-soft);border-radius:12px;padding:11px 12px;}
+  .fact h4{margin:0 0 3px;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted-2);font-weight:600;}
+  .fact p{margin:0;font-size:13.5px;}
+  .fact.wide{grid-column:1/-1;}
+
+  /* ---------- subunit family (details) ---------- */
+  .fam-group{margin-bottom:16px;}
+  .fam-group h3{font-size:14px;color:var(--muted);font-weight:600;margin:0 0 8px;font-family:var(--display);}
+  .fam-grid{display:grid;grid-template-columns:1fr;gap:8px;}
+  details.subchip{
+    background:var(--panel);border:1px solid var(--line-soft);border-radius:12px;
+    padding:2px 4px;
+  }
+  details.subchip summary{
+    list-style:none;cursor:pointer;padding:11px 12px;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  details.subchip summary::-webkit-details-marker{display:none;}
+  .subchip-name{display:flex;align-items:center;gap:9px;font-family:var(--display);font-weight:600;font-size:14px;}
+  .swatch{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+  .subchip .gene{font-family:var(--mono);font-size:11px;color:var(--muted-2);}
+  details.subchip summary .arrow{color:var(--muted-2);transition:transform .2s ease;font-size:11px;}
+  details.subchip[open] summary .arrow{transform:rotate(180deg);}
+  details.subchip .subchip-body{padding:0 14px 13px;font-size:13.5px;color:var(--muted);}
+
+  /* ---------- body map ---------- */
+  .map-wrap{display:flex;gap:18px;align-items:flex-start;}
+  .map-svg{flex-shrink:0;width:150px;}
+  .map-svg svg{width:100%;height:auto;}
+  .hotspot{cursor:pointer;}
+  .hotspot circle.dot{fill:var(--ion);stroke:var(--bg);stroke-width:2;}
+  .hotspot circle.pulse{fill:none;stroke:var(--ion);stroke-width:1.5;opacity:0;animation:pulse 2.4s ease-out infinite;}
+  .hotspot:nth-of-type(2) circle.pulse{animation-delay:.4s;}
+  .hotspot:nth-of-type(3) circle.pulse{animation-delay:.8s;}
+  .hotspot:nth-of-type(4) circle.pulse{animation-delay:1.2s;}
+  .hotspot:nth-of-type(5) circle.pulse{animation-delay:1.6s;}
+  @keyframes pulse{0%{r:6;opacity:.7;}100%{r:16;opacity:0;}}
+  .map-list{flex:1;display:flex;flex-direction:column;gap:8px;}
+  .maprow{
+    text-align:left;width:100%;background:var(--panel);border:1px solid var(--line-soft);
+    border-radius:10px;padding:9px 12px;color:var(--text);font-size:13px;cursor:pointer;
+    font-family:var(--body);
+  }
+  .maprow b{display:block;font-family:var(--display);font-size:13px;margin-bottom:1px;}
+  .maprow.active{border-color:var(--ion);background:var(--ion-soft);}
+
+  /* ---------- pharmacology ---------- */
+  .filter-row{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap;}
+  .fchip{
+    font-family:var(--display);font-size:12px;font-weight:600;padding:7px 12px;
+    border-radius:100px;border:1px solid var(--line);background:var(--panel);
+    color:var(--muted);cursor:pointer;
+  }
+  .fchip.active{color:var(--bg);background:var(--ion);border-color:var(--ion);}
+  .drug-grid{display:grid;grid-template-columns:1fr;gap:10px;}
+  .drug-card{
+    background:var(--panel);border:1px solid var(--line-soft);border-radius:14px;padding:13px 15px;
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .drug-card.hide{display:none;}
+  .drug-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px;}
+  .drug-top h4{margin:0;font-size:15px;}
+  .tag{
+    font-family:var(--display);font-size:10px;font-weight:700;text-transform:uppercase;
+    letter-spacing:0.05em;padding:3px 8px;border-radius:100px;white-space:nowrap;
+  }
+  .tag.agonist{color:var(--alpha);background:var(--alpha-soft);}
+  .tag.antagonist{color:var(--block);background:var(--block-soft);}
+  .tag.modulator{color:var(--ion);background:var(--ion-soft);}
+  .tag.tool{color:var(--other);background:var(--other-soft);}
+  .drug-card p{margin:0;font-size:13.5px;color:var(--muted);}
+
+  /* ---------- clinical accordion ---------- */
+  details.clin{
+    background:var(--panel);border:1px solid var(--line-soft);border-radius:14px;
+    margin-bottom:9px;overflow:hidden;
+  }
+  details.clin summary{
+    list-style:none;cursor:pointer;padding:13px 15px;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    font-family:var(--display);font-weight:600;font-size:14.5px;
+  }
+  details.clin summary::-webkit-details-marker{display:none;}
+  details.clin summary .arrow{color:var(--muted-2);font-size:12px;transition:transform .2s ease;flex-shrink:0;}
+  details.clin[open] summary .arrow{transform:rotate(180deg);}
+  details.clin .clin-body{padding:0 15px 15px;font-size:14px;color:var(--muted);border-top:1px solid var(--line-soft);padding-top:11px;margin-top:-2px;}
+
+  footer{padding:34px 0 50px;border-top:1px solid var(--line-soft);}
+  footer p{color:var(--muted-2);font-size:12.5px;margin:4px 0;}
+
+  @media (max-width:400px){
+    .map-wrap{flex-direction:column;}
+    .map-svg{width:120px;margin:0 auto;}
+    .facts-grid{grid-template-columns:1fr;}
+  }
+  @media (min-width:640px){
+    .drug-grid{grid-template-columns:1fr 1fr;}
+    .fam-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="3" fill="#5EC8F2"/><g stroke="#5E6A85" stroke-width="1"><circle cx="9" cy="2.5" r="2" fill="#F0A94E"/><circle cx="15" cy="6.5" r="2" fill="#E86FA6"/><circle cx="13" cy="14" r="2" fill="#B08CF0"/><circle cx="5" cy="14" r="2" fill="#B08CF0"/><circle cx="3" cy="6.5" r="2" fill="#F0A94E"/></g></svg>
+    GABA
+  </div>
+  <nav class="navscroll">
+    <a class="navpill" href="#anatomy">Anatomy</a>
+    <a class="navpill" href="#gabab">GABA-B</a>
+    <a class="navpill" href="#families">Subunits</a>
+    <a class="navpill" href="#map">In the body</a>
+    <a class="navpill" href="#pharma">Pharmacology</a>
+    <a class="navpill" href="#clinical">Clinical</a>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <section class="hero" id="top">
+    <div class="eyebrow">Cys-loop receptor family</div>
+    <h1>GABA <em>Receptors</em></h1>
+    <p>The brain's main brake pedal. A pentagon of protein that lets chloride flood in and quiets a neuron down — the target behind benzodiazepines, general anesthesia, and alcohol's first drink. Tap through the pieces below.</p>
+    <div class="statrow">
+      <div class="stat"><b>5</b><span>subunits per receptor</span></div>
+      <div class="stat"><b>19</b><span>known GABA-A subunit genes</span></div>
+      <div class="stat"><b>Cl⁻</b><span>ion that flows through</span></div>
+    </div>
+  </section>
+
+  <section class="sec" id="anatomy">
+    <div class="sec-tag">01 · Structure</div>
+    <h2>Five subunits, one chloride pore</h2>
+    <p class="lede">Like its excitatory cousin the nicotinic receptor, GABA-A is a pentamer — five subunits ringing a central channel. Here the channel passes chloride instead of sodium, so opening it quiets a neuron rather than firing it. Pick a real-world version below, then tap a subunit to read about it.</p>
+
+    <div class="subtype-pills" id="subtypePills"></div>
+
+    <div class="anatomy-card">
+      <div class="receptor-svg-wrap">
+        <svg id="receptorSvg" viewBox="0 0 300 300" data-state="resting">
+          <circle class="pore-ring" cx="150" cy="150" r="46"/>
+          <line x1="150" y1="55" x2="150" y2="227" stroke="#1B253A" stroke-width="1"/>
+          <line x1="240" y1="121" x2="94" y2="227" stroke="#1B253A" stroke-width="1"/>
+          <line x1="206" y1="227" x2="60" y2="121" stroke="#1B253A" stroke-width="1"/>
+
+          <g id="ions">
+            <circle class="ion" cx="150" cy="150" r="4" fill="#5EC8F2" style="animation-delay:0s"/>
+            <circle class="ion" cx="150" cy="150" r="4" fill="#5EC8F2" style="animation-delay:.3s"/>
+            <circle class="ion" cx="150" cy="150" r="4" fill="#5EC8F2" style="animation-delay:.6s"/>
+            <circle class="ion" cx="150" cy="150" r="4" fill="#5EC8F2" style="animation-delay:.9s"/>
+          </g>
+
+          <circle class="pore" cx="150" cy="150" r="18"/>
+
+          <g id="subunitNodes"></g>
+        </svg>
+      </div>
+
+      <div class="legend">
+        <span><i style="background:var(--alpha)"></i>α — sets benzo sensitivity</span>
+        <span><i style="background:var(--beta)"></i>β — binds GABA with α</span>
+        <span><i style="background:var(--other)"></i>γ/δ/ρ — sets the pharmacology</span>
+      </div>
+
+      <div class="gate-toggle" id="gateToggle">
+        <button class="gbtn active" data-g="resting">Resting</button>
+        <button class="gbtn" data-g="open">Open</button>
+        <button class="gbtn" data-g="desensitized">Desensitized</button>
+      </div>
+      <p class="gate-note" id="gateNote">No GABA bound. The chloride channel is shut and the membrane potential is undisturbed.</p>
+
+      <div class="subunit-info" id="subunitInfo">
+        <p class="si-placeholder">Tap a subunit in the diagram above to read what it does.</p>
+      </div>
+
+      <div class="facts-grid" id="subtypeFacts"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="gabab">
+    <div class="sec-tag">— A different receptor entirely</div>
+    <h2>Meanwhile: GABA-B</h2>
+    <p class="lede">Everything above is GABA-A — a fast, ionotropic chloride channel. GABA also activates a completely unrelated receptor, GABA-B, which is metabotropic: no pore at all, just a slow chemical signal.</p>
+    <div class="callout">
+      <h3>How it's built</h3>
+      <p>GABA-B is a G-protein-coupled receptor that only works as a pair — an obligate heterodimer of <span class="k">GABA-B1</span> (which binds GABA) and <span class="k">GABA-B2</span> (which activates the G-protein). Neither subunit works alone.</p>
+      <h3 style="margin-top:12px;">What it does</h3>
+      <p>Presynaptically, it closes voltage-gated calcium channels to throttle back neurotransmitter release. Postsynaptically, it opens GIRK potassium channels, producing a slow inhibitory current that lasts far longer than a GABA-A IPSP.</p>
+      <h3 style="margin-top:12px;">Pharmacology</h3>
+      <p><span class="k">Baclofen</span> is a selective GABA-B agonist used clinically as a muscle relaxant for spasticity (e.g., in multiple sclerosis or spinal cord injury). Selective antagonists like CGP55845 exist only as research tools.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="families">
+    <div class="sec-tag">02 · Subunit atlas</div>
+    <h2>Meet the parts catalog</h2>
+    <p class="lede">Nineteen GABA-A subunit genes fall into several families. Which ones assemble together decides whether a receptor sits at the synapse or outside it, and which drugs can find it.</p>
+
+    <div class="fam-group">
+      <h3>Alpha subunits (α1 – α6)</h3>
+      <div class="fam-grid" id="famAlpha"></div>
+    </div>
+    <div class="fam-group">
+      <h3>Beta subunits (β1 – β3)</h3>
+      <div class="fam-grid" id="famBeta"></div>
+    </div>
+    <div class="fam-group">
+      <h3>Gamma subunits (γ1 – γ3)</h3>
+      <div class="fam-grid" id="famGamma"></div>
+    </div>
+    <div class="fam-group">
+      <h3>Delta, epsilon, pi & theta — rare & specialized</h3>
+      <div class="fam-grid" id="famRare"></div>
+    </div>
+    <div class="fam-group">
+      <h3>Rho subunits (ρ1 – ρ3) — "GABA-A-ρ", formerly GABA-C</h3>
+      <div class="fam-grid" id="famRho"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="map">
+    <div class="sec-tag">03 · Where they work</div>
+    <h2>Same lock, five different doors</h2>
+    <p class="lede">Different subunit combinations dominate different circuits. Tap a node on the figure to jump back up and load that subtype in the diagram above.</p>
+
+    <div class="map-wrap">
+      <div class="map-svg">
+        <svg viewBox="0 0 240 420">
+          <g stroke="#26314A" stroke-width="3" fill="none" stroke-linecap="round">
+            <circle cx="120" cy="44" r="26" stroke-dasharray="2 5"/>
+            <line x1="70" y1="80" x2="170" y2="80"/>
+            <path d="M70 80 Q60 160 85 230" />
+            <path d="M170 80 Q180 160 155 230" />
+            <line x1="70" y1="80" x2="35" y2="185"/>
+            <line x1="35" y1="185" x2="28" y2="245"/>
+            <line x1="170" y1="80" x2="205" y2="185"/>
+            <line x1="205" y1="185" x2="212" y2="245"/>
+            <line x1="85" y1="230" x2="72" y2="340"/>
+            <line x1="72" y1="340" x2="62" y2="404"/>
+            <line x1="155" y1="230" x2="168" y2="340"/>
+            <line x1="168" y1="340" x2="178" y2="404"/>
+          </g>
+
+          <g class="hotspot" data-map="synaptic-a1" tabindex="0" role="button" aria-label="Cortex">
+            <circle class="pulse" cx="120" cy="30" r="6"/>
+            <circle class="dot" cx="120" cy="30" r="6"/>
+          </g>
+          <g class="hotspot" data-map="alpha5" tabindex="0" role="button" aria-label="Hippocampus">
+            <circle class="pulse" cx="141" cy="40" r="6"/>
+            <circle class="dot" cx="141" cy="40" r="6"/>
+          </g>
+          <g class="hotspot" data-map="extrasynaptic-delta" tabindex="0" role="button" aria-label="Cerebellum and thalamus">
+            <circle class="pulse" cx="107" cy="58" r="6"/>
+            <circle class="dot" cx="107" cy="58" r="6"/>
+          </g>
+          <g class="hotspot" data-map="rho" tabindex="0" role="button" aria-label="Retina">
+            <circle class="pulse" cx="111" cy="46" r="5"/>
+            <circle class="dot" cx="111" cy="46" r="5"/>
+          </g>
+          <g class="hotspot" data-map="synaptic-a2a3" tabindex="0" role="button" aria-label="Spinal cord and limbic system">
+            <circle class="pulse" cx="122" cy="150" r="6"/>
+            <circle class="dot" cx="122" cy="150" r="6"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="map-list" id="mapList"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="pharma">
+    <div class="sec-tag">04 · Pharmacology</div>
+    <h2>What binds the pocket</h2>
+    <p class="lede">GABA-A is an allosteric modulator's playground — sedatives, anesthetics, alcohol and neurosteroids all find their own separate pockets on the same receptor.</p>
+
+    <div class="filter-row" id="drugFilters">
+      <button class="fchip active" data-filter="all">All</button>
+      <button class="fchip" data-filter="agonist">Agonists</button>
+      <button class="fchip" data-filter="modulator">Modulators</button>
+      <button class="fchip" data-filter="antagonist">Antagonists</button>
+      <button class="fchip" data-filter="tool">Research tools</button>
+    </div>
+
+    <div class="drug-grid" id="drugGrid"></div>
+  </section>
+
+  <section class="sec" id="clinical">
+    <div class="sec-tag">05 · When it matters</div>
+    <h2>Clinical relevance</h2>
+    <p class="lede">Few receptors touch as much of everyday medicine — from a dentist's chair to a psychiatrist's prescription pad.</p>
+    <div id="clinicalList"></div>
+  </section>
+
+  <footer>
+    <p>A compact reference on GABA-A receptor structure, subtypes, pharmacology and physiology, with a short note on the separate GABA-B receptor. Simplified for clarity — stoichiometries shown are the commonly cited forms; several subtypes assemble in more than one ratio.</p>
+    <p>Built as an interactive wiki page.</p>
+  </footer>
+
+</main>
+
+<script>
+/* ---------------- data ---------------- */
+const subunitInfo = {
+  "α1": {gene:"GABRA1", type:"alpha", text:"The most abundant alpha subunit in the brain. Forms benzodiazepine-sensitive synaptic receptors linked mainly to sedation and amnesia."},
+  "α2": {gene:"GABRA2", type:"alpha", text:"Enriched in limbic regions and the spinal cord; thought to carry much of benzodiazepines' anxiolytic and muscle-relaxant effect."},
+  "α3": {gene:"GABRA3", type:"alpha", text:"Found in cortex, amygdala and monoaminergic nuclei; functionally overlaps with α2."},
+  "α4": {gene:"GABRA4", type:"alpha", text:"Pairs with δ to form benzodiazepine-insensitive extrasynaptic receptors, notably in the thalamus and dentate gyrus."},
+  "α5": {gene:"GABRA5", type:"alpha", text:"Mostly extrasynaptic in the hippocampus; shapes tonic inhibition relevant to learning and memory."},
+  "α6": {gene:"GABRA6", type:"alpha", text:"Restricted almost entirely to cerebellar granule cells; like α4, pairs with δ to form benzodiazepine-insensitive receptors."},
+  "β1": {gene:"GABRB1", type:"beta", text:"A less-studied structural subunit that still contributes to the GABA-binding pocket at the β/α interface."},
+  "β2": {gene:"GABRB2", type:"beta", text:"The most common beta subunit in synaptic receptors; also a binding site for many general anesthetics."},
+  "β3": {gene:"GABRB3", type:"beta", text:"Prominent in extrasynaptic and δ-containing receptors; its gene sits in the chromosomal region linked to Angelman syndrome."},
+  "γ1": {gene:"GABRG1", type:"other", text:"A minor gamma subunit with a more restricted expression pattern."},
+  "γ2": {gene:"GABRG2", type:"other", text:"Required for the classical benzodiazepine binding site and for normal synaptic clustering of the receptor."},
+  "γ3": {gene:"GABRG3", type:"other", text:"The least-studied gamma subunit; can substitute for γ2 in some receptor populations."},
+  "δ": {gene:"GABRD", type:"other", text:"Replaces γ in extrasynaptic receptors — this removes benzodiazepine sensitivity while boosting sensitivity to neurosteroids, GABA itself, and low-dose ethanol."},
+  "ε": {gene:"GABRE", type:"other", text:"A rare subunit that can substitute for γ/δ and, unusually, lets the receptor open spontaneously without any agonist bound."},
+  "π": {gene:"GABRP", type:"other", text:"Expressed mainly outside the CNS in reproductive tissue; poorly understood."},
+  "θ": {gene:"GABRQ", type:"other", text:"A rare subunit with limited, patchy expression in the CNS."},
+  "ρ1": {gene:"GABRR1", type:"other", text:"Forms homomeric 'GABA-A-ρ' (formerly called GABA-C) receptors, especially in the retina."},
+  "ρ2": {gene:"GABRR2", type:"other", text:"Co-assembles with ρ1 in retinal bipolar cells, contributing to slow, sustained inhibitory currents."},
+  "ρ3": {gene:"GABRR3", type:"other", text:"The least-characterized rho subunit; broadly similar in role to ρ1 and ρ2."}
+};
+
+const subtypes = [
+  {
+    id:"synaptic-a1", label:"α1βγ2",
+    seats:["γ2","β2","α1","β2","α1"],
+    location:"Synaptic membranes throughout the cortex, thalamus and cerebellum — the most abundant GABA-A receptor in the brain.",
+    function:"Fast, phasic inhibitory postsynaptic currents — the brain's primary moment-to-moment brake.",
+    stoich:"2α1 : 2β2 : 1γ2, arranged γ–β–α–β–α around the ring",
+    drugs:"GABA binds at the two β/α interfaces; classical benzodiazepines, Z-drugs, and barbiturates all potentiate via the α1/γ2 interface.",
+    clinical:"α1-mediated potentiation underlies most of the sedative and amnestic effects of benzodiazepines and Z-drugs."
+  },
+  {
+    id:"synaptic-a2a3", label:"α2/α3βγ2",
+    seats:["γ2","β3","α2","β3","α2"],
+    location:"Enriched in the limbic system, amygdala, and the spinal cord's dorsal horn.",
+    function:"Synaptic inhibition tied more to emotional regulation and muscle tone than to sedation.",
+    stoich:"2α2 (or α3) : 2β3 : 1γ2",
+    drugs:"Also benzodiazepine-sensitive; compounds selective for α2/α3 over α1 are pursued for anxiolysis without heavy sedation.",
+    clinical:"Thought to carry most of benzodiazepines' anxiolytic and muscle-relaxant effect."
+  },
+  {
+    id:"extrasynaptic-delta", label:"α4/α6βδ",
+    seats:["δ","β3","α4","β3","α4"],
+    location:"Extrasynaptic membrane — cerebellar granule cells (α6) and hippocampal/thalamic neurons (α4).",
+    function:"Persistent, high-affinity tonic inhibition — sets a circuit's overall excitability rather than shaping individual spikes.",
+    stoich:"2α : 2β : 1δ — δ replaces γ, so no classical benzodiazepine site forms",
+    drugs:"Insensitive to classical benzodiazepines; highly sensitive to neurosteroids and low-dose ethanol. Gaboxadol (THIP) selectively activates these receptors.",
+    clinical:"A target for neurosteroid-based treatments and implicated in alcohol's acute sedative effects."
+  },
+  {
+    id:"alpha5", label:"α5βγ2",
+    seats:["γ2","β3","α5","β3","α5"],
+    location:"Concentrated in the hippocampus, largely at extrasynaptic and perisynaptic sites.",
+    function:"Tonic-like inhibition that constrains hippocampal excitability and shapes learning and memory.",
+    stoich:"2α5 : 2β3 : 1γ2",
+    drugs:"Still benzodiazepine-sensitive; α5-selective negative modulators are studied as cognitive enhancers, positive ones for anxiety with less sedation.",
+    clinical:"Overactivity has been linked to cognitive impairment after anesthesia and in some genetic conditions — an active drug target."
+  },
+  {
+    id:"rho", label:"ρ (GABA-A-ρ)",
+    seats:["ρ1","ρ1","ρ1","ρ1","ρ1"],
+    location:"Retina — especially bipolar cell terminals — plus scattered CNS regions.",
+    function:"Slower, more sustained inhibitory currents than typical GABA-A receptors; historically classed as the separate 'GABA-C' receptor.",
+    stoich:"Homopentamer of ρ1 (can also mix with ρ2/ρ3)",
+    drugs:"Insensitive to bicuculline and benzodiazepines; selectively blocked by the research tool TPMPA.",
+    clinical:"Studied for its distinct role in retinal signal processing, separate from mainstream GABA-A pharmacology."
+  }
+];
+
+const drugs = [
+  {name:"GABA", cat:"agonist", note:"The endogenous inhibitory transmitter; binds at the β/α interfaces to open the chloride channel."},
+  {name:"Muscimol", cat:"agonist", note:"A potent GABA-A agonist from the Amanita muscaria mushroom; a key research tool and historical hallucinogen."},
+  {name:"Gaboxadol (THIP)", cat:"agonist", note:"Selectively activates extrasynaptic δ-containing receptors; studied for sleep and tonic-inhibition research."},
+  {name:"Baclofen", cat:"agonist", note:"Activates the separate, metabotropic GABA-B receptor rather than GABA-A; used clinically as a muscle relaxant for spasticity."},
+  {name:"Diazepam", cat:"modulator", note:"A classical benzodiazepine — a positive allosteric modulator at the α/γ2 interface that boosts GABA's effect without opening the channel alone."},
+  {name:"Zolpidem", cat:"modulator", note:"A 'Z-drug' selective for α1-containing receptors; sedative-hypnotic with less anxiolytic and myorelaxant action than classic benzodiazepines."},
+  {name:"Phenobarbital", cat:"modulator", note:"A barbiturate that potentiates GABA-A at low doses and can directly open the channel at higher doses — a narrower safety margin than benzodiazepines."},
+  {name:"Propofol / etomidate", cat:"modulator", note:"General anesthetics acting mainly through the β subunit, strongly potentiating — and at high dose, directly activating — the receptor."},
+  {name:"Allopregnanolone", cat:"modulator", note:"A neurosteroid, especially potent at δ-containing extrasynaptic receptors; basis of a fast-acting postpartum depression treatment."},
+  {name:"Ethanol", cat:"modulator", note:"At low-to-moderate concentrations, preferentially potentiates δ-containing extrasynaptic receptors, contributing to alcohol's sedative effects."},
+  {name:"Flumazenil", cat:"antagonist", note:"Competitively blocks the benzodiazepine site; used clinically to reverse benzodiazepine overdose or sedation."},
+  {name:"Bicuculline", cat:"antagonist", note:"A competitive antagonist at the GABA binding site itself; a classic research tool for blocking GABA-A signaling."},
+  {name:"Picrotoxin", cat:"antagonist", note:"A non-competitive channel blocker that physically plugs the open pore."},
+  {name:"TPMPA", cat:"tool", note:"A selective antagonist at ρ-subunit (GABA-A-ρ) receptors, useful for isolating their contribution from classical GABA-A receptors."}
+];
+
+const clinicalItems = [
+  {t:"Anxiety & insomnia treatment", b:"Benzodiazepines and Z-drugs potentiate GABA-A receptors to produce anxiolysis and sedation, but chronic use can cause tolerance and dependence as receptors adapt."},
+  {t:"Epilepsy", b:"Many anticonvulsants work by boosting GABA-A-mediated inhibition — including barbiturates, benzodiazepines, and drugs that raise GABA levels — to dampen runaway neuronal firing."},
+  {t:"General anesthesia", b:"Propofol, etomidate, and volatile anesthetics act substantially through GABA-A potentiation at the β subunit to produce unconsciousness."},
+  {t:"Alcohol use & withdrawal", b:"Ethanol potentiates GABA-A receptors, especially δ-containing ones. Chronic use downregulates them, contributing to the hyperexcitability and seizure risk seen in withdrawal."},
+  {t:"Postpartum depression", b:"Brexanolone, a synthetic form of the neurosteroid allopregnanolone, rapidly relieves postpartum depression by strongly potentiating δ-containing GABA-A receptors."},
+  {t:"Angelman syndrome", b:"The β3 subunit gene sits in the chromosomal region deleted in Angelman syndrome, linking GABA-A dysfunction to some of its neurological features."},
+  {t:"Benzodiazepine dependence & withdrawal", b:"Prolonged use downregulates and desensitizes GABA-A receptors, so abrupt discontinuation can trigger rebound anxiety and seizures."},
+  {t:"Cognitive research", b:"α5-selective drugs that dial down hippocampal tonic inhibition are being explored to reverse cognitive impairment, including after anesthesia."}
+];
+
+const gateNotes = {
+  resting:"No GABA bound. The chloride channel is shut and the membrane potential is undisturbed.",
+  open:"GABA bound at the β/α interfaces pries the gate open, letting Cl⁻ flow in and briefly hyperpolarizing — quieting — the neuron.",
+  desensitized:"With GABA still attached, the receptor can flip into a temporarily unresponsive state, blunting further inhibition despite continued exposure."
+};
+
+/* ---------------- pentagon geometry ---------------- */
+const pts = [[150,55],[240,121],[206,227],[94,227],[60,121]];
+const typeColor = {alpha:"var(--alpha)", beta:"var(--beta)", other:"var(--other)"};
+
+const svgNS = "http://www.w3.org/2000/svg";
+const nodesG = document.getElementById("subunitNodes");
+pts.forEach((p,i)=>{
+  const g = document.createElementNS(svgNS,"g");
+  g.setAttribute("class","subunit-node");
+  g.setAttribute("data-i",i);
+  const c = document.createElementNS(svgNS,"circle");
+  c.setAttribute("cx",p[0]); c.setAttribute("cy",p[1]); c.setAttribute("r",34);
+  c.setAttribute("stroke","#080B12");
+  const t = document.createElementNS(svgNS,"text");
+  t.setAttribute("x",p[0]); t.setAttribute("y",p[1]+1);
+  g.appendChild(c); g.appendChild(t);
+  nodesG.appendChild(g);
+  g.addEventListener("click", ()=>showSubunit(currentSubtype.seats[i]));
+});
+
+/* ---------------- render pills ---------------- */
+const pillWrap = document.getElementById("subtypePills");
+subtypes.forEach(s=>{
+  const b = document.createElement("button");
+  b.className = "spill"; b.textContent = s.label; b.dataset.id = s.id;
+  b.addEventListener("click", ()=>selectSubtype(s.id, true));
+  pillWrap.appendChild(b);
+});
+
+let currentSubtype = subtypes[0];
+
+function selectSubtype(id, scroll){
+  currentSubtype = subtypes.find(s=>s.id===id) || subtypes[0];
+  document.querySelectorAll(".spill").forEach(p=>p.classList.toggle("active", p.dataset.id===id));
+  document.querySelectorAll("#subunitNodes .subunit-node").forEach((g,i)=>{
+    const code = currentSubtype.seats[i];
+    const info = subunitInfo[code];
+    g.querySelector("circle").setAttribute("fill", typeColor[info.type]);
+    g.querySelector("text").textContent = code;
+  });
+  document.getElementById("subunitInfo").innerHTML = '<p class="si-placeholder">Tap a subunit in the diagram above to read what it does.</p>';
+  renderFacts();
+  if(scroll){ document.getElementById("anatomy").scrollIntoView({behavior:"smooth", block:"start"}); }
+}
+
+function showSubunit(code){
+  const info = subunitInfo[code];
+  document.getElementById("subunitInfo").innerHTML =
+    '<span class="si-code">'+code+' &middot; '+info.gene+'</span><p>'+info.text+'</p>';
+}
+
+function renderFacts(){
+  const s = currentSubtype;
+  document.getElementById("subtypeFacts").innerHTML = `
+    <div class="fact"><h4>Stoichiometry</h4><p>${s.stoich}</p></div>
+    <div class="fact"><h4>Location</h4><p>${s.location}</p></div>
+    <div class="fact wide"><h4>Function</h4><p>${s.function}</p></div>
+    <div class="fact wide"><h4>Pharmacology</h4><p>${s.drugs}</p></div>
+    <div class="fact wide"><h4>Clinical note</h4><p>${s.clinical}</p></div>
+  `;
+}
+
+/* ---------------- gating toggle ---------------- */
+document.getElementById("gateToggle").addEventListener("click", (e)=>{
+  const btn = e.target.closest(".gbtn");
+  if(!btn) return;
+  document.querySelectorAll(".gbtn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  const g = btn.dataset.g;
+  document.getElementById("receptorSvg").setAttribute("data-state", g);
+  document.getElementById("gateNote").textContent = gateNotes[g];
+});
+
+/* ---------------- subunit family lists ---------------- */
+function famCard(code){
+  const info = subunitInfo[code];
+  return `<details class="subchip">
+    <summary>
+      <span class="subchip-name"><span class="swatch" style="background:${typeColor[info.type]}"></span>${code} <span class="gene">${info.gene}</span></span>
+      <span class="arrow">▾</span>
+    </summary>
+    <div class="subchip-body">${info.text}</div>
+  </details>`;
+}
+document.getElementById("famAlpha").innerHTML = ["α1","α2","α3","α4","α5","α6"].map(famCard).join("");
+document.getElementById("famBeta").innerHTML = ["β1","β2","β3"].map(famCard).join("");
+document.getElementById("famGamma").innerHTML = ["γ1","γ2","γ3"].map(famCard).join("");
+document.getElementById("famRare").innerHTML = ["δ","ε","π","θ"].map(famCard).join("");
+document.getElementById("famRho").innerHTML = ["ρ1","ρ2","ρ3"].map(famCard).join("");
+
+/* ---------------- body map ---------------- */
+const mapMeta = {
+  "synaptic-a1":{title:"Cortex (whole brain)", sub:"Fast phasic inhibition (α1βγ2)"},
+  "alpha5":{title:"Hippocampus", sub:"Memory-related tonic inhibition (α5βγ2)"},
+  "extrasynaptic-delta":{title:"Cerebellum & thalamus", sub:"Tonic inhibition (α4/α6βδ)"},
+  "rho":{title:"Retina", sub:"Slow sustained inhibition (GABA-A-ρ)"},
+  "synaptic-a2a3":{title:"Spinal cord & limbic system", sub:"Anxiolysis & muscle tone (α2/α3βγ2)"}
+};
+const mapListEl = document.getElementById("mapList");
+Object.keys(mapMeta).forEach(id=>{
+  const row = document.createElement("button");
+  row.className = "maprow"; row.dataset.map = id;
+  row.innerHTML = `<b>${mapMeta[id].title}</b>${mapMeta[id].sub}`;
+  row.addEventListener("click", ()=>selectSubtype(id, true));
+  mapListEl.appendChild(row);
+});
+document.querySelectorAll(".hotspot").forEach(h=>{
+  h.addEventListener("click", ()=>selectSubtype(h.dataset.map, true));
+  h.addEventListener("keydown", (e)=>{ if(e.key==="Enter") selectSubtype(h.dataset.map, true); });
+});
+
+/* ---------------- drugs ---------------- */
+const drugGrid = document.getElementById("drugGrid");
+drugs.forEach(d=>{
+  const card = document.createElement("div");
+  card.className = "drug-card"; card.dataset.cat = d.cat;
+  card.innerHTML = `<div class="drug-top"><h4>${d.name}</h4><span class="tag ${d.cat}">${d.cat}</span></div><p>${d.note}</p>`;
+  drugGrid.appendChild(card);
+});
+document.getElementById("drugFilters").addEventListener("click",(e)=>{
+  const btn = e.target.closest(".fchip");
+  if(!btn) return;
+  document.querySelectorAll(".fchip").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  const f = btn.dataset.filter;
+  document.querySelectorAll(".drug-card").forEach(c=>{
+    c.classList.toggle("hide", f!=="all" && c.dataset.cat!==f);
+  });
+});
+
+/* ---------------- clinical ---------------- */
+document.getElementById("clinicalList").innerHTML = clinicalItems.map(c=>`
+  <details class="clin">
+    <summary>${c.t}<span class="arrow">▾</span></summary>
+    <div class="clin-body">${c.b}</div>
+  </details>
+`).join("");
+
+/* ---------------- init ---------------- */
+selectSubtype("synaptic-a1", false);
+</script>
+</body>
+</html>
