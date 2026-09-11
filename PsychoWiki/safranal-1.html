@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Safranal — Substance Wiki Template</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Linux+Libertine:ital,wght@0,400;0,600;1,400&family=Linux+Biolinum:wght@400;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8f9fa;
+  --bg2: #ffffff;
+  --border: #a2a9b1;
+  --border-light: #e0e4e8;
+  --text: #202122;
+  --text2: #54595d;
+  --text3: #72777d;
+  --link: #3366cc;
+  --link-hover: #6a4ead;
+  --warn-bg: #fef6e7;
+  --warn-border: #f0a500;
+  --danger-bg: #fee7e6;
+  --danger-border: #d33;
+  --info-bg: #eaf3fb;
+  --info-border: #3680b0;
+  --tip-bg: #e5f5e0;
+  --tip-border: #2d6a2d;
+  --box-bg: #f8f9fa;
+  --cat-bg: #eaf0fb;
+  --cat-border: #a2b8d8;
+  --infobox-bg: #f8f9fa;
+  --infobox-head: #cee0f2;
+  --tag-pa: #e8f0fe;
+  --tag-ant: #fce8e8;
+  --tag-inh: #f0e8fe;
+  --tag-mod: #e8feee;
+  --positive: #1a7a1a;
+  --neutral: #7a5c00;
+  --negative: #8b0000;
+  --both: #00457c;
+  --placeholder: #b0b6bd;
+  --font-body: 'Linux Libertine', Georgia, serif;
+  --font-ui: 'Linux Biolinum', 'Segoe UI', sans-serif;
+  --font-mono: 'Source Code Pro', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+/* PLACEHOLDER STYLING — makes unfilled fields visually obvious */
+.ph { color: var(--placeholder); font-style: italic; }
+[data-field] { color: var(--placeholder); font-style: italic; }
+
+/* LAYOUT */
+.page-wrap { display: flex; max-width: 1280px; margin: 0 auto; }
+.sidebar {
+  width: 220px; min-width: 220px; background: var(--bg2);
+  border-right: 1px solid var(--border-light);
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  padding: 16px 0; font-family: var(--font-ui); font-size: 13px;
+}
+.sidebar-logo {
+  padding: 0 12px 12px;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 10px;
+}
+.sidebar-logo .logo-name { font-size: 15px; font-weight: 600; color: #3a3a3a; }
+.sidebar-logo .logo-sub  { font-size: 11px; color: var(--text3); }
+.toc-section { padding: 4px 12px; }
+.toc-section h4 { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin-bottom: 4px; }
+.toc-section a { display: block; padding: 2px 0 2px 8px; color: var(--link); text-decoration: none; font-size: 12.5px; border-left: 2px solid transparent; line-height: 1.4; }
+.toc-section a:hover { border-left-color: var(--link); background: var(--info-bg); }
+.toc-section a.sub { padding-left: 18px; font-size: 12px; color: var(--text2); }
+.toc-divider { border: none; border-top: 1px solid var(--border-light); margin: 8px 12px; }
+
+.content { flex: 1; min-width: 0; padding: 24px 32px 80px; }
+
+/* HEADER */
+h1.page-title {
+  font-family: var(--font-body);
+  font-size: 2.1em;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+.page-subtitle { font-size: 13px; color: var(--text3); font-family: var(--font-ui); margin-bottom: 18px; }
+.page-subtitle a { color: var(--link); text-decoration: none; }
+
+/* SECTION HEADINGS */
+h2 { font-family: var(--font-body); font-size: 1.5em; font-weight: 600; border-bottom: 1px solid var(--border-light); padding-bottom: 3px; margin: 32px 0 12px; color: #1a1a1a; }
+h3 { font-family: var(--font-body); font-size: 1.18em; font-weight: 600; margin: 20px 0 8px; color: #2a2a2a; }
+h4 { font-family: var(--font-ui); font-size: 0.95em; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--text2); margin: 14px 0 4px; }
+p  { margin-bottom: 10px; }
+a  { color: var(--link); }
+a:hover { color: var(--link-hover); }
+sup { font-size: 0.72em; }
+sup a { text-decoration: none; }
+
+/* INFOBOX (right-side summary card) */
+.infobox {
+  float: right; clear: right;
+  width: 310px; margin: 0 0 16px 24px;
+  background: var(--infobox-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+}
+.infobox-head {
+  background: var(--infobox-head);
+  text-align: center;
+  padding: 7px 10px;
+  font-weight: 600;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+  border-radius: 4px 4px 0 0;
+}
+.infobox-img {
+  text-align: center;
+  padding: 10px;
+  border-bottom: 1px solid var(--border-light);
+  background: #fff;
+}
+.mol-diagram-placeholder {
+  width: 240px; height: 150px;
+  margin: 0 auto;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  color: var(--placeholder);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  text-align: center;
+}
+.infobox table { width: 100%; border-collapse: collapse; }
+.infobox tr td { padding: 4px 9px; border-top: 1px solid var(--border-light); vertical-align: top; }
+.infobox tr td:first-child { font-weight: 500; color: var(--text2); width: 42%; }
+.infobox tr td:last-child { color: var(--text); }
+.infobox-section-head { background: var(--infobox-head); text-align: center; font-weight: 600; padding: 4px 8px; font-size: 12px; }
+
+/* CLEARFIX */
+.clearfix::after { content: ""; display: table; clear: both; }
+
+/* ALERT BOXES */
+.alert {
+  border-radius: 4px; padding: 10px 14px; margin: 14px 0;
+  font-size: 14px; font-family: var(--font-ui);
+  display: flex; gap: 10px; align-items: flex-start;
+  border-left: 4px solid;
+}
+.alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.alert-warn   { background: var(--warn-bg);   border-color: var(--warn-border); }
+.alert-danger { background: var(--danger-bg); border-color: var(--danger-border); }
+.alert-info   { background: var(--info-bg);   border-color: var(--info-border); }
+.alert-tip    { background: var(--tip-bg);    border-color: var(--tip-border); }
+
+/* DOSAGE TABLE */
+.dose-table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 13.5px; margin: 10px 0; }
+.dose-table th { background: var(--infobox-head); padding: 7px 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.dose-table td { padding: 7px 12px; border: 1px solid var(--border-light); vertical-align: middle; }
+.dose-table tr.thresh { background: #f0f8e8; }
+.dose-table tr.light  { background: #e8f8e0; }
+.dose-table tr.common { background: #fffde8; }
+.dose-table tr.strong { background: #fef0d8; }
+.dose-table tr.heavy  { background: #fee8e8; }
+
+/* DURATION TABLE */
+.dur-table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 13.5px; margin: 10px 0; }
+.dur-table th { background: var(--infobox-head); padding: 7px 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.dur-table td { padding: 7px 12px; border: 1px solid var(--border-light); }
+
+/* EFFECTS LIST */
+.effects-group { margin: 14px 0; }
+.effects-group h4 { font-size: 13px; font-family: var(--font-ui); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.effects-group h4.positive { color: var(--positive); }
+.effects-group h4.neutral  { color: var(--neutral); }
+.effects-group h4.negative { color: var(--negative); }
+.effects-group h4.both     { color: var(--both); }
+.effects-group ul { list-style: none; padding: 0; margin: 0; }
+.effects-group li { padding: 3px 0 3px 18px; position: relative; font-size: 14.5px; border-bottom: 1px solid var(--border-light); }
+.effects-group li:last-child { border-bottom: none; }
+.effects-group li::before { content: "•"; position: absolute; left: 5px; }
+.eff-positive li::before { color: var(--positive); }
+.eff-neutral  li::before { color: var(--neutral); }
+.eff-negative li::before { color: var(--negative); }
+.eff-both     li::before { color: var(--both); }
+.eff-note { font-size: 12px; color: var(--text3); font-style: italic; margin-left: 4px; }
+
+/* PHARMACOLOGY TABLE */
+.pharm-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--font-ui); margin: 10px 0; }
+.pharm-table th { background: var(--infobox-head); padding: 7px 10px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.pharm-table td { padding: 6px 10px; border: 1px solid var(--border-light); vertical-align: top; }
+.pharm-table tr:hover td { background: var(--info-bg); }
+.pharm-tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+.pa  { background: var(--tag-pa);  color: #1a3ca8; }
+.ant { background: var(--tag-ant); color: #8b0000; }
+.mod { background: var(--tag-mod); color: #1a5c1a; }
+.inh { background: var(--tag-inh); color: #5c1a8b; }
+.ki-val { font-family: var(--font-mono); font-weight: 500; }
+
+/* INTERACTIONS */
+.int-table { width: 100%; border-collapse: collapse; font-size: 13.5px; font-family: var(--font-ui); margin: 10px 0; }
+.int-table th { background: var(--infobox-head); padding: 7px 12px; text-align: left; font-weight: 600; border: 1px solid var(--border); }
+.int-table td { padding: 7px 12px; border: 1px solid var(--border-light); vertical-align: top; }
+.sev-danger  { background: #fee; color: #900; font-weight: 600; font-size: 12px; padding: 2px 7px; border-radius: 3px; }
+.sev-caution { background: #fff3cd; color: #856404; font-weight: 600; font-size: 12px; padding: 2px 7px; border-radius: 3px; }
+.sev-safe    { background: #d4edda; color: #155724; font-weight: 600; font-size: 12px; padding: 2px 7px; border-radius: 3px; }
+
+/* METABOLITES DIAGRAM */
+.metab-flow {
+  background: #fff; border: 1px dashed var(--border);
+  border-radius: 6px; padding: 20px; margin: 12px 0;
+  font-family: var(--font-ui); text-align: center;
+  color: var(--placeholder); font-size: 13px;
+}
+
+/* LEGAL STATUS */
+.legal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin: 12px 0; }
+.legal-item { background: #fff; border: 1px solid var(--border-light); border-radius: 5px; padding: 8px 10px; font-family: var(--font-ui); font-size: 12.5px; }
+.legal-item .country { font-weight: 600; color: var(--text); }
+.legal-item .status  { color: var(--text2); }
+.legal-rx { border-left: 3px solid #2196f3; }
+.legal-cont { border-left: 3px solid #f44336; }
+.legal-unsched { border-left: 3px solid #9e9e9e; }
+
+/* REFERENCES */
+.refs { font-size: 12.5px; font-family: var(--font-ui); color: var(--text2); }
+.refs ol { padding-left: 20px; }
+.refs li { margin-bottom: 3px; }
+
+/* CATEGORIES */
+.category-bar {
+  background: var(--cat-bg); border: 1px solid var(--cat-border);
+  border-radius: 4px; padding: 8px 12px; margin-top: 32px;
+  font-family: var(--font-ui); font-size: 13px;
+}
+.category-bar span { font-weight: 600; margin-right: 6px; }
+.category-bar a { color: var(--link); text-decoration: none; margin-right: 10px; }
+
+/* COMPARISON TABLE */
+.comp-table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-family: var(--font-ui); }
+.comp-table th { background: var(--infobox-head); padding: 6px 10px; font-weight: 600; border: 1px solid var(--border); text-align: left; }
+.comp-table td { padding: 5px 10px; border: 1px solid var(--border-light); }
+.comp-table tr:hover td { background: #f0f4ff; }
+.tick { color: #2a7; } .cross { color: #c33; } .partial { color: #a86; }
+
+/* FILL-ME NOTE BOX (meta guidance, remove when populating a real page) */
+.fillnote {
+  background: #f3f0ff; border: 1px dashed #9b8ce0; border-radius: 4px;
+  padding: 8px 12px; margin: 6px 0 14px; font-family: var(--font-ui);
+  font-size: 12px; color: #5c4d99;
+}
+
+@media (max-width: 860px) {
+  .sidebar { display: none; }
+  .infobox { float: none; width: 100%; margin: 0 0 16px 0; }
+  .content { padding: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- SIDEBAR TOC -->
+<nav class="sidebar" aria-label="Table of contents">
+  <div class="sidebar-logo">
+    <div class="logo-name">⚗ Substance Wiki</div>
+    <div class="logo-sub">Template — reference/education only</div>
+  </div>
+  <div class="toc-section">
+    <h4>Contents</h4>
+    <a href="#summary">Summary</a>
+    <a href="#chemistry">Chemistry</a>
+    <a href="#pharmacology">Pharmacology</a>
+    <a href="#dosage">Dosage</a>
+    <a href="#duration">Duration</a>
+    <a href="#effects">Subjective effects</a>
+    <a class="sub" href="#eff-physical">Physical effects</a>
+    <a class="sub" href="#eff-cognitive">Cognitive effects</a>
+    <a href="#tolerance">Tolerance &amp; withdrawal</a>
+    <a href="#toxicity">Toxicity &amp; harm</a>
+    <a href="#interactions">Interactions</a>
+    <a href="#metabolites">Metabolites &amp; PK</a>
+    <a href="#comparison">Comparison</a>
+    <a href="#adhd">Safranal for ADHD</a>
+    <a href="#references">References</a>
+  </div>
+  <hr class="toc-divider">
+  <div class="toc-section">
+    <h4>Related</h4>
+    <a href="#">Crocin</a>
+    <a href="#">Picrocrocin</a>
+    <a href="#">Crocetin</a>
+    <a href="#">Monoterpenoid aldehydes</a>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+<h1 class="page-title">Safranal</h1>
+<p class="page-subtitle">
+  From Substance Wiki Template · 
+  <a href="#chemistry">Monoterpenoid aldehyde</a> · 
+  <a href="#pharmacology">GABA<sub>A</sub> PAM / TRPA1 agonist</a> · 
+  <a href="#">Natural product — food &amp; fragrance constituent</a>
+</p>
+
+<div class="clearfix">
+
+<!-- INFOBOX -->
+<aside class="infobox" aria-label="Substance summary">
+  <div class="infobox-head">Safranal</div>
+  <div class="infobox-img">
+    <img src="data:image/png;base64,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" alt="Structure of safranal" style="max-width:240px;max-height:180px;">
+    <div style="font-size:11px;color:var(--text2);margin-top:4px;font-family:monospace;">C<sub>10</sub>H<sub>14</sub>O</div>
+  </div>
+  <table>
+    <tr><td>Also known as</td><td>2,6,6-Trimethyl-1,3-cyclohexadien-1-carboxaldehyde; safranal aldehyde</td></tr>
+    <tr><td>Class</td><td>Monoterpenoid aldehyde (cyclohexadiene)</td></tr>
+    <tr><td>Pharmacological class</td><td>GABA<sub>A</sub> receptor positive allosteric modulator; TRPA1 channel agonist; multi-target natural compound (not a classical CNS drug)</td></tr>
+    <tr><td>CAS number</td><td>116-26-7</td></tr>
+    <tr><td>Mol. formula</td><td>C<sub>10</sub>H<sub>14</sub>O</td></tr>
+    <tr><td>Mol. weight</td><td>150.22 g/mol</td></tr>
+    <tr><td>Routes</td><td>Dietary (saffron); inhalational (aroma); oral/IP/IV in experimental animal studies</td></tr>
+    <tr><td>Bioavailability</td><td>Not established in humans</td></tr>
+    <tr><td>Protein binding</td><td>Not established</td></tr>
+    <tr><td>Metabolism</td><td>Hepatic; oxidation of the aldehyde group (proposed), pathway not fully mapped</td></tr>
+    <tr><td>Half-life</td><td>Not established in humans</td></tr>
+    <tr><td>Onset</td><td>Rapid absorption/CNS entry reported in animal studies (small, lipophilic molecule)</td></tr>
+    <tr><td>Origin</td><td>Forms from oxidative/enzymatic breakdown of picrocrocin during drying and storage of <i>Crocus sativus</i> (saffron) stigmas</td></tr>
+  </table>
+
+  <div class="infobox-section-head" style="margin-top:4px;">Note</div>
+  <table>
+    <tr><td colspan="2" style="font-style:italic;color:var(--text2);">Not a substance with an established recreational dosing/duration profile — see Pharmacology and Toxicity sections.</td></tr>
+  </table>
+</aside>
+
+<!-- SUMMARY -->
+<section id="summary">
+<p>Safranal is a volatile monoterpenoid aldehyde and the principal compound responsible for the aroma of saffron, the dried stigmas of <i>Crocus sativus</i>. It is not present as such in the fresh flower; it forms during drying and storage, when enzymatic and thermal breakdown of the glycoside picrocrocin releases safranal. It is used commercially as a flavor and fragrance ingredient and has been studied extensively as a bioactive constituent of saffron extracts.</p>
+<p>Pharmacologically, safranal is a multi-target lipophilic molecule rather than a compound with one dominant mechanism. Its best-characterized central action is positive allosteric modulation at the benzodiazepine-binding site of the GABA<sub>A</sub> receptor complex, which underlies anticonvulsant- and anxiolytic-like effects seen in animal models. Separately, it directly activates the TRPA1 ion channel on peripheral sensory neurons, a mechanism linked to its anti-inflammatory and analgesic effects. It also has broad antioxidant, anti-inflammatory, and antiproliferative activity that is not tied to a single receptor.</p>
+<p>Human pharmacokinetic data are limited; most absorption, distribution, and metabolism information comes from rodent studies. As a small, lipophilic aldehyde, it is reported to cross the blood–brain barrier readily in animal models, but no validated human half-life, bioavailability, or clearance values exist.</p>
+
+<div class="alert alert-warn">
+  <span class="alert-icon">⚠️</span>
+  <div><b>Disclaimer:</b> This page summarizes published pharmacological and toxicological research for educational reference. It is not medical advice, and safranal is not an approved medicine — it should not be used to self-treat any condition.</div>
+</div>
+</section>
+
+<!-- CHEMISTRY -->
+<section id="chemistry">
+<h2>Chemistry</h2>
+<p>Safranal is 2,6,6-trimethylcyclohexa-1,3-diene-1-carbaldehyde: a cyclohexadiene ring bearing a gem-dimethyl group at C6, a methyl group at C2, and an aldehyde (–CHO) at C1 conjugated with the ring's diene system. This conjugation between the aldehyde and the diene gives it a relatively stable, aromatic-like planar chromophore and its characteristic low odor threshold.</p>
+<p>It belongs to the same biosynthetic family as saffron's other major constituents: it is the volatile breakdown product of picrocrocin (a glycosylated precursor), and shares its terpenoid skeleton with crocetin and its glycosides, the crocins, which are responsible for saffron's color rather than its aroma. Structurally it is also related to other cyclohexadiene/cyclohexene terpenoid aldehydes found in essential oils (e.g. β-cyclocitral), though safranal's conjugated diene-aldehyde system is distinctive.</p>
+</section>
+
+<!-- PHARMACOLOGY -->
+<section id="pharmacology">
+<h2>Pharmacology</h2>
+<div class="fillnote">Fill: receptor/target binding table, mechanism of action narrative.</div>
+<p>Safranal does not have a single defining mechanism; it is a small, lipophilic molecule that engages several distinct targets. Its two best-supported mechanisms are (1) positive allosteric modulation of the GABA<sub>A</sub> receptor at its benzodiazepine-binding site, demonstrated by dose-dependent suppression of pharmacologically induced absence seizures in mice together with reduced [<sup>3</sup>H]flunitrazepam binding in cortex, hippocampus, and thalamus, and (2) direct agonism of the TRPA1 cation channel on nociceptive sensory neurons, shown by calcium influx and current responses in human cells and rodent dorsal root ganglion neurons, with no comparable activity at TRPV1 or TRPV4. TRPA1 activation drives release of calcitonin gene-related peptide (CGRP) and accounts for much of safranal's antinociceptive and anti-inflammatory activity in rodent pain models.</p>
+<p>Beyond these two targets, safranal has documented free-radical-scavenging/antioxidant activity, suppresses NF-κB– and NLRP3-linked inflammatory signaling, and shows direct physical binding to structural and metabolic proteins (including β-actin and components of the mitochondrial electron transport chain) in affinity-chromatography studies, though the functional significance of these interactions is still being worked out. In cancer cell models it disrupts microtubule assembly dynamics and, in glioblastoma cells specifically, has been linked by network-pharmacology and follow-up experiments to inhibition of PI3K/AKT/mTOR signaling, promoting apoptosis and G2/M cell-cycle arrest.</p>
+<table class="pharm-table">
+  <thead><tr><th>Target</th><th>Action</th><th>Affinity</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>GABA<sub>A</sub> receptor (benzodiazepine site)</td><td><span class="pharm-tag pa">PAM</span> agonist-like</td><td class="ki-val">Not quantified in humans</td><td>Inferred from rodent radioligand-binding displacement + anticonvulsant efficacy</td></tr>
+    <tr><td>TRPA1 channel</td><td><span class="pharm-tag pa">Agonist</span></td><td class="ki-val">Not established</td><td>Selective over TRPV1/TRPV4; covalent-type interaction via cysteine/lysine residues</td></tr>
+    <tr><td>Cytoskeletal proteins (e.g. β-actin, microtubules)</td><td><span class="pharm-tag mod">Modulator</span> / disruptor</td><td class="ki-val">Not established</td><td>Affinity-chromatography binding studies; linked to in vitro cytotoxicity</td></tr>
+    <tr><td>PI3K/AKT/mTOR pathway</td><td><span class="pharm-tag inh">Inhibitor</span> (indirect)</td><td class="ki-val">Not established</td><td>Network-pharmacology + experimental evidence in glioblastoma cell models</td></tr>
+  </tbody>
+</table>
+<h3>Unique kinetic properties</h3>
+<p>Because it is small and lipophilic, safranal is reported to cross the blood–brain barrier readily in animal studies, which is consistent with its central (anticonvulsant, anxiolytic-like) effects. However, no validated human absorption, distribution, metabolism, or excretion (ADME) data exist — essentially all PK characterization has been done in rodents, typically at doses well above normal dietary saffron exposure.</p>
+</section>
+
+<!-- DOSAGE -->
+<section id="dosage">
+<h2>Dosage</h2>
+<p>Safranal is not consumed as a standalone recreational or therapeutic drug, so there is no established human dosing scale (threshold/light/common/strong/heavy) of the kind used for medicines or recreational substances. Human exposure is almost entirely dietary, via saffron itself (typical culinary use: tens of milligrams of saffron, containing only a small fraction of a milligram of safranal). Experimental doses used in animal pharmacology studies (often 50–300&nbsp;mg/kg body weight, oral or intraperitoneal) are far above any realistic dietary exposure and are not a guide to human use.</p>
+</section>
+
+<!-- DURATION -->
+<section id="duration">
+<h2>Duration and timeline</h2>
+<p>No validated onset/peak/offset timeline exists for safranal in humans, since it is not used as a discrete dose. In animal studies, CNS-related effects (e.g. anticonvulsant activity) appear within minutes of intraperitoneal or oral administration, consistent with rapid absorption and blood–brain barrier penetration, but this has not been characterized in people.</p>
+</section>
+
+<!-- SUBJECTIVE EFFECTS -->
+<section id="effects">
+<h2>Observed effects (animal/preclinical research)</h2>
+<div class="alert alert-info">
+  <span class="alert-icon">ℹ️</span>
+  <div>Safranal has no established human subjective-effects profile of the kind reported for psychoactive drugs. The points below summarize findings from animal behavioral studies and are not a description of a human experience.</div>
+</div>
+<div class="effects-group eff-positive">
+  <h4 class="positive">Reported in animal models</h4>
+  <ul>
+    <li>Anticonvulsant / antiseizure activity <span class="eff-note">absence-seizure models in mice</span></li>
+    <li>Anxiolytic-like and sedative-like behavior <span class="eff-note">rodent behavioral assays</span></li>
+    <li>Antinociceptive / analgesic effects <span class="eff-note">inflammatory and neuropathic pain models</span></li>
+    <li>Antidepressant-like activity <span class="eff-note">animal models; limited human pilot data via saffron extracts</span></li>
+  </ul>
+</div>
+<div class="effects-group eff-negative">
+  <h4 class="negative">Adverse findings at high experimental doses</h4>
+  <ul>
+    <li>Early excitation/hyperactivity followed by sedation and reduced locomotor activity <span class="eff-note">rat subacute oral dosing</span></li>
+    <li>Hematological changes (↓RBC, hematocrit, hemoglobin, platelets) <span class="eff-note">21-day rat subacute study</span></li>
+    <li>Kidney and lung pathology at high repeated doses <span class="eff-note">no comparable heart/liver/spleen toxicity seen</span></li>
+  </ul>
+</div>
+
+<h3>Cognitive / mood-related findings (animal and limited human pilot data)</h3>
+<div class="effects-group eff-positive">
+  <h4 class="positive">Reported in research</h4>
+  <ul>
+    <li>Antidepressant-like activity in animal models, with some supporting pilot human data using saffron extracts (not isolated safranal)</li>
+    <li>Anxiolytic-like behavior in rodent assays, consistent with its GABA<sub>A</sub> modulation</li>
+  </ul>
+</div>
+</section>
+
+<!-- TOLERANCE -->
+<section id="tolerance">
+<h2>Tolerance and discontinuation</h2>
+<h3>Tolerance</h3>
+<p>No tolerance data exist for safranal in humans, as it is not used as a repeated therapeutic or recreational dose. Repeated dosing studies in animals (21-day subacute toxicity protocols) have not specifically assessed tolerance to its behavioral or anticonvulsant effects.</p>
+<h3>Discontinuation / withdrawal</h3>
+<p>No withdrawal syndrome has been reported or studied for safranal; it is not classified as a dependence-producing substance.</p>
+</section>
+
+<!-- TOXICITY -->
+<section id="toxicity">
+<h2>Toxicity and harm potential</h2>
+<h3>Acute toxicity</h3>
+<p>In rodent studies, safranal was "practically non-toxic" by the oral route and "low-toxic" intraperitoneally, by standard LD<sub>50</sub> classification. Reported oral LD<sub>50</sub> values were roughly 5.5&nbsp;mL/kg in male rats and 11–21&nbsp;mL/kg in mice (sex-dependent); intraperitoneal LD<sub>50</sub> values were much lower, around 1.5–1.9&nbsp;mL/kg across mice and rats — i.e. the injected route is substantially more toxic than the oral route, which is typical for a locally irritant aldehyde bypassing first-pass processing.</p>
+
+<h3>Human incidents and toxic dosages</h3>
+<div class="alert alert-warn">
+  <span class="alert-icon">⚠️</span>
+  <div>No documented human poisoning case involves isolated safranal — reported human toxicity is for whole <i>saffron</i> (dried Crocus sativus stigma, of which safranal is one of several active constituents), consumed in doses far above normal culinary use.</div>
+</div>
+<table class="dose-table">
+  <thead><tr><th>Saffron dose</th><th>Reported effects</th><th>Source type</th></tr></thead>
+  <tbody>
+    <tr class="thresh"><td>Up to ~1.5&nbsp;g/day</td><td>Generally well tolerated (typical culinary/supplement range)</td><td>Pharmacognosy references</td></tr>
+    <tr class="light"><td>1.5–3&nbsp;g/day</td><td>Mild GI upset, increased anxiety reported</td><td>Secondary safety summaries</td></tr>
+    <tr class="common"><td>3–5&nbsp;g/day</td><td>Dizziness, nausea, vomiting</td><td>Secondary safety summaries</td></tr>
+    <tr class="strong"><td>5–10&nbsp;g (single/short-term)</td><td>Vomiting, bleeding tendency, kidney effects, yellowing of skin/mucosa; historically noted abortifacient dose ~10&nbsp;g</td><td>Classical pharmacognosy monographs (e.g. German Commission E)</td></tr>
+    <tr class="heavy"><td>10–20+&nbsp;g</td><td>Cited as a potentially lethal dose range in humans (commonly quoted figures: "10–12&nbsp;g fatal" per Lust's <i>Herb Book</i>; "lethal dose 20&nbsp;g" per German pharmacognosy monographs)</td><td>Classical toxicology/herbal references</td></tr>
+  </tbody>
+</table>
+<p>These figures come from older pharmacognosy and toxicology monographs rather than a series of modern documented fatalities; well-characterized, published case reports of fatal saffron (Crocus sativus) poisoning in humans are scarce, likely in part because consuming tens of grams of saffron is both extremely expensive and difficult to ingest in one sitting.</p>
+<p><b>Important mix-up to avoid:</b> most of the serious human poisoning case reports that turn up when searching for "saffron poisoning" actually involve <i>meadow saffron</i> (<i>Colchicum autumnale</i>), an unrelated and highly toxic lily-family plant that is sometimes foraged by mistake (often confused with wild garlic). Meadow saffron contains the alkaloid colchicine and has caused well-documented fatal poisonings — but this is a different plant from culinary saffron (<i>Crocus sativus</i>, an iris-family plant) and has no chemical relationship to safranal.</p>
+
+<h3>Chronic toxicity</h3>
+<p>A 21-day rat oral subacute toxicity study found decreased red blood cell count, hematocrit, hemoglobin, and platelets, along with changes in several liver enzyme and lipid markers (decreased cholesterol/triglycerides/alkaline phosphatase, increased LDH and urea nitrogen). Histology showed no toxic effect on heart, liver, or spleen, but pathological changes were seen in kidney and lung at the doses tested. Co-administration with whole saffron extract reduced these toxic effects compared with safranal alone in follow-up rat studies, suggesting other saffron constituents may buffer safranal's toxicity in the natural spice.</p>
+<h3>Abuse potential</h3>
+<p>Safranal is not associated with drug-seeking, reinforcing, or dependence-producing effects in the literature; it is not scheduled or monitored as a substance of abuse.</p>
+<div class="alert alert-danger">
+  <span class="alert-icon">🚑</span>
+  <div><b>In an emergency:</b> If large amounts of concentrated safranal or safranal-containing essential oil/extract have been ingested and the person is symptomatic, contact emergency services or a poison control center rather than relying on this page.</div>
+</div>
+</section>
+
+<!-- INTERACTIONS -->
+<section id="interactions">
+<h2>Drug interactions</h2>
+<div class="fillnote">Human interaction data are essentially absent; the entries below are mechanism-based, plausible interactions inferred from safranal's pharmacology, not clinically confirmed interactions.</div>
+<table class="int-table">
+  <thead><tr><th>Substance / class</th><th>Risk</th><th>Mechanism / notes</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Benzodiazepines / other GABA<sub>A</sub> positive allosteric modulators</td>
+      <td><span class="sev-caution">Caution (theoretical)</span></td>
+      <td>Shared benzodiazepine-site modulation could plausibly produce additive sedative effects; not clinically studied</td>
+    </tr>
+    <tr>
+      <td>CNS depressants (alcohol, sedatives)</td>
+      <td><span class="sev-caution">Caution (theoretical)</span></td>
+      <td>Overlapping sedative-like activity seen in animal models; additive CNS depression cannot be ruled out</td>
+    </tr>
+    <tr>
+      <td>Dietary saffron / culinary use</td>
+      <td><span class="sev-safe">Low</span></td>
+      <td>Normal food-level exposure to safranal is far below doses used in pharmacology/toxicology studies</td>
+    </tr>
+  </tbody>
+</table>
+</section>
+
+<!-- METABOLITES -->
+<section id="metabolites">
+<h2>Pharmacokinetics and metabolites</h2>
+<div class="metab-flow">Safranal (aldehyde) → hepatic oxidation (proposed) → safranal-derived carboxylic acid / other oxidation products — full metabolic pathway and specific enzymes not yet definitively mapped in the literature</div>
+<table class="dur-table">
+  <thead><tr><th>Parameter</th><th>Parent compound</th><th>Metabolite(s)</th></tr></thead>
+  <tbody>
+    <tr><td>Half-life</td><td>Not established in humans</td><td>Not established</td></tr>
+    <tr><td>Protein binding</td><td>Not established</td><td>Not established</td></tr>
+    <tr><td>Primary elimination</td><td colspan="2">Not characterized; presumed hepatic/renal based on general aldehyde metabolism</td></tr>
+  </tbody>
+</table>
+<h3>Clinical implications</h3>
+<ul style="padding-left:22px;margin:8px 0;">
+  <li>Because human PK is uncharacterized, extrapolating animal effective doses to people (e.g. from anticonvulsant or antinociceptive studies) is not reliable.</li>
+  <li>Rapid CNS entry in animal models means behavioral/neurological effects, when they occur, would be expected relatively quickly after systemic exposure — but this has not been confirmed in humans.</li>
+</ul>
+</section>
+
+<!-- COMPARISON -->
+<section id="comparison">
+<h2>Comparison with related saffron constituents</h2>
+<table class="comp-table">
+  <thead><tr><th>Property</th><th>Safranal</th><th>Crocin</th><th>Picrocrocin</th></tr></thead>
+  <tbody>
+    <tr><td>Role in saffron</td><td>Aroma (volatile aldehyde)</td><td>Color (carotenoid glycoside)</td><td>Taste precursor (glycoside)</td></tr>
+    <tr><td>Formed from</td><td>Breakdown of picrocrocin on drying</td><td>Zeaxanthin-derived, independent pathway</td><td>Direct biosynthetic product; parent of safranal</td></tr>
+    <tr><td>CNS activity reported</td><td>GABA<sub>A</sub> PAM, anticonvulsant/anxiolytic-like</td><td>Antidepressant-like, neuroprotective (different proposed mechanisms)</td><td>Limited data</td></tr>
+    <tr><td>Volatility</td><td>High (defines saffron's smell)</td><td>Non-volatile</td><td>Non-volatile</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- SAFRANAL FOR ADHD -->
+<section id="adhd">
+<h2>Safranal for ADHD</h2>
+<div class="alert alert-warn">
+  <span class="alert-icon">⚠️</span>
+  <div><b>Important caveat:</b> every clinical trial below tested <i>whole standardized saffron extract</i> (which contains safranal alongside crocin, picrocrocin, and other constituents), not isolated safranal on its own. No study has tested purified safranal as a standalone ADHD treatment in humans. Saffron is not FDA-approved for ADHD and should not replace prescribed treatment without medical supervision.</div>
+</div>
+
+<h3>Clinical evidence (official / peer-reviewed sources)</h3>
+<table class="dose-table">
+  <thead><tr><th>Study</th><th>Design</th><th>Comparator</th><th>Key finding</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Baziar et al. (2019), <i>J Child Adolesc Psychopharmacol</i></td>
+      <td>Randomized, double-blind pilot; 54 children (6–17)</td>
+      <td>Methylphenidate</td>
+      <td>Saffron capsules (20–30 mg/day) showed no significant difference from methylphenidate on Parent/Teacher ADHD Rating Scale scores at 6 weeks</td>
+    </tr>
+    <tr>
+      <td>Blasco-Fontecilla et al. (2022), <i>Nutrients</i> 14(19):4046</td>
+      <td>Non-randomized clinical trial; 63 participants (7–17)</td>
+      <td>Extended-release methylphenidate</td>
+      <td>Comparable efficacy overall; saffron extract (Saffr'Activ, 30 mg/day) more effective for hyperactivity, methylphenidate more effective for inattention; saffron also improved sleep</td>
+    </tr>
+    <tr>
+      <td>Khaksarian et al. (cited in Blasco-Fontecilla review)</td>
+      <td>Add-on trial</td>
+      <td>Methylphenidate + saffron vs. methylphenidate alone</td>
+      <td>Saffron as an adjunct (~15 mg/day) produced greater symptom reduction than methylphenidate alone</td>
+    </tr>
+  </tbody>
+</table>
+<p>Across these trials, standardized saffron extract is described as increasing dopamine, serotonin, and noradrenaline signaling and acting on GABAergic and NMDA pathways — broadly consistent with safranal's known GABA<sub>A</sub> benzodiazepine-site modulation described above, though the trials cannot isolate safranal's individual contribution from the extract's other constituents. Reported side effects across studies were generally mild (appetite/GI effects, occasional headache or dizziness), and notably milder than typical stimulant side effects like appetite suppression and insomnia.</p>
+
+<h3>Community / anecdotal sources</h3>
+<div class="alert alert-info">
+  <span class="alert-icon">ℹ️</span>
+  <div>A direct, well-established Reddit thread specifically discussing safranal (as opposed to saffron generally) for ADHD was not found in this search. The closest first-person account located was an ADHD-focused blog, linked below; treat it as one person's self-report, not evidence.</div>
+</div>
+<ul style="padding-left:22px;margin:8px 0;">
+  <li><i>"What the Heck is up with Saffron and ADHD?"</i> — ADHD Mom Hacks (Substack). Self-reported ~2-month trial of saffron extract: noted reduced task-initiation resistance and modestly longer focused work sessions starting around day 3–4, alongside a mild itchy-skin side effect the author wasn't fully certain was related.</li>
+  <li>General ADHD/social-media discussion (per CHOP and other clinical summaries above) notes saffron has been popularized on platforms including Reddit and TikTok as a "natural Ritalin," which is part of why formal research interest has grown — but individual online anecdotes vary widely and aren't a substitute for the clinical trial data above.</li>
+</ul>
+</section>
+
+<!-- REFERENCES -->
+<section id="references">
+<h2>References</h2>
+<div class="refs">
+<ol>
+  <li>Hosseinzadeh, H., Sadeghi Shakib, S., Khadem Sameni, A., Taghiabadi, E. (2013). Acute and subacute toxicity of safranal, a constituent of saffron, in mice and rats. <i>Iranian Journal of Pharmaceutical Research</i>.</li>
+  <li>Li Puma, S., Landini, L., Seravalli, V., et al. (2019). TRPA1 mediates the antinociceptive properties of the constituent of <i>Crocus sativus</i> L., safranal. <i>Journal of Cellular and Molecular Medicine</i>. PMC6378183.</li>
+  <li>Journals.library.ualberta.ca (JPPS). Anticonvulsant and GABA<sub>A</sub>/benzodiazepine-site binding effects of safranal in mouse absence-seizure models.</li>
+  <li>Yang, X., Lu, D., Sun, Y., et al. (2023). Network pharmacology and experimental verification reveal the mechanism of safranal against glioblastoma (GBM). <i>Frontiers in Oncology</i>, 13:1255164.</li>
+  <li>Review: Pharmacological and medical effects of safranal (antioxidant, anti-inflammatory, cardioprotective, neuroprotective, nephroprotective, gastrointestinal-protective actions), sid.ir literature review, 2010–2022.</li>
+  <li>Wikipedia contributors. Safranal. <i>Wikipedia, The Free Encyclopedia</i>.</li>
+  <li>Baziar, S., et al. (2019). Crocus sativus L. versus methylphenidate in treatment of children with attention-deficit/hyperactivity disorder: a randomized, double-blind pilot study. <i>Journal of Child and Adolescent Psychopharmacology</i>.</li>
+  <li>Blasco-Fontecilla, H., Moyano-Ramírez, E., Méndez-González, O., et al. (2022). Effectivity of Saffron Extract (Saffr'Activ) on Treatment for Children and Adolescents with ADHD: A Clinical Effectivity Study. <i>Nutrients</i>, 14(19), 4046.</li>
+  <li>ADHD Mom Hacks (Substack). What the Heck is up with Saffron and ADHD? (first-person account, not peer-reviewed).</li>
+  <li>Lust, J. (1983). <i>The Herb Book</i>. Bantam Books. (classical toxic-dose reference, ~10–12 g cited as fatal)</li>
+  <li>German pharmacognosy monograph (Commission E, 1987) and altmeyers.org saffron entry — abortifacient dose ~10 g, lethal dose ~20 g cited.</li>
+  <li>Case reports on <i>Colchicum autumnale</i> (meadow saffron) colchicine poisoning, distinguished from <i>Crocus sativus</i>: e.g. Danilović et al. (2020), <i>Vojnosanitetski Pregled</i>; Šundov et al. (2005), <i>Forensic Science International</i>.</li>
+</ol>
+</div>
+</section>
+
+</div><!-- clearfix -->
+
+<!-- CATEGORY BAR -->
+<div class="category-bar">
+  <span>Categories:</span>
+  <a href="#">Monoterpenoid aldehydes</a>
+  <a href="#">Saffron constituents</a>
+  <a href="#">GABA<sub>A</sub> modulators</a>
+  <a href="#">Flavor &amp; fragrance compounds</a>
+</div>
+
+</main>
+</div>
+</body>
+</html>
