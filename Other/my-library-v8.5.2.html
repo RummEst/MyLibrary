@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>MY LIBRARY</title>
+<!-- v8.5.2 -->
+<meta name="mylib-version" content="8.5.2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #131110;
+    --bg-raised: #1b1815;
+    --bg-hover: #221e19;
+    --border: #2e2822;
+    --border-soft: #241f1a;
+    --ink: #ece5d8;
+    --ink-dim: #948c7d;
+    --ink-faint: #665f53;
+    --accent: #c9a15c;
+    --accent-dim: #8f7442;
+    --accent-glow: rgba(201,161,92,0.14);
+    --err: #c96a5c;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky; top:0; z-index:20;
+    background:linear-gradient(180deg, var(--bg) 80%, transparent);
+    padding:14px 16px 10px;
+    border-bottom:1px solid var(--border-soft);
+  }
+  header.collapsed{padding-bottom:6px;}
+  header.collapsed > *:not(.header-collapse-btn){display:none;}
+  .header-collapse-btn{
+    position:absolute; left:50%; bottom:0;
+    transform:translate(-50%, 50%);
+    width:36px; height:16px;
+    background:var(--bg-raised);
+    border:1px solid var(--border); border-top:none;
+    border-radius:0 0 8px 8px;
+    color:var(--ink-faint);
+    font-size:9px; line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    z-index:21;
+  }
+  .header-collapse-btn:hover{color:var(--accent); border-color:var(--accent-dim);}
+  .title-row{
+    display:flex; align-items:baseline; gap:10px; margin-bottom:10px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-optical-sizing:auto;
+    font-weight:700;
+    font-size:22px;
+    letter-spacing:0.14em;
+    margin:0;
+    color:var(--ink);
+  }
+  h1 span{color:var(--accent);}
+  .subtitle{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--ink-faint);
+    letter-spacing:0.04em;
+  }
+  .controls{
+    display:flex; gap:6px; flex-wrap:wrap;
+  }
+  .controls input{
+    flex:1; min-width:160px;
+    background:var(--bg-raised);
+    border:1px solid var(--border);
+    color:var(--ink);
+    padding:7px 10px;
+    border-radius:5px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    outline:none;
+  }
+  .controls input::placeholder{color:var(--ink-faint);}
+  .controls input:focus{border-color:var(--accent-dim); box-shadow:0 0 0 2px var(--accent-glow);}
+  .controls button{
+    background:var(--accent);
+    color:#1a1712;
+    border:none;
+    padding:7px 14px;
+    border-radius:5px;
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:12.5px;
+    cursor:pointer;
+    letter-spacing:0.02em;
+  }
+  .controls button:hover{background:#d8ae67;}
+  .controls button:disabled{opacity:0.5; cursor:default;}
+  .status-line{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--ink-faint);
+    margin-top:6px;
+    min-height:14px;
+  }
+  .status-line.err{color:var(--err);}
+
+  /* ---------- Tree ---------- */
+  main{padding:6px 10px 60px;}
+  .empty-state{
+    color:var(--ink-faint);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    text-align:center;
+    padding:60px 20px;
+  }
+
+  .folder{
+    border-bottom:1px solid var(--border-soft);
+  }
+  .folder-row{
+    display:flex; align-items:center; gap:8px;
+    padding:8px 6px;
+    cursor:pointer;
+    user-select:none;
+    border-left:2px solid transparent;
+  }
+  .folder-row:hover{background:var(--bg-hover); border-left-color:var(--accent-dim);}
+  .folder-row .fchevron{
+    color:var(--ink-faint);
+    font-size:10px;
+    width:10px;
+    transition:transform 0.15s ease;
+    flex-shrink:0;
+  }
+  .folder.open > .folder-row .fchevron{transform:rotate(90deg); color:var(--accent);}
+  .folder-row .ficon{font-size:14px; flex-shrink:0;}
+  .folder-row .fname{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:14.5px;
+    color:var(--ink);
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .folder-row .fcount{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--ink-faint);
+    background:var(--bg-raised);
+    border:1px solid var(--border);
+    padding:1px 6px;
+    border-radius:20px;
+    flex-shrink:0;
+  }
+  .folder.open > .folder-row .fcount{border-color:var(--accent-dim); color:var(--accent);}
+  .folder-children{
+    display:none;
+    padding-left:16px;
+    border-left:1px solid var(--border-soft);
+    margin-left:14px;
+  }
+  .folder.open > .folder-children{display:block;}
+
+  /* ---------- Item ---------- */
+  .item{
+    display:flex; gap:9px;
+    padding:7px 6px 7px 4px;
+    cursor:pointer;
+    border-left:2px solid transparent;
+    align-items:flex-start;
+  }
+  .item:hover{background:var(--bg-hover); border-left-color:var(--accent);}
+  .item .iicon{
+    font-size:14px;
+    width:18px;
+    text-align:center;
+    flex-shrink:0;
+    margin-top:1px;
+    line-height:1.3;
+  }
+  .item .iicon img{width:15px; height:15px; border-radius:3px; vertical-align:-2px;}
+  .item .iicon.custom-icon{font-size:18px;}
+  .item-body{flex:1; min-width:0;}
+  .item-line1{
+    display:flex; align-items:baseline; gap:8px;
+  }
+  .item-title{
+    font-size:13.5px;
+    font-weight:500;
+    color:var(--ink);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .item.is-html .item-title{
+    font-weight:600;
+  }
+  .item-version{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--accent-dim);
+    flex-shrink:0;
+  }
+  .item-line2{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--ink-faint);
+    margin-top:2px;
+    display:flex; gap:10px;
+  }
+  .item-line2 .ext{color:var(--ink-dim);}
+  .item-line2 .fsize{color:var(--ink-faint);}
+  .item-desc{
+    font-size:11.5px;
+    color:var(--ink-dim);
+    margin-top:2px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    opacity:0.85;
+  }
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop{
+    position:fixed; inset:0;
+    background:rgba(10,9,8,0.7);
+    display:none;
+    align-items:center; justify-content:center;
+    z-index:100;
+    /* 10% wiggle room from every screen edge */
+    padding:10vh 10vw;
+    box-sizing:border-box;
+  }
+  .modal-backdrop.show{display:flex;}
+  .modal{
+    background:var(--bg-raised);
+    border:1px solid var(--border);
+    border-radius:8px;
+    width:100%; height:100%;
+    max-width:1100px;
+    display:flex; flex-direction:column;
+    overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  }
+  .modal-head{
+    display:flex; align-items:center; gap:10px;
+    padding:10px 12px;
+    border-bottom:1px solid var(--border);
+    flex-shrink:0;
+  }
+  .modal-head .mtitle{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:14px;
+    flex:1;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .modal-head a{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--accent);
+    text-decoration:none;
+    border:1px solid var(--border);
+    padding:4px 8px;
+    border-radius:4px;
+    white-space:nowrap;
+  }
+  .modal-head a:hover{background:var(--accent-glow);}
+  .modal-head .mclose{
+    cursor:pointer;
+    color:var(--ink-dim);
+    font-size:18px;
+    line-height:1;
+    padding:2px 6px;
+    background:none; border:none;
+  }
+  .modal-head .mclose:hover{color:var(--ink);}
+  .modal-body{flex:1; overflow:auto; background:#0f0d0c;}
+  .modal-body iframe{width:100%; height:100%; border:none; background:#fff;}
+  .modal-body pre{
+    margin:0; padding:16px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--ink);
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+  .modal-body table{
+    border-collapse:collapse;
+    width:100%;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+  }
+  .modal-body table th, .modal-body table td{
+    border:1px solid var(--border);
+    padding:5px 8px;
+    text-align:left;
+    white-space:nowrap;
+  }
+  .modal-body table th{background:var(--bg-raised); color:var(--accent); position:sticky; top:0;}
+  .modal-body table tr:nth-child(even){background:rgba(255,255,255,0.02);}
+  .modal-loading{
+    padding:24px; font-family:'IBM Plex Mono', monospace; color:var(--ink-faint); font-size:12px;
+  }
+  .img-preview-wrap{
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+    padding:20px;
+  }
+  .img-preview{
+    max-width:100%; max-height:65vh;
+    object-fit:contain;
+    border:1px solid var(--border);
+    border-radius:6px;
+    background:#fff;
+  }
+  .img-preview-actions a{
+    display:inline-block;
+    background:var(--bg-raised);
+    border:1px solid var(--border);
+    color:var(--ink);
+    padding:7px 13px;
+    border-radius:5px;
+    font-family:'Inter', sans-serif;
+    font-size:12px;
+    font-weight:600;
+    text-decoration:none;
+  }
+  .img-preview-actions a:hover{border-color:var(--accent-dim); color:var(--accent);}
+
+  a.icon-btn{text-decoration:none; box-sizing:border-box;}
+
+  .changelog-body{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--ink-dim);
+    line-height:1.6;
+    max-height:200px;
+    overflow:auto;
+    border-top:1px solid var(--border-soft);
+    padding-top:10px;
+    margin-top:2px;
+  }
+  .changelog-body .cl-version{color:var(--accent); font-weight:600;}
+  .changelog-body ul{margin:4px 0 12px 16px; padding:0;}
+  .changelog-body li{margin-bottom:2px;}
+
+.fullpage-view{
+    position:fixed; inset:0; z-index:200;
+    background:var(--bg);
+    display:none;
+    flex-direction:column;
+  }
+  .fullpage-view.show{display:flex;}
+  .fullpage-bar{
+    display:flex; align-items:center; gap:10px;
+    padding:8px 12px;
+    border-bottom:1px solid var(--border);
+    flex-shrink:0;
+    background:var(--bg-raised);
+  }
+  .fullpage-bar .fptitle{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:14px;
+    color:var(--ink);
+    flex:1;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    border-left:2px solid var(--accent);
+    padding-left:8px;
+  }
+  .fullpage-bar .fpclose{
+    cursor:pointer;
+    color:var(--ink-dim);
+    background:none; border:1px solid var(--border);
+    border-radius:5px;
+    font-size:13px;
+    padding:5px 10px;
+    font-family:'Inter', sans-serif;
+  }
+  .fullpage-bar .fpclose:hover{color:var(--ink); background:var(--bg-hover);}
+  .fullpage-body{flex:1; min-height:0;}
+  .fullpage-body iframe{width:100%; height:100%; border:none; background:#fff;}
+
+  /* ---------- Header extras: settings button, sort select ---------- */
+  .icon-btn{
+    background:var(--bg-raised);
+    border:1px solid var(--border);
+    color:var(--ink-dim);
+    width:31px; height:31px;
+    border-radius:5px;
+    font-size:14px;
+    cursor:pointer;
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .icon-btn:hover{color:var(--accent); border-color:var(--accent-dim); background:var(--bg-hover);}
+  .controls select{
+    background:var(--bg-raised);
+    border:1px solid var(--border);
+    color:var(--ink);
+    padding:7px 8px;
+    border-radius:5px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    outline:none;
+    flex-shrink:0;
+  }
+  .controls select:focus{border-color:var(--accent-dim); box-shadow:0 0 0 2px var(--accent-glow);}
+
+  /* ---------- Recently opened ---------- */
+  .recent-section{
+    display:none;
+    align-items:center; flex-wrap:wrap; gap:8px;
+    padding:9px 14px;
+    border-bottom:1px solid var(--border-soft);
+    background:var(--bg-raised);
+  }
+  .recent-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    color:var(--ink-faint);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-right:2px;
+    flex-shrink:0;
+  }
+  .recent-chip{
+    background:var(--bg);
+    border:1px solid var(--border);
+    color:var(--ink-dim);
+    font-family:'Inter', sans-serif;
+    font-size:11.5px;
+    padding:4px 11px;
+    border-radius:20px;
+    cursor:pointer;
+    max-width:200px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .recent-chip:hover{color:var(--accent); border-color:var(--accent-dim); background:var(--accent-glow);}
+
+
+  /* ---------- Settings modal ---------- */
+  .settings-modal{max-width:420px; height:auto; max-height:80vh;}
+  .settings-body{padding:6px 4px;}
+  .setting-row{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:14px 16px;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .setting-row:last-child{border-bottom:none;}
+  .setting-label{
+    font-size:13px; color:var(--ink); font-family:'Inter', sans-serif; font-weight:500;
+  }
+  .setting-sub{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--ink-faint);
+    margin-top:3px;
+    font-weight:400;
+    line-height:1.4;
+    max-width:230px;
+  }
+  .settings-btn{
+    background:var(--bg-raised);
+    border:1px solid var(--border);
+    color:var(--ink);
+    padding:7px 13px;
+    border-radius:5px;
+    font-family:'Inter', sans-serif;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .settings-btn:hover{border-color:var(--accent-dim); color:var(--accent);}
+  .color-input{
+    -webkit-appearance:none; appearance:none;
+    width:38px; height:28px;
+    border:1px solid var(--border);
+    border-radius:5px;
+    background:none;
+    cursor:pointer;
+    padding:0;
+    flex-shrink:0;
+  }
+  .color-input::-webkit-color-swatch-wrapper{padding:2px;}
+  .color-input::-webkit-color-swatch{border:none; border-radius:3px;}
+  .switch{
+    position:relative; display:inline-block;
+    width:38px; height:22px; flex-shrink:0;
+  }
+  .switch input{opacity:0; width:0; height:0;}
+  .switch-track{
+    position:absolute; inset:0; cursor:pointer;
+    background:var(--border); border-radius:22px;
+    transition:background 0.15s ease;
+  }
+  .switch-track::before{
+    content:""; position:absolute;
+    width:16px; height:16px; left:3px; top:3px;
+    background:var(--ink-dim); border-radius:50%;
+    transition:transform 0.15s ease, background 0.15s ease;
+  }
+  .switch input:checked + .switch-track{background:var(--accent-glow); border:1px solid var(--accent-dim);}
+  .switch input:checked + .switch-track::before{transform:translateX(16px); background:var(--accent);}
+
+  ::-webkit-scrollbar{width:10px; height:10px;}
+  ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:var(--border); border-radius:5px;}
+</style>
+</head>
+<body>
+
+<div id="appWrap">
+
+<header>
+  <div class="title-row">
+    <h1>MY <span>LIBRARY</span></h1>
+  </div>
+  <div class="controls">
+    <input id="repoInput" type="text" placeholder="owner/repo  (e.g. torvalds/linux)" autocomplete="off" value="RummEst/MyLibrary">
+    <button id="loadBtn">Load</button>
+    <button id="settingsBtn" class="icon-btn" title="Settings" aria-label="Settings">⚙</button>
+  </div>
+  <div class="controls" style="margin-top:6px;">
+    <input id="searchInput" type="text" placeholder="Search files…" autocomplete="off">
+    <select id="sortSelect" title="Sort by">
+      <option value="name">Name</option>
+      <option value="date">Date modified</option>
+      <option value="size">Size</option>
+      <option value="type">Type</option>
+    </select>
+  </div>
+  <div class="status-line" id="statusLine"></div>
+  <button class="header-collapse-btn" id="headerCollapseBtn" title="Hide top bar" aria-label="Hide top bar">▲</button>
+</header>
+
+<div class="recent-section" id="recentSection"></div>
+
+<main id="tree">
+  <div class="empty-state">Enter a public GitHub repo above (owner/repo) and press Load.</div>
+</main>
+
+</div><!-- /appWrap -->
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="mtitle" id="modalTitle">—</div>
+      <a id="modalRaw" href="#" target="_blank" rel="noopener">raw ↗</a>
+      <button class="mclose" id="modalClose">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div class="fullpage-view" id="fullpageView">
+  <div class="fullpage-bar">
+    <div class="fptitle" id="fullpageTitle">—</div>
+    <a class="icon-btn" id="fullpageLocalBtn" href="#" title="Open locally" aria-label="Open locally">›</a>
+    <button class="fpclose" id="fullpageClose">✕ Close</button>
+  </div>
+  <div class="fullpage-body" id="fullpageBody"></div>
+</div>
+
+<div class="modal-backdrop" id="settingsBackdrop">
+  <div class="modal settings-modal">
+    <div class="modal-head">
+      <div class="mtitle">Settings</div>
+      <button class="mclose" id="settingsClose">✕</button>
+    </div>
+    <div class="modal-body settings-body">
+      <div class="setting-row">
+        <div class="setting-label">Offline mode
+          <div class="setting-sub">Cache full HTML content (not just metadata) so pages still open with no connection.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="offlineToggle">
+          <span class="switch-track"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Cache
+          <div class="setting-sub">Clear everything stored locally and re-fetch fresh, bypassing the 6-hour cache.</div>
+        </div>
+        <button class="settings-btn" id="clearCacheBtn">Clear cache</button>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Accent color</div>
+        <input type="color" id="accentColorInput" class="color-input" value="#c9a15c">
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Background color</div>
+        <input type="color" id="bgColorInput" class="color-input" value="#131110">
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Colors</div>
+        <button class="settings-btn" id="resetThemeBtn">Reset to default</button>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Scale
+          <div class="setting-sub">Scales the whole app's size — handy since desktop mode is forced.</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <input type="range" id="fontSizeInput" min="80" max="250" step="5" style="width:100px;">
+          <span id="fontSizeVal" style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--ink-faint); width:34px; text-align:right;"></span>
+        </div>
+      </div>
+      <div class="setting-row" style="flex-direction:column; align-items:stretch; gap:0;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;">
+          <div class="setting-label">Changelog
+            <div class="setting-sub">Short version history.</div>
+          </div>
+          <button class="settings-btn" id="changelogBtn">Show</button>
+        </div>
+        <div id="changelogBody" class="changelog-body" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Theme (accent + background color) ----------
+  function clamp255(n){ return Math.max(0, Math.min(255, Math.round(n))); }
+  function hexToRgb(hex){
+    hex = (hex||"").replace("#","");
+    if(hex.length === 3) hex = hex.split("").map(c => c+c).join("");
+    const num = parseInt(hex, 16);
+    if(isNaN(num)) return null;
+    return { r:(num>>16)&255, g:(num>>8)&255, b:num&255 };
+  }
+  function rgbToHex(r,g,b){
+    return "#" + [r,g,b].map(v => clamp255(v).toString(16).padStart(2,"0")).join("");
+  }
+  function shade(hex, amt){
+    const c = hexToRgb(hex);
+    if(!c) return hex;
+    return rgbToHex(c.r+amt, c.g+amt, c.b+amt);
+  }
+  function hexToRgba(hex, alpha){
+    const c = hexToRgb(hex);
+    if(!c) return `rgba(201,161,92,${alpha})`;
+    return `rgba(${c.r},${c.g},${c.b},${alpha})`;
+  }
+
+  const THEME_KEY = "mylib:theme";
+  function loadTheme(){
+    try{ const raw = localStorage.getItem(THEME_KEY); return raw ? JSON.parse(raw) : {}; }
+    catch(e){ return {}; }
+  }
+  function saveTheme(theme){
+    try{ localStorage.setItem(THEME_KEY, JSON.stringify(theme)); }catch(e){ /* ignore */ }
+  }
+  function applyTheme(theme){
+    const root = document.documentElement.style;
+    if(theme.accent){
+      root.setProperty("--accent", theme.accent);
+      root.setProperty("--accent-dim", shade(theme.accent, -40));
+      root.setProperty("--accent-glow", hexToRgba(theme.accent, 0.14));
+    } else {
+      root.removeProperty("--accent"); root.removeProperty("--accent-dim"); root.removeProperty("--accent-glow");
+    }
+    if(theme.bg){
+      root.setProperty("--bg", theme.bg);
+      root.setProperty("--bg-raised", shade(theme.bg, 14));
+      root.setProperty("--bg-hover", shade(theme.bg, 24));
+      root.setProperty("--border", shade(theme.bg, 34));
+      root.setProperty("--border-soft", shade(theme.bg, 22));
+    } else {
+      root.removeProperty("--bg"); root.removeProperty("--bg-raised"); root.removeProperty("--bg-hover");
+      root.removeProperty("--border"); root.removeProperty("--border-soft");
+    }
+  }
+  let theme = loadTheme();
+  applyTheme(theme);
+
+  // ---------- App settings ----------
+  const SETTINGS_KEY = "mylib:settings";
+  function loadSettings(){
+    try{
+      const raw = localStorage.getItem(SETTINGS_KEY);
+      return Object.assign({ offline: true, fontSize: 200 }, raw ? JSON.parse(raw) : {});
+    }catch(e){ return { offline: true, fontSize: 200 }; }
+  }
+  function saveSettings(){
+    try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }catch(e){ /* ignore */ }
+  }
+  let settings = loadSettings();
+
+  function applyFontSize(pct){
+    // 'zoom' scales the app's normal UI (#appWrap). It deliberately does
+    // NOT touch <body> directly — CSS zoom on an ancestor of a
+    // position:fixed element (our modals) breaks that element's
+    // positioning, making popups draw relative to the scrolled document
+    // instead of the viewport. Keeping the fixed overlays outside the
+    // zoomed subtree avoids that entirely.
+    const wrap = document.getElementById("appWrap");
+    if(wrap) wrap.style.zoom = (pct / 100);
+    const val = document.getElementById("fontSizeVal");
+    if(val) val.textContent = pct + "%";
+  }
+  applyFontSize(settings.fontSize || 200);
+
+  const DEFAULT_ICON = "▶️";
+  const EXT_ICONS = { txt: "📄", md: "📝", csv: "📊", json: "🗂️", log: "🧾" };
+  const IMG_EXTS = new Set(["png","jpg","jpeg","gif","webp","svg","bmp","ico","avif"]);
+  const TREE_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
+
+  // ---------- Local cache (repo tree, metadata, expanded folders) ----------
+  function loadCache(key){
+    try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : null; }
+    catch(e){ return null; }
+  }
+  function saveCache(key, val){
+    try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){ /* storage full/unavailable — ignore */ }
+  }
+  function repoKey(owner, repo){ return `${owner}/${repo}`; }
+  function treeCacheKey(owner, repo){ return `mylib:tree:${repoKey(owner, repo)}`; }
+  function metaCacheKey(owner, repo){ return `mylib:meta:${repoKey(owner, repo)}`; }
+  function expandedCacheKey(owner, repo){ return `mylib:expanded:${repoKey(owner, repo)}`; }
+  function recentCacheKey(owner, repo){ return `mylib:recent:${repoKey(owner, repo)}`; }
+  function htmlCacheKey(owner, repo, path){ return `mylib:htmlcache:${repoKey(owner, repo)}:${path}`; }
+  function iconsCacheKey(owner, repo){ return `mylib:icons2:${repoKey(owner, repo)}`; }
+
+  // ---------- Custom file icons (.icons CSV at repo root) ----------
+  // Keyed primarily by exact filename (e.g. "gaba-receptors-wiki.html"),
+  // since real repo filenames rarely match a "prettified" title. A
+  // normalized-title map is kept only as a fallback for older-style CSVs.
+  let iconMap = { byFilename: {}, byTitle: {} };
+  function iconMapHasEntries(){
+    return Object.keys(iconMap.byFilename).length > 0 || Object.keys(iconMap.byTitle).length > 0;
+  }
+  function normIconKey(str){
+    return String(str || "")
+      .replace(/[_\-]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  }
+  function parseIconsCsv(text){
+    const byFilename = {};
+    const byTitle = {};
+    const lines = String(text || "").split(/\r?\n/).filter(l => l.trim().length);
+    let start = 0;
+    if(lines.length && /^\s*filename\s*,\s*emoji\s*$/i.test(lines[0])) start = 1;
+    for(let i = start; i < lines.length; i++){
+      const line = lines[i];
+      const idx = line.lastIndexOf(",");
+      if(idx === -1) continue;
+      const name = line.slice(0, idx).trim();
+      const emoji = line.slice(idx + 1).trim();
+      if(!name || !emoji) continue;
+      byFilename[name.toLowerCase()] = emoji;
+      byTitle[normIconKey(name.replace(/\.[a-zA-Z0-9]+$/, ""))] = emoji;
+    }
+    return { byFilename, byTitle };
+  }
+  function rawGithubUrl(path){
+    const enc = path.split("/").map(encodeURIComponent).join("/");
+    return `https://raw.githubusercontent.com/${state.owner}/${state.repo}/${state.branch}/${enc}`;
+  }
+  async function loadIconsCsv(){
+    // Always fetch fresh from raw GitHub — no jsDelivr CDN cache, no localStorage cache.
+    const candidates = [".icons.csv", "icons.csv", ".icons"];
+    for(const p of candidates){
+      try{
+        const resp = await fetch(rawGithubUrl(p), { cache: "no-store" });
+        if(resp.ok){
+          const text = await resp.text();
+          iconMap = parseIconsCsv(text);
+          return;
+        }
+      }catch(e){ /* try next candidate */ }
+    }
+  }
+  function iconFor(name){
+    const raw = String(name || "").trim();
+    if(!raw) return null;
+    // 1) exact filename match (with extension) — the reliable path.
+    const byName = iconMap.byFilename[raw.toLowerCase()];
+    if(byName) return byName;
+    // 2) fallback: normalized "prettified title" match, for CSVs written
+    //    the old way (no extension, spaces instead of dashes/underscores).
+    const base = raw.replace(/\.[a-zA-Z0-9]+$/, "");
+    return iconMap.byTitle[normIconKey(base)] || null;
+  }
+  function applyIconsToTree(){
+    treeEl.querySelectorAll(".item").forEach(el => {
+      const path = el.dataset.path;
+      if(!path) return;
+      const emoji = iconFor(path.split("/").pop());
+      if(!emoji) return;
+      const iconSpan = el.querySelector(".iicon");
+      if(iconSpan){
+        iconSpan.textContent = emoji;
+        iconSpan.classList.add("custom-icon");
+      }
+    });
+  }
+
+  const SORT_KEY = "mylib:sortBy";
+  let currentSort = (function(){ try{ return localStorage.getItem(SORT_KEY) || "name"; }catch(e){ return "name"; } })();
+
+  let metaSaveTimer = null;
+  function saveMetaCacheDebounced(){
+    clearTimeout(metaSaveTimer);
+    metaSaveTimer = setTimeout(() => {
+      saveCache(metaCacheKey(state.owner, state.repo), state.metaCache);
+    }, 400);
+  }
+
+  function saveExpandedState(){
+    if(!state.owner || !state.repo) return;
+    const paths = Array.from(treeEl.querySelectorAll(".folder.open")).map(el => el.dataset.path);
+    saveCache(expandedCacheKey(state.owner, state.repo), paths);
+  }
+
+  function collectFoldersByPath(node, map){
+    if(node.type === "folder"){
+      if(node.path) map[node.path] = node;
+      Object.keys(node.children).forEach(k => collectFoldersByPath(node.children[k], map));
+    }
+  }
+
+  function restoreExpandedFolders(root){
+    const expanded = loadCache(expandedCacheKey(state.owner, state.repo)) || [];
+    if(!expanded.length) return;
+    const folderMap = {};
+    collectFoldersByPath(root, folderMap);
+    expanded.forEach(path => {
+      const folder = folderMap[path];
+      if(!folder) return;
+      const el = treeEl.querySelector(`.folder[data-path="${cssEscape(path)}"]`);
+      if(el){ el.classList.add("open"); loadMetaForFolder(folder); }
+    });
+  }
+
+  function clearAppCache(){
+    const prefixes = ["mylib:tree:", "mylib:meta:", "mylib:expanded:", "mylib:recent:", "mylib:htmlcache:", "mylib:icons2:"];
+    Object.keys(localStorage).forEach(k => {
+      if(prefixes.some(p => k.startsWith(p))) localStorage.removeItem(k);
+    });
+    renderRecentSection();
+    if(state.owner && state.repo){
+      loadRepo();
+    }
+  }
+
+  const state = {
+    owner: null,
+    repo: null,
+    branch: null,
+    root: null,        // nested folder tree
+    metaCache: {},      // path -> {date, desc, favicon}
+    rateNote: ""
+  };
+
+  const $ = (sel) => document.querySelector(sel);
+  const treeEl = $("#tree");
+  const statusEl = $("#statusLine");
+  const repoInput = $("#repoInput");
+  const loadBtn = $("#loadBtn");
+
+  function setStatus(msg, isErr){
+    statusEl.textContent = msg || "";
+    statusEl.classList.toggle("err", !!isErr);
+  }
+
+  function extOf(name){
+    const m = /\.([a-zA-Z0-9]+)$/.exec(name);
+    return m ? m[1].toLowerCase() : "";
+  }
+
+  function titleOf(name, ext){
+    const base = name.replace(/\.[a-zA-Z0-9]+$/, "");
+    const cleaned = base.replace(/[_\-]+/g, " ").trim();
+    if(ext === "html" || ext === "htm"){
+      // Every word's first letter capitalized for html titles.
+      return cleaned.replace(/\S+/g, w => w.charAt(0).toUpperCase() + w.slice(1));
+    }
+    return cleaned;
+  }
+
+  function formatSize(bytes){
+    if(bytes === undefined || bytes === null || isNaN(bytes)) return "";
+    if(bytes < 1024) return bytes + " B";
+    const units = ["KB","MB","GB","TB"];
+    let val = bytes / 1024, i = 0;
+    while(val >= 1024 && i < units.length - 1){ val /= 1024; i++; }
+    return (val < 10 ? val.toFixed(1) : Math.round(val)) + " " + units[i];
+  }
+
+  function versionOf(name){
+    const m = /v(?:er(?:sion)?)?[\s._-]?(\d+(?:\.\d+){0,3})/i.exec(name);
+    return m ? "v" + m[1] : "";
+  }
+
+  function jsdelivrUrl(path){
+    const enc = path.split("/").map(encodeURIComponent).join("/");
+    return `https://cdn.jsdelivr.net/gh/${state.owner}/${state.repo}@${state.branch}/${enc}`;
+  }
+
+  function htmlpreviewUrl(path){
+    const raw = `https://raw.githubusercontent.com/${state.owner}/${state.repo}/${state.branch}/${path.split("/").map(encodeURIComponent).join("/")}`;
+    return `https://htmlpreview.github.io/?${raw}`;
+  }
+
+  // ---------- Load repo ----------
+  async function loadRepo(){
+    const val = repoInput.value.trim().replace(/^https?:\/\/github\.com\//,"").replace(/\/$/,"");
+    if(!val || !val.includes("/")){
+      setStatus("Enter a repo as owner/repo", true);
+      return;
+    }
+    const [owner, repo] = val.split("/");
+    state.owner = owner; state.repo = repo;
+    state.metaCache = loadCache(metaCacheKey(owner, repo)) || {};
+    loadBtn.disabled = true;
+    renderRecentSection();
+
+    const cached = loadCache(treeCacheKey(owner, repo));
+    const cacheFresh = cached && (Date.now() - cached.fetchedAt < TREE_CACHE_TTL);
+
+    if(cached){
+      // Show the cached copy instantly while we (maybe) refresh in the background.
+      state.branch = cached.branch;
+      state.root = buildTree(cached.files);
+      sortFolderOrder(state.root, currentSort);
+      renderRoot(state.root);
+      restoreExpandedFolders(state.root);
+      setStatus(`${owner}/${repo} — ${cached.files.length} files (cached)`);
+      loadIconsCsv().then(() => { if(iconMapHasEntries()) applyIconsToTree(); });
+    } else {
+      setStatus("Loading repository…");
+      treeEl.innerHTML = `<div class="empty-state">Loading…</div>`;
+    }
+
+    if(cacheFresh){
+      loadBtn.disabled = false;
+      return;
+    }
+
+    try{
+      const repoResp = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+      if(!repoResp.ok){
+        if(repoResp.status === 403){ throw new Error("GitHub API rate limit hit. Try again shortly."); }
+        throw new Error(`Repo not found (${repoResp.status})`);
+      }
+      const repoData = await repoResp.json();
+      state.branch = repoData.default_branch || "main";
+
+      const treeResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/${state.branch}?recursive=1`);
+      if(!treeResp.ok){ throw new Error(`Could not read file tree (${treeResp.status})`); }
+      const treeData = await treeResp.json();
+      const remaining = treeResp.headers.get("x-ratelimit-remaining");
+
+      const files = (treeData.tree || []).filter(t => t.type === "blob");
+      state.root = buildTree(files);
+      sortFolderOrder(state.root, currentSort);
+      renderRoot(state.root);
+      restoreExpandedFolders(state.root);
+      saveCache(treeCacheKey(owner, repo), { branch: state.branch, files, fetchedAt: Date.now() });
+      setStatus(`${owner}/${repo} — ${files.length} files` + (remaining ? ` · ${remaining} API calls left this hour` : ""));
+      loadIconsCsv().then(() => { if(iconMapHasEntries()) applyIconsToTree(); });
+    }catch(err){
+      if(cached){
+        // Network/API failed but we already have a cached copy on screen.
+        setStatus(`Showing cached copy — could not refresh (${err.message || "error"})`, true);
+      } else {
+        setStatus(err.message || "Failed to load repo", true);
+        treeEl.innerHTML = `<div class="empty-state">Could not load this repo.<br>${escapeHtml(err.message||"")}</div>`;
+      }
+    }finally{
+      loadBtn.disabled = false;
+    }
+  }
+
+  function buildTree(files){
+    const root = { name:"", path:"", type:"folder", children:{}, order:[] };
+    files.forEach(f => {
+      const parts = f.path.split("/");
+      let node = root;
+      let acc = "";
+      for(let i=0;i<parts.length;i++){
+        const part = parts[i];
+        acc = acc ? acc + "/" + part : part;
+        const isFile = (i === parts.length-1);
+        if(isFile){
+          const fileNode = { name:part, path:acc, type:"file", size:f.size||0 };
+          node.children[part] = fileNode;
+          node.order.push(part);
+        }else{
+          if(!node.children[part]){
+            node.children[part] = { name:part, path:acc, type:"folder", children:{}, order:[] };
+            node.order.push(part);
+          }
+          node = node.children[part];
+        }
+      }
+    });
+    return root;
+  }
+
+  function countDirect(folder){
+    return folder.order.length;
+  }
+
+  function sortFolderOrder(node, sortBy){
+    const keys = node.order.slice();
+    keys.sort((a,b) => {
+      const na = node.children[a], nb = node.children[b];
+      if(na.type !== nb.type) return na.type === "folder" ? -1 : 1; // folders first, always
+      if(sortBy === "size") return (nb.size||0) - (na.size||0); // largest first
+      if(sortBy === "date"){
+        const da = (state.metaCache[na.path] && state.metaCache[na.path].date) || "";
+        const db = (state.metaCache[nb.path] && state.metaCache[nb.path].date) || "";
+        if(!da && !db) return na.name.localeCompare(nb.name, undefined, {sensitivity:"base"});
+        return db.localeCompare(da); // newest first, unknown dates sink
+      }
+      if(sortBy === "type"){
+        const ea = extOf(na.name||""), eb = extOf(nb.name||"");
+        return ea.localeCompare(eb) || na.name.localeCompare(nb.name, undefined, {sensitivity:"base"});
+      }
+      return na.name.localeCompare(nb.name, undefined, {sensitivity:"base"});
+    });
+    node.order = keys;
+    Object.keys(node.children).forEach(k => {
+      if(node.children[k].type === "folder") sortFolderOrder(node.children[k], sortBy);
+    });
+  }
+
+  // ---------- Render ----------
+  function renderRoot(root){
+    treeEl.innerHTML = "";
+    if(root.order.length === 0){
+      treeEl.innerHTML = `<div class="empty-state">No files found in this repo.</div>`;
+      return;
+    }
+    root.order.forEach(key => {
+      const node = root.children[key];
+      treeEl.appendChild(node.type === "folder" ? renderFolder(node) : renderItem(node));
+    });
+  }
+
+  function renderFolder(folder){
+    const el = document.createElement("div");
+    el.className = "folder";
+    el.dataset.path = folder.path;
+
+    const row = document.createElement("div");
+    row.className = "folder-row";
+    row.innerHTML = `
+      <span class="fchevron">▶</span>
+      <span class="ficon">📂</span>
+      <span class="fname">${escapeHtml(folder.name)}</span>
+      <span class="fcount">${countDirect(folder)}</span>
+    `;
+
+    const children = document.createElement("div");
+    children.className = "folder-children";
+    folder.order.forEach(key => {
+      const node = folder.children[key];
+      children.appendChild(node.type === "folder" ? renderFolder(node) : renderItem(node));
+    });
+
+    row.addEventListener("click", () => {
+      const wasOpen = el.classList.contains("open");
+      el.classList.toggle("open", !wasOpen);
+      if(!wasOpen){
+        loadMetaForFolder(folder);
+      }
+      saveExpandedState();
+    });
+
+    el.appendChild(row);
+    el.appendChild(children);
+    return el;
+  }
+
+  function renderItem(file){
+    const ext = extOf(file.name);
+    const el = document.createElement("div");
+    el.className = "item" + (ext === "html" || ext === "htm" ? " is-html" : "");
+    el.dataset.path = file.path;
+    el.dataset.search = (titleOf(file.name, ext) + " " + file.name + " " + ext).toLowerCase();
+
+    const iconSpan = document.createElement("span");
+    iconSpan.className = "iicon";
+    const customEmoji = iconFor(file.name);
+    if(customEmoji){
+      iconSpan.textContent = customEmoji;
+      iconSpan.classList.add("custom-icon");
+    } else {
+      iconSpan.textContent = ext === "html" || ext === "htm" ? DEFAULT_ICON : (EXT_ICONS[ext] || DEFAULT_ICON);
+    }
+    el.appendChild(iconSpan);
+
+    const body = document.createElement("div");
+    body.className = "item-body";
+    body.innerHTML = `
+      <div class="item-line1">
+        <span class="item-title">${escapeHtml(titleOf(file.name, ext))}</span>
+        <span class="item-version">${escapeHtml(versionOf(file.name))}</span>
+      </div>
+      <div class="item-line2">
+        <span class="cdate"></span><span class="ext">${escapeHtml(ext)}</span><span class="fsize">${escapeHtml(formatSize(file.size))}</span>
+      </div>
+      <div class="item-desc"></div>
+    `;
+    el.appendChild(body);
+
+    el.addEventListener("click", () => openItem(file, el));
+    return el;
+  }
+
+  // ---------- Search ----------
+  let preSearchOpenPaths = null;
+  function applySearch(rawQuery){
+    const query = rawQuery.trim().toLowerCase();
+
+    if(!query){
+      if(preSearchOpenPaths !== null){
+        treeEl.querySelectorAll(".folder").forEach(el => {
+          el.classList.toggle("open", preSearchOpenPaths.includes(el.dataset.path));
+          el.style.display = "";
+        });
+        treeEl.querySelectorAll(".item").forEach(el => { el.style.display = ""; });
+        preSearchOpenPaths = null;
+      }
+      const empty = $("#searchEmpty");
+      if(empty) empty.remove();
+      return;
+    }
+
+    if(preSearchOpenPaths === null){
+      preSearchOpenPaths = Array.from(treeEl.querySelectorAll(".folder.open")).map(el => el.dataset.path);
+    }
+
+    treeEl.querySelectorAll(".item").forEach(el => {
+      const match = (el.dataset.search || "").includes(query);
+      el.style.display = match ? "" : "none";
+    });
+
+    // Innermost folders first so parent visibility can depend on children.
+    const folders = Array.from(treeEl.querySelectorAll(".folder")).reverse();
+    let anyVisible = false;
+    folders.forEach(folderEl => {
+      const anyVisibleItem = Array.from(folderEl.querySelectorAll(":scope > .folder-children > .item"))
+        .some(it => it.style.display !== "none");
+      const anyVisibleFolder = Array.from(folderEl.querySelectorAll(":scope > .folder-children > .folder"))
+        .some(f => f.style.display !== "none");
+      const show = anyVisibleItem || anyVisibleFolder;
+      folderEl.style.display = show ? "" : "none";
+      folderEl.classList.toggle("open", show);
+      if(show) anyVisible = true;
+    });
+    if(treeEl.querySelectorAll(".item:not([style*='display: none'])").length > 0) anyVisible = true;
+
+    let empty = $("#searchEmpty");
+    if(!anyVisible){
+      if(!empty){
+        empty = document.createElement("div");
+        empty.id = "searchEmpty";
+        empty.className = "empty-state";
+        treeEl.appendChild(empty);
+      }
+      empty.textContent = `No files match "${rawQuery.trim()}".`;
+    } else if(empty){
+      empty.remove();
+    }
+  }
+
+  // ---------- Recently opened ----------
+  function recordRecent(file){
+    if(!state.owner || !state.repo) return;
+    const key = recentCacheKey(state.owner, state.repo);
+    let list = loadCache(key) || [];
+    list = list.filter(x => x.path !== file.path);
+    list.unshift({ name: file.name, path: file.path, ts: Date.now() });
+    list = list.slice(0, 10);
+    saveCache(key, list);
+    renderRecentSection();
+  }
+
+  function renderRecentSection(){
+    const wrap = $("#recentSection");
+    if(!wrap) return;
+    if(!state.owner || !state.repo){ wrap.style.display = "none"; wrap.innerHTML = ""; return; }
+    const list = (loadCache(recentCacheKey(state.owner, state.repo)) || []).slice(0, 3);
+    if(!list.length){ wrap.style.display = "none"; wrap.innerHTML = ""; return; }
+    wrap.style.display = "flex";
+    wrap.innerHTML = `<span class="recent-label">Recently opened</span>` +
+      list.map(item => `<button class="recent-chip" data-path="${escapeHtml(item.path)}">${escapeHtml(titleOf(item.name, extOf(item.name)))}</button>`).join("");
+    wrap.querySelectorAll(".recent-chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const path = btn.dataset.path;
+        const entry = (loadCache(recentCacheKey(state.owner, state.repo)) || []).find(x => x.path === path);
+        if(entry) openItem({ name: entry.name, path: entry.path });
+      });
+    });
+  }
+
+
+  async function loadMetaForFolder(folder){
+    const files = folder.order.map(k => folder.children[k]).filter(n => n.type === "file");
+    for(const file of files){
+      loadMetaForFile(file); // fire without awaiting sequentially, small repo folders assumed
+    }
+  }
+
+  async function loadMetaForFile(file){
+    if(state.metaCache[file.path]) { applyMeta(file); return; }
+    const ext = extOf(file.name);
+    const isHtml = ext === "html" || ext === "htm";
+    const textLike = ["html","htm","txt","md","csv","json","log",""].includes(ext);
+    const sizeCap = isHtml ? 3000000 : 300000; // html gets more headroom since we also cache full content
+    if(!textLike || file.size > sizeCap){
+      state.metaCache[file.path] = { desc:"", favicon:null };
+      return;
+    }
+    try{
+      const resp = await fetch(jsdelivrUrl(file.path));
+      if(!resp.ok) throw new Error("fetch failed");
+      const text = await resp.text();
+      let desc = "";
+      let favicon = null;
+      if(isHtml){
+        const titleMatch = /<title>([^<]*)<\/title>/i.exec(text);
+        const metaMatch = /<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["']/i.exec(text);
+        desc = (metaMatch && metaMatch[1]) || (titleMatch && titleMatch[1]) || "";
+        const iconMatch = /<link[^>]+rel=["'](?:shortcut icon|icon)["'][^>]*>/i.exec(text);
+        if(iconMatch){
+          const hrefMatch = /href=["']([^"']+)["']/i.exec(iconMatch[0]);
+          if(hrefMatch){
+            const dir = file.path.split("/").slice(0,-1).join("/");
+            const base = jsdelivrUrl(dir ? dir + "/placeholder" : "placeholder");
+            try{ favicon = new URL(hrefMatch[1], base).href; }catch(e){ favicon = null; }
+          }
+        }
+        // Progressively build an offline copy while browsing, if enabled.
+        if(settings.offline){
+          saveCache(htmlCacheKey(state.owner, state.repo, file.path), text);
+        }
+      } else {
+        const firstLine = text.split(/\r?\n/).find(l => l.trim().length > 0);
+        desc = firstLine ? firstLine.trim() : "";
+        if(ext === "csv"){ desc = "Columns: " + desc; }
+      }
+      state.metaCache[file.path] = { desc: (desc||"").slice(0,140), favicon };
+    }catch(e){
+      state.metaCache[file.path] = { desc:"", favicon:null };
+    }
+    applyMeta(file);
+    saveMetaCacheDebounced();
+    loadDateForFile(file);
+  }
+
+  async function loadDateForFile(file){
+    if(state.metaCache[file.path] && state.metaCache[file.path].date !== undefined) return;
+    try{
+      const resp = await fetch(`https://api.github.com/repos/${state.owner}/${state.repo}/commits?path=${encodeURIComponent(file.path)}&per_page=1`);
+      if(!resp.ok){ throw new Error("rate limited"); }
+      const data = await resp.json();
+      const dateStr = data && data[0] && data[0].commit && data[0].commit.author && data[0].commit.author.date;
+      state.metaCache[file.path].date = dateStr ? dateStr.slice(0,10) : "";
+    }catch(e){
+      state.metaCache[file.path].date = "";
+    }
+    applyMeta(file);
+    saveMetaCacheDebounced();
+  }
+
+  function applyMeta(file){
+    const el = treeEl.querySelector(`.item[data-path="${cssEscape(file.path)}"]`);
+    if(!el) return;
+    const meta = state.metaCache[file.path];
+    if(!meta) return;
+    const descEl = el.querySelector(".item-desc");
+    if(descEl && meta.desc) descEl.textContent = meta.desc;
+    const dateEl = el.querySelector(".cdate");
+    if(dateEl && meta.date) dateEl.textContent = meta.date;
+    const ext = extOf(file.name);
+    if((ext === "html" || ext === "htm")){
+      const iconSpan = el.querySelector(".iicon");
+      // Never override a filename-matched custom icon from the .icons CSV.
+      if(iconSpan && meta.favicon && !iconSpan.classList.contains("custom-icon")){
+        iconSpan.innerHTML = "";
+        const img = document.createElement("img");
+        img.src = meta.favicon;
+        img.onerror = () => { iconSpan.textContent = DEFAULT_ICON; };
+        iconSpan.appendChild(img);
+      }
+    }
+  }
+
+  function cssEscape(str){
+    return str.replace(/["\\]/g, "\\$&");
+  }
+
+  // ---------- Force desktop-mode rendering on opened pages ----------
+  function forceDesktopViewport(html){
+    let out = String(html || "");
+    out = out.replace(/<meta[^>]+name=["']viewport["'][^>]*>/gi, "");
+    const desktopMeta = '<meta name="viewport" content="width=1280">';
+    if(/<head[^>]*>/i.test(out)){
+      out = out.replace(/<head[^>]*>/i, m => m + desktopMeta);
+    } else if(/<html[^>]*>/i.test(out)){
+      out = out.replace(/<html[^>]*>/i, m => m + "<head>" + desktopMeta + "</head>");
+    } else {
+      out = desktopMeta + out;
+    }
+    return out;
+  }
+
+  // ---------- Local-file open (Xplore File Manager) ----------
+  function buildXploreUri(path, size){
+    const localBase = `/storage/emulated/0/GitSync/${state.repo}/`;
+    const fullPath = localBase + path;
+    const encodedPath = fullPath.split("/").map(encodeURIComponent).join("/");
+    const fileUri = "file://" + encodedPath;
+    const uid = encodeURIComponent(fileUri);
+    return `content://com.lcg.Xplore.FileContent/uid/${uid}?size=${size || 0}&time=${Date.now()}`;
+  }
+
+  // ---------- Open item ----------
+  let currentOpenFile = null;
+  const backdrop = $("#modalBackdrop");
+  const modalTitle = $("#modalTitle");
+  const modalBody = $("#modalBody");
+  const modalRaw = $("#modalRaw");
+
+  function openModal(){ backdrop.classList.add("show"); }
+  function closeModal(){
+    backdrop.classList.remove("show");
+    modalBody.innerHTML = "";
+  }
+  $("#modalClose").addEventListener("click", closeModal);
+  backdrop.addEventListener("click", (e) => { if(e.target === backdrop) closeModal(); });
+  document.addEventListener("keydown", (e) => { if(e.key === "Escape") closeModal(); });
+
+  const fullpageView = $("#fullpageView");
+  const fullpageTitle = $("#fullpageTitle");
+  const fullpageBody = $("#fullpageBody");
+  const fullpageLocalBtn = $("#fullpageLocalBtn");
+  let fullpageBlobUrl = null;
+
+  async function openFullpage(title, path, file){
+    fullpageTitle.textContent = title;
+    fullpageLocalBtn.href = buildXploreUri(path, file && file.size);
+    fullpageBody.innerHTML = `<div class="modal-loading">Loading ${escapeHtml(title)}…</div>`;
+    fullpageView.classList.add("show");
+    const cacheKey = htmlCacheKey(state.owner, state.repo, path);
+    let html = null;
+    let fromCache = false;
+    try{
+      const resp = await fetch(jsdelivrUrl(path));
+      if(!resp.ok) throw new Error("Could not fetch file");
+      html = await resp.text();
+      if(settings.offline) saveCache(cacheKey, html);
+    }catch(e){
+      if(settings.offline){
+        const cached = loadCache(cacheKey);
+        if(cached){ html = cached; fromCache = true; }
+      }
+    }
+    if(html === null){
+      fullpageBody.innerHTML = `<div class="modal-loading">Could not load ${escapeHtml(title)}${settings.offline ? " (no offline copy saved yet)" : ""}.</div>`;
+      return;
+    }
+    // Every opened page starts up in forced desktop mode, regardless of
+    // whatever viewport meta tag the source page shipped with.
+    html = forceDesktopViewport(html);
+    // Force an explicit text/html Blob so the browser always renders it
+    // as a page (never downloads it or shows raw source).
+    const blob = new Blob([html], { type: "text/html" });
+    if(fullpageBlobUrl) URL.revokeObjectURL(fullpageBlobUrl);
+    fullpageBlobUrl = URL.createObjectURL(blob);
+    fullpageBody.innerHTML = "";
+    const iframe = document.createElement("iframe");
+    iframe.src = fullpageBlobUrl;
+    fullpageBody.appendChild(iframe);
+    if(fromCache) setStatus(`Showing offline copy of ${title}`, false);
+  }
+  function closeFullpage(){
+    fullpageView.classList.remove("show");
+    fullpageBody.innerHTML = "";
+    if(fullpageBlobUrl){ URL.revokeObjectURL(fullpageBlobUrl); fullpageBlobUrl = null; }
+  }
+  $("#fullpageClose").addEventListener("click", closeFullpage);
+  document.addEventListener("keydown", (e) => { if(e.key === "Escape" && fullpageView.classList.contains("show")) closeFullpage(); });
+
+  async function openItem(file, el){
+    const ext = extOf(file.name);
+    recordRecent(file);
+    currentOpenFile = file;
+
+    if(ext === "html" || ext === "htm"){
+      // Render the page inline, full-screen — no modal, no raw view, no new tab.
+      openFullpage(titleOf(file.name, ext), file.path, file);
+      return;
+    }
+
+    modalTitle.textContent = titleOf(file.name, ext);
+    modalRaw.href = `https://github.com/${state.owner}/${state.repo}/blob/${state.branch}/${file.path}`;
+
+    if(IMG_EXTS.has(ext)){
+      const imgUrl = jsdelivrUrl(file.path);
+      modalBody.innerHTML = `
+        <div class="img-preview-wrap">
+          <img class="img-preview" src="${imgUrl}" alt="${escapeHtml(file.name)}">
+          <div class="img-preview-actions"><a href="${imgUrl}" target="_blank" rel="noopener">Open in new tab ↗</a></div>
+        </div>`;
+      openModal();
+      return;
+    }
+
+    modalBody.innerHTML = `<div class="modal-loading">Loading ${escapeHtml(file.name)}…</div>`;
+    openModal();
+    try{
+      const resp = await fetch(jsdelivrUrl(file.path));
+      if(!resp.ok) throw new Error("Could not fetch file");
+      const text = await resp.text();
+      if(ext === "csv"){
+        modalBody.innerHTML = renderCsvTable(text);
+      }else{
+        const pre = document.createElement("pre");
+        pre.textContent = text;
+        modalBody.innerHTML = "";
+        modalBody.appendChild(pre);
+      }
+    }catch(e){
+      modalBody.innerHTML = `<div class="modal-loading">Could not load file content.</div>`;
+    }
+  }
+
+  function renderCsvTable(text){
+    const lines = text.split(/\r?\n/).filter(l => l.length > 0).slice(0, 300);
+    if(lines.length === 0) return `<div class="modal-loading">Empty file.</div>`;
+    const rows = lines.map(l => l.split(","));
+    let html = "<table><thead><tr>";
+    rows[0].forEach(c => html += `<th>${escapeHtml(c)}</th>`);
+    html += "</tr></thead><tbody>";
+    for(let i=1;i<rows.length;i++){
+      html += "<tr>";
+      rows[i].forEach(c => html += `<td>${escapeHtml(c)}</td>`);
+      html += "</tr>";
+    }
+    html += "</tbody></table>";
+    return html;
+  }
+
+  function escapeHtml(str){
+    return String(str || "").replace(/[&<>"']/g, s => ({
+      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    }[s]));
+  }
+
+  loadBtn.addEventListener("click", loadRepo);
+  repoInput.addEventListener("keydown", (e) => { if(e.key === "Enter") loadRepo(); });
+
+  // ---------- Search & sort wiring ----------
+  const searchInput = $("#searchInput");
+  const sortSelect = $("#sortSelect");
+  let searchDebounce = null;
+  searchInput.addEventListener("input", () => {
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(() => applySearch(searchInput.value), 120);
+  });
+  sortSelect.value = currentSort;
+  sortSelect.addEventListener("change", () => {
+    currentSort = sortSelect.value;
+    try{ localStorage.setItem(SORT_KEY, currentSort); }catch(e){ /* ignore */ }
+    if(state.root){
+      sortFolderOrder(state.root, currentSort);
+      renderRoot(state.root);
+      restoreExpandedFolders(state.root);
+      if(searchInput.value.trim()) applySearch(searchInput.value);
+    }
+  });
+
+  // ---------- Settings modal wiring ----------
+  const settingsBackdrop = $("#settingsBackdrop");
+  const offlineToggle = $("#offlineToggle");
+  const accentColorInput = $("#accentColorInput");
+  const bgColorInput = $("#bgColorInput");
+
+  function openSettings(){ settingsBackdrop.classList.add("show"); }
+  function closeSettings(){ settingsBackdrop.classList.remove("show"); }
+  $("#settingsBtn").addEventListener("click", openSettings);
+  $("#settingsClose").addEventListener("click", closeSettings);
+  settingsBackdrop.addEventListener("click", (e) => { if(e.target === settingsBackdrop) closeSettings(); });
+
+  offlineToggle.checked = !!settings.offline;
+  offlineToggle.addEventListener("change", () => {
+    settings.offline = offlineToggle.checked;
+    saveSettings();
+  });
+
+  $("#clearCacheBtn").addEventListener("click", () => {
+    clearAppCache();
+    setStatus("Cache cleared.");
+  });
+
+  accentColorInput.value = theme.accent || "#c9a15c";
+  bgColorInput.value = theme.bg || "#131110";
+  accentColorInput.addEventListener("input", () => {
+    theme.accent = accentColorInput.value;
+    applyTheme(theme);
+    saveTheme(theme);
+  });
+  bgColorInput.addEventListener("input", () => {
+    theme.bg = bgColorInput.value;
+    applyTheme(theme);
+    saveTheme(theme);
+  });
+  $("#resetThemeBtn").addEventListener("click", () => {
+    theme = {};
+    applyTheme(theme);
+    saveTheme(theme);
+    accentColorInput.value = "#c9a15c";
+    bgColorInput.value = "#131110";
+  });
+
+  // ---------- Header collapse toggle ----------
+  const headerEl = document.querySelector("header");
+  const headerCollapseBtn = $("#headerCollapseBtn");
+  const HEADER_COLLAPSE_KEY = "mylib:headerCollapsed";
+  function setHeaderCollapsed(collapsed){
+    headerEl.classList.toggle("collapsed", collapsed);
+    headerCollapseBtn.textContent = collapsed ? "▼" : "▲";
+    headerCollapseBtn.title = collapsed ? "Show top bar" : "Hide top bar";
+    try{ localStorage.setItem(HEADER_COLLAPSE_KEY, collapsed ? "1" : "0"); }catch(e){ /* ignore */ }
+  }
+  headerCollapseBtn.addEventListener("click", () => {
+    setHeaderCollapsed(!headerEl.classList.contains("collapsed"));
+  });
+  let initialHeaderCollapsed = false;
+  try{ initialHeaderCollapsed = localStorage.getItem(HEADER_COLLAPSE_KEY) === "1"; }catch(e){ /* ignore */ }
+  setHeaderCollapsed(initialHeaderCollapsed);
+
+  // ---------- Font size setting ----------
+  const fontSizeInput = $("#fontSizeInput");
+  fontSizeInput.value = settings.fontSize || 200;
+  applyFontSize(settings.fontSize || 200);
+  fontSizeInput.addEventListener("input", () => {
+    const pct = parseInt(fontSizeInput.value, 10) || 100;
+    settings.fontSize = pct;
+    applyFontSize(pct);
+    saveSettings();
+  });
+
+  // ---------- Changelog ----------
+  const CHANGELOG = [
+    { v: "8.5.2", notes: [
+      "Fixed icon list fetching from the wrong source — .icons.csv is now fetched directly from raw.githubusercontent.com (not the jsDelivr CDN), with cache: no-store, so it is always fresh and never served from CDN or browser cache"
+    ]},
+    { v: "8.5.1", notes: [
+      "Page icons are now re-fetched from MyLibrary/.icons.csv fresh on every load (not just served from cache) — every item's filename is matched against the CSV and its emoji applied"
+    ]},
+    { v: "8.5", notes: [
+      "Fixed Clear Cache not clearing the custom .icons emoji cache — newly added .icons entries were stuck showing the default ▶️ until a hard refresh",
+      "Renamed \"Font size\" to \"Scale\" and raised its max from 160% to 250% — it already zoomed the whole app, not just text",
+      "Default scale raised from 100% to 200%"
+    ]},
+    { v: "8.4", notes: [
+      "Removed the old prerendered-screenshot thumbnail system entirely — it was overwriting custom .icons CSV icons once its (async) result came in",
+      "Favicon icons are now only ever used as a fallback and can no longer override a custom icon"
+    ]},
+    { v: "8.3", notes: [
+      "Fixed txt/csv/image popup drawing too high — it no longer lives inside the zoomed font-size wrapper, so it positions against the real viewport",
+      "Popups now keep a consistent 10% margin from every screen edge"
+    ]},
+    { v: "8.2", notes: [
+      "Custom icons now match by exact filename (with extension) instead of a fuzzy title guess",
+      "Old title-style .icons entries still work as a fallback"
+    ]},
+    { v: "8.1", notes: [
+      "Custom per-file icons: emoji pulled from a .icons CSV at the repo root",
+      "Images now open as an inline preview with an Open in new tab button",
+      "Forced desktop-mode rendering — for this app and every opened page",
+      "Collapsible top bar (small arrow tab under the header)",
+      "Font size control in Settings",
+      "Local-file open button (via Xplore) on opened pages",
+      "This changelog"
+    ]},
+    { v: "8.0", notes: [
+      "Recently opened chips",
+      "HTML thumbnail previews and favicons",
+      "Offline caching of page content",
+      "Custom accent / background theme colors",
+      "Sort by name, date, size, type"
+    ]}
+  ];
+  function renderChangelog(){
+    return CHANGELOG.map(entry =>
+      `<div class="cl-entry"><span class="cl-version">v${escapeHtml(entry.v)}</span><ul>${
+        entry.notes.map(n => `<li>${escapeHtml(n)}</li>`).join("")
+      }</ul></div>`
+    ).join("");
+  }
+  const changelogBtn = $("#changelogBtn");
+  const changelogBody = $("#changelogBody");
+  changelogBtn.addEventListener("click", () => {
+    const show = changelogBody.style.display === "none";
+    if(show && !changelogBody.innerHTML) changelogBody.innerHTML = renderChangelog();
+    changelogBody.style.display = show ? "block" : "none";
+    changelogBtn.textContent = show ? "Hide" : "Show";
+  });
+
+  // Auto-load the default repo on page open
+  if(repoInput.value.trim()) loadRepo();
+
+})();
+</script>
+</body>
+</html>
