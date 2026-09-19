@@ -4,8 +4,701 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280">
 <title>TENFOLD — Number Match (v2)</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --bg-2:#f4f4f4;
+    --ink:#111111;
+    --ink-dim:#5c5c5c;
+    --rule:#111111;
+    --rule-faint:#c9c9c9;
+    --tile-bg:#ffffff;
+    --tile-border:#111111;
+    --tile-empty-border:#cfcfcf;
+    --select-bg:#111111;
+    --select-ink:#ffffff;
+  }
+  body.dark{
+    --bg:#0a0a0a;
+    --bg-2:#141414;
+    --ink:#f2f2f2;
+    --ink-dim:#9a9a9a;
+    --rule:#f2f2f2;
+    --rule-faint:#3a3a3a;
+    --tile-bg:#0a0a0a;
+    --tile-border:#f2f2f2;
+    --tile-empty-border:#3a3a3a;
+    --select-bg:#f2f2f2;
+    --select-ink:#0a0a0a;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{
+    margin:0; padding:0;
+    min-width:1280px;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    -webkit-user-select:none; user-select:none;
+  }
+  #app{ width:1200px; margin:0 auto; padding:34px 0 60px; }
+  .masthead{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    padding-bottom:14px;
+    border-bottom:3px double var(--rule);
+  }
+  .masthead .title{
+    font-size:52px;
+    letter-spacing:0.01em;
+    font-weight:400;
+    margin:0;
+  }
+  .masthead .tagline{
+    font-size:13px;
+    color:var(--ink-dim);
+    font-style:italic;
+    max-width:280px;
+    text-align:right;
+    line-height:1.5;
+    padding-bottom:6px;
+  }
+  .gear{
+    background:none;
+    border:1px solid var(--rule);
+    color:var(--ink);
+    font-family:inherit;
+    font-size:13px;
+    letter-spacing:0.06em;
+    padding:8px 16px;
+    cursor:pointer;
+    margin-left:18px;
+  }
+  .gear:active{ background:var(--select-bg); color:var(--select-ink); }
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    border-bottom:1px solid var(--rule-faint);
+    margin-top:16px;
+  }
+  .stat{
+    text-align:center;
+    padding:14px 4px;
+    border-right:1px solid var(--rule-faint);
+  }
+  .stat:last-child{ border-right:none; }
+  .stat .num{ font-size:30px; line-height:1; }
+  .stat .lbl{
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    margin-top:6px;
+    font-family:'Times New Roman', Times, serif;
+  }
+  .stat.combo .num{ font-style:italic; }
+  #board-wrap{ padding:36px 0 18px; overflow-x:auto; }
+  #board{ display:grid; gap:8px; position:relative; margin:0 auto; }
+  .cell{
+    position:relative;
+    width:64px; height:64px;
+    background:var(--tile-bg);
+    border:1px solid var(--tile-border);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+    color:var(--ink);
+    cursor:pointer;
+    transition:background .12s ease, color .12s ease, transform .1s ease, border-color .12s ease;
+  }
+  .cell.empty{
+    background:transparent;
+    border:1px dashed var(--tile-empty-border);
+    color:transparent;
+    cursor:default;
+    pointer-events:none;
+  }
+  .cell.selected{
+    background:var(--select-bg);
+    color:var(--select-ink);
+    border-color:var(--select-bg);
+    transform:scale(1.05);
+  }
+  .cell:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
+  .cell.hint{ animation:pulse 0.9s ease-in-out infinite; }
+  @keyframes pulse{
+    0%,100%{ box-shadow:0 0 0 0 rgba(0,0,0,0); }
+    50%{ box-shadow:0 0 0 4px var(--rule-faint); }
+  }
+  .cell.pop{ animation:pop .26s ease forwards; }
+  @keyframes pop{
+    0%{ transform:scale(1.06); }
+    60%{ transform:scale(0.35); opacity:0.35; }
+    100%{ transform:scale(0.15); opacity:0; }
+  }
+  .cell.shake{ animation:shake .26s ease; }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    25%{ transform:translateX(-4px); }
+    75%{ transform:translateX(4px); }
+  }
+  #line-svg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; z-index:5; }
+  #line-svg path{ stroke:var(--ink); stroke-width:2; fill:none; stroke-linecap:round; opacity:0; }
+  #line-svg path.show{ opacity:0.85; animation:fadeline .38s ease forwards; }
+  @keyframes fadeline{ from{opacity:0.9;} to{opacity:0;} }
+  .combo-pop{
+    position:absolute;
+    font-size:15px;
+    font-style:italic;
+    color:var(--ink);
+    pointer-events:none;
+    transform:translate(-50%,-50%);
+    animation:float-up .75s ease forwards;
+    z-index:6;
+    white-space:nowrap;
+  }
+  @keyframes float-up{
+    0%{ opacity:1; transform:translate(-50%,-50%); }
+    100%{ opacity:0; transform:translate(-50%,-140%); }
+  }
+  .controls{
+    display:flex;
+    gap:10px;
+    padding-top:12px;
+    border-top:1px solid var(--rule-faint);
+    padding-top:20px;
+  }
+  button.ctrl{
+    flex:1;
+    border:1px solid var(--rule);
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Times New Roman', Times, serif;
+    font-size:14px;
+    letter-spacing:0.02em;
+    padding:14px 8px;
+    cursor:pointer;
+  }
+  button.ctrl:active{ background:var(--select-bg); color:var(--select-ink); }
+  button.ctrl.primary{ background:var(--ink); color:var(--bg); }
+  button.ctrl.primary:active{ opacity:0.75; }
+  button.ctrl:disabled{ opacity:0.35; cursor:default; }
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(0,0,0,0.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+  }
+  body.dark .overlay{ background:rgba(0,0,0,0.75); }
+  .overlay.show{ display:flex; }
+  .card{
+    background:var(--bg);
+    border:1px solid var(--rule);
+    padding:34px 36px;
+    max-width:380px;
+    width:100%;
+  }
+  .card h2{
+    margin:0 0 4px;
+    font-size:26px;
+    font-weight:400;
+    border-bottom:2px double var(--rule);
+    padding-bottom:12px;
+  }
+  .card p.sub{
+    color:var(--ink-dim);
+    font-size:13px;
+    font-style:italic;
+    margin:12px 0 20px;
+  }
+  .card .score-line{ font-size:38px; margin-bottom:2px; }
+  .card .score-lbl{
+    font-size:10px; text-transform:uppercase; letter-spacing:0.14em;
+    color:var(--ink-dim); margin-bottom:22px;
+  }
+  .setting-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 0;
+    border-bottom:1px solid var(--rule-faint);
+    font-size:14px;
+  }
+  .setting-row:last-of-type{ border-bottom:none; }
+  .setting-row .val{ color:var(--ink-dim); font-style:italic; font-size:12.5px; }
+  input[type=range]{ width:150px; accent-color:var(--ink); }
+  .switch{
+    width:44px; height:22px;
+    border:1px solid var(--rule);
+    position:relative;
+    cursor:pointer;
+    flex:none;
+  }
+  .switch .knob{
+    position:absolute; top:1px; left:1px;
+    width:18px; height:18px;
+    background:var(--ink);
+    transition:left .15s ease;
+  }
+  .switch.on .knob{ left:23px; }
+  select.seg{
+    font-family:'Times New Roman', Times, serif;
+    font-size:13px;
+    background:var(--bg);
+    color:var(--ink);
+    border:1px solid var(--rule);
+    padding:5px 8px;
+  }
+  .card .close-row{ margin-top:22px; display:flex; gap:10px; }
+  .toast{
+    position:fixed;
+    top:18px; left:50%;
+    transform:translateX(-50%) translateY(-140%);
+    background:var(--ink);
+    color:var(--bg);
+    font-family:'Times New Roman', Times, serif;
+    font-size:13px;
+    padding:9px 20px;
+    z-index:60;
+    transition:transform .28s cubic-bezier(.3,1.4,.4,1);
+  }
+  .toast.show{ transform:translateX(-50%) translateY(0); }
+</style>
 </head>
 <body>
-<p>placeholder</p>
+<div id="app">
+  <div class="masthead">
+    <div>
+      <p class="title">Tenfold</p>
+    </div>
+    <div style="display:flex; align-items:flex-end;">
+      <p class="tagline">Match equal pairs, or pairs that sum to ten. Connect along a row, column, or diagonal.</p>
+      <button class="gear" id="btn-settings">SETTINGS ⚙</button>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="num" id="score">0</div><div class="lbl">Score</div></div>
+    <div class="stat combo"><div class="num" id="combo">—</div><div class="lbl">Combo</div></div>
+    <div class="stat"><div class="num" id="bestcombo">0</div><div class="lbl">Best combo</div></div>
+    <div class="stat"><div class="num" id="moves">0</div><div class="lbl">Moves</div></div>
+    <div class="stat"><div class="num" id="left">—</div><div class="lbl">Tiles left</div></div>
+    <div class="stat"><div class="num" id="timer">0:00</div><div class="lbl">Time</div></div>
+  </div>
+  <div id="board-wrap">
+    <div id="board"></div>
+  </div>
+  <div class="controls">
+    <button class="ctrl" id="btn-hint">Hint</button>
+    <button class="ctrl" id="btn-shuffle">Shuffle</button>
+    <button class="ctrl" id="btn-undo">Undo</button>
+    <button class="ctrl" id="btn-more">Deal More</button>
+    <button class="ctrl primary" id="btn-new">New Board</button>
+  </div>
+</div>
+<div class="overlay" id="settings-overlay">
+  <div class="card">
+    <h2>Settings</h2>
+    <p class="sub">Changes to size or difficulty apply on the next new board.</p>
+    <div class="setting-row">
+      <span>Dark mode</span>
+      <div class="switch" id="sw-dark"><div class="knob"></div></div>
+    </div>
+    <div class="setting-row">
+      <span>Sound</span>
+      <div class="switch on" id="sw-sound"><div class="knob"></div></div>
+    </div>
+    <div class="setting-row">
+      <span>Columns</span>
+      <input type="range" id="sl-cols" min="6" max="16" value="10">
+      <span class="val" id="val-cols">10</span>
+    </div>
+    <div class="setting-row">
+      <span>Rows</span>
+      <input type="range" id="sl-rows" min="3" max="10" value="4">
+      <span class="val" id="val-rows">4</span>
+    </div>
+    <div class="setting-row">
+      <span>Difficulty</span>
+      <select class="seg" id="sel-diff">
+        <option value="easy">Easy — many pairs</option>
+        <option value="normal" selected>Normal</option>
+        <option value="hard">Hard — scarce pairs</option>
+      </select>
+    </div>
+    <div class="close-row">
+      <button class="ctrl primary" id="btn-regen" style="flex:1;">Apply & Regenerate</button>
+      <button class="ctrl" id="btn-close-settings" style="flex:1;">Close</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="end-overlay">
+  <div class="card">
+    <h2 id="over-title">Board cleared!</h2>
+    <p class="sub" id="over-sub">Every tile found its match.</p>
+    <div class="score-line" id="over-score">0</div>
+    <div class="score-lbl">final score — best combo <span id="over-combo">0</span></div>
+    <button class="ctrl primary" id="btn-again" style="width:100%;">Play again</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+  "use strict";
+  var settings = { dark:false, sound:true, cols:10, rows:4, difficulty:'normal' };
+  var MAX_ROWS_HARDCAP = 40;
+  var COLS = settings.cols;
+  var grid = [];
+  var selected = -1;
+  var score = 0;
+  var moves = 0;
+  var combo = 0;
+  var bestCombo = 0;
+  var comboTimer = null;
+  var COMBO_WINDOW = 3000;
+  var busy = false;
+  var history = [];
+  var startTime = null;
+  var timerInterval = null;
+  var audioCtx = null;
+  var boardEl = document.getElementById('board');
+  var scoreEl = document.getElementById('score');
+  var comboEl = document.getElementById('combo');
+  var bestComboEl = document.getElementById('bestcombo');
+  var movesEl = document.getElementById('moves');
+  var leftEl = document.getElementById('left');
+  var timerEl = document.getElementById('timer');
+  var toastEl = document.getElementById('toast');
+  var settingsOverlay = document.getElementById('settings-overlay');
+  var endOverlay = document.getElementById('end-overlay');
+  function rand(n){ return Math.floor(Math.random()*n); }
+  function idx(r,c){ return r*COLS + c; }
+  function rc(i){ return [Math.floor(i/COLS), i%COLS]; }
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastEl._t);
+    toastEl._t = setTimeout(function(){ toastEl.classList.remove('show'); }, 1300);
+  }
+  function beep(freq, dur){
+    if(!settings.sound) return;
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      var o = audioCtx.createOscillator();
+      var g = audioCtx.createGain();
+      o.type = 'sine';
+      o.frequency.value = freq;
+      g.gain.value = 0.05;
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start();
+      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+      o.stop(audioCtx.currentTime + dur);
+    }catch(e){}
+  }
+  function activeCount(){
+    var n=0;
+    for(var i=0;i<grid.length;i++){ if(grid[i]!==null) n++; }
+    return n;
+  }
+  function freshValues(count){
+    var bias;
+    if(settings.difficulty==='easy') bias = 0.75;
+    else if(settings.difficulty==='hard') bias = 0.32;
+    else bias = 0.55;
+    var vals = [];
+    while(vals.length < count){
+      var a = 1 + rand(9);
+      vals.push(a);
+      if(vals.length < count){
+        var roll = Math.random();
+        var partner = roll < bias ? (10-a) : (roll < bias+0.25 ? a : (1+rand(9)));
+        vals.push(partner);
+      }
+    }
+    vals.length = count;
+    shuffle(vals);
+    return vals;
+  }
+  function shuffle(arr){
+    for(var i=arr.length-1;i>0;i--){
+      var j = rand(i+1);
+      var t = arr[i]; arr[i]=arr[j]; arr[j]=t;
+    }
+  }
+  function newGame(){
+    COLS = settings.cols;
+    grid = freshValues(COLS * settings.rows);
+    score = 0; moves = 0; combo = 0; bestCombo = 0;
+    selected = -1;
+    history = [];
+    clearTimeout(comboTimer);
+    startTimer();
+    render();
+    updateStats();
+    endOverlay.classList.remove('show');
+  }
+  function startTimer(){
+    startTime = Date.now();
+    clearInterval(timerInterval);
+    timerInterval = setInterval(function(){
+      var s = Math.floor((Date.now()-startTime)/1000);
+      var m = Math.floor(s/60);
+      var ss = s%60;
+      timerEl.textContent = m + ':' + (ss<10?'0':'') + ss;
+    }, 500);
+  }
+  function valuesMatch(a,b){ return a===b || a+b===10; }
+  function canConnect(i,j){
+    if(i===j) return false;
+    if(grid[i]===null || grid[j]===null) return false;
+    if(!valuesMatch(grid[i], grid[j])) return false;
+    var lo = Math.min(i,j), hi = Math.max(i,j);
+    var clearLinear = true;
+    for(var k=lo+1;k<hi;k++){ if(grid[k]!==null){ clearLinear=false; break; } }
+    if(clearLinear) return true;
+    var rc1 = rc(i), rc2 = rc(j);
+    var r1=rc1[0], c1=rc1[1], r2=rc2[0], c2=rc2[1];
+    if(c1===c2){
+      var rTop=Math.min(r1,r2), rBot=Math.max(r1,r2), ok=true;
+      for(var rr=rTop+1; rr<rBot; rr++){ if(grid[idx(rr,c1)]!==null){ ok=false; break; } }
+      if(ok) return true;
+    }
+    if(Math.abs(r1-r2)===Math.abs(c1-c2) && r1!==r2){
+      var stepR = r2>r1?1:-1, stepC = c2>c1?1:-1;
+      var rr2=r1+stepR, cc2=c1+stepC, ok2=true;
+      while(rr2!==r2 && cc2!==c2){
+        if(grid[idx(rr2,cc2)]!==null){ ok2=false; break; }
+        rr2+=stepR; cc2+=stepC;
+      }
+      if(ok2) return true;
+    }
+    return false;
+  }
+  function hasAnyMove(){
+    for(var i=0;i<grid.length;i++){
+      if(grid[i]===null) continue;
+      for(var j=i+1;j<grid.length;j++){
+        if(grid[j]===null) continue;
+        if(canConnect(i,j)) return [i,j];
+      }
+    }
+    return null;
+  }
+  function render(){
+    boardEl.style.gridTemplateColumns = 'repeat('+COLS+', 64px)';
+    boardEl.innerHTML = '';
+    for(var i=0;i<grid.length;i++){
+      var v = grid[i];
+      var cell = document.createElement('div');
+      cell.className = 'cell' + (v===null ? ' empty' : '');
+      cell.dataset.i = i;
+      cell.tabIndex = v===null ? -1 : 0;
+      if(v!==null){ cell.textContent = v; }
+      cell.addEventListener('click', onCellTap);
+      cell.addEventListener('keydown', onCellKey);
+      boardEl.appendChild(cell);
+    }
+    var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('id','line-svg');
+    boardEl.appendChild(svg);
+    updateStats();
+  }
+  function cellEl(i){ return boardEl.querySelector('.cell[data-i="'+i+'"]'); }
+  function updateStats(){
+    scoreEl.textContent = score;
+    comboEl.textContent = combo>0 ? ('x'+combo) : '—';
+    bestComboEl.textContent = bestCombo;
+    movesEl.textContent = moves;
+    leftEl.textContent = activeCount();
+  }
+  function onCellKey(e){
+    if(e.key==='Enter' || e.key===' '){ e.preventDefault(); onCellTap(e); }
+  }
+  function onCellTap(e){
+    if(busy) return;
+    var i = parseInt(e.currentTarget.dataset.i, 10);
+    if(grid[i]===null) return;
+    if(selected === -1){
+      selected = i;
+      e.currentTarget.classList.add('selected');
+      return;
+    }
+    if(selected === i){
+      e.currentTarget.classList.remove('selected');
+      selected = -1;
+      return;
+    }
+    if(canConnect(selected, i)){
+      resolveMatch(selected, i);
+    } else {
+      var prev = cellEl(selected);
+      if(prev) prev.classList.remove('selected');
+      e.currentTarget.classList.add('shake');
+      beep(160, 0.12);
+      setTimeout(function(){ e.currentTarget.classList.remove('shake'); }, 280);
+      selected = i;
+      e.currentTarget.classList.add('selected');
+    }
+  }
+  function drawLine(i,j){
+    var svg = boardEl.querySelector('#line-svg');
+    if(!svg) return;
+    var a = cellEl(i), b = cellEl(j);
+    if(!a || !b) return;
+    var boardRect = boardEl.getBoundingClientRect();
+    var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+    var x1 = ra.left+ra.width/2 - boardRect.left, y1 = ra.top+ra.height/2 - boardRect.top;
+    var x2 = rb.left+rb.width/2 - boardRect.left, y2 = rb.top+rb.height/2 - boardRect.top;
+    var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d','M '+x1+' '+y1+' L '+x2+' '+y2');
+    svg.appendChild(path);
+    requestAnimationFrame(function(){ path.classList.add('show'); });
+    setTimeout(function(){ path.remove(); }, 420);
+  }
+  function comboPopup(i, j, gained){
+    var a = cellEl(i), b = cellEl(j);
+    if(!a || !b) return;
+    var boardRect = boardEl.getBoundingClientRect();
+    var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+    var x = ((ra.left+ra.width/2) + (rb.left+rb.width/2))/2 - boardRect.left;
+    var y = ((ra.top+ra.height/2) + (rb.top+rb.height/2))/2 - boardRect.top;
+    var pop = document.createElement('div');
+    pop.className = 'combo-pop';
+    pop.style.left = x+'px';
+    pop.style.top = y+'px';
+    pop.textContent = combo>1 ? ('+'+gained+'  ·  combo x'+combo) : ('+'+gained);
+    boardEl.appendChild(pop);
+    setTimeout(function(){ pop.remove(); }, 760);
+  }
+  function pushHistory(){
+    history.push({ grid: grid.slice(), score: score, moves: moves, combo: combo, bestCombo: bestCombo });
+    if(history.length > 30) history.shift();
+  }
+  function resolveMatch(i,j){
+    busy = true;
+    pushHistory();
+    drawLine(i,j);
+    var a = cellEl(i), b = cellEl(j);
+    if(a) a.classList.remove('selected');
+    if(b) b.classList.remove('selected');
+    if(a) a.classList.add('pop');
+    if(b) b.classList.add('pop');
+    combo = combo>0 ? combo+1 : 1;
+    bestCombo = Math.max(bestCombo, combo);
+    clearTimeout(comboTimer);
+    comboTimer = setTimeout(function(){ combo = 0; updateStats(); }, COMBO_WINDOW);
+    var gained = 10 + (combo-1)*5;
+    score += gained;
+    moves += 1;
+    comboPopup(i,j,gained);
+    beep(520 + combo*40, 0.1);
+    grid[i] = null;
+    grid[j] = null;
+    selected = -1;
+    setTimeout(function(){
+      if(a){ a.classList.remove('pop'); a.classList.add('empty'); a.innerHTML=''; a.tabIndex=-1; }
+      if(b){ b.classList.remove('pop'); b.classList.add('empty'); b.innerHTML=''; b.tabIndex=-1; }
+      updateStats();
+      busy = false;
+      checkEndState();
+    }, 240);
+  }
+  function checkEndState(){
+    if(activeCount() === 0){ finish(true); return; }
+    if(!hasAnyMove()){ finish(false); }
+  }
+  function finish(cleared){
+    clearInterval(timerInterval);
+    document.getElementById('over-title').textContent = cleared ? 'Board cleared!' : 'No moves left';
+    document.getElementById('over-sub').textContent = cleared
+      ? 'Every tile found its match.'
+      : 'No matching pairs remain on the board.';
+    document.getElementById('over-score').textContent = score;
+    document.getElementById('over-combo').textContent = bestCombo;
+    endOverlay.classList.add('show');
+  }
+  document.getElementById('btn-new').addEventListener('click', newGame);
+  document.getElementById('btn-again').addEventListener('click', newGame);
+  document.getElementById('btn-undo').addEventListener('click', function(){
+    if(busy || history.length===0){ toast('Nothing to undo'); return; }
+    var h = history.pop();
+    grid = h.grid; score = h.score; moves = h.moves; combo = h.combo; bestCombo = h.bestCombo;
+    selected = -1;
+    render();
+    toast('Move undone');
+  });
+  document.getElementById('btn-shuffle').addEventListener('click', function(){
+    if(busy) return;
+    var positions = [];
+    var vals = [];
+    for(var i=0;i<grid.length;i++){ if(grid[i]!==null){ positions.push(i); vals.push(grid[i]); } }
+    shuffle(vals);
+    for(var k=0;k<positions.length;k++){ grid[positions[k]] = vals[k]; }
+    selected = -1;
+    render();
+    toast('Remaining tiles shuffled');
+  });
+  document.getElementById('btn-more').addEventListener('click', function(){
+    if(busy) return;
+    var currentActive = activeCount();
+    var maxCells = COLS * MAX_ROWS_HARDCAP;
+    if(grid.length + COLS > maxCells){ toast('Board is at its size limit'); return; }
+    if(currentActive === 0){ toast('Nothing left — start a new board'); return; }
+    var dealCount = Math.max(COLS, currentActive);
+    grid = grid.concat(freshValues(dealCount));
+    selected = -1;
+    render();
+    toast('Dealt '+dealCount+' more tiles');
+  });
+  document.getElementById('btn-hint').addEventListener('click', function(){
+    if(busy) return;
+    var move = hasAnyMove();
+    if(!move){ toast('No moves available — try Deal More'); return; }
+    boardEl.querySelectorAll('.cell.selected').forEach(function(c){ c.classList.remove('selected'); });
+    selected = -1;
+    [move[0], move[1]].forEach(function(i){
+      var c = cellEl(i);
+      if(!c) return;
+      c.classList.add('hint');
+      setTimeout(function(){ c.classList.remove('hint'); }, 1300);
+    });
+  });
+  var swDark = document.getElementById('sw-dark');
+  var swSound = document.getElementById('sw-sound');
+  var slCols = document.getElementById('sl-cols');
+  var slRows = document.getElementById('sl-rows');
+  var valCols = document.getElementById('val-cols');
+  var valRows = document.getElementById('val-rows');
+  var selDiff = document.getElementById('sel-diff');
+  document.getElementById('btn-settings').addEventListener('click', function(){
+    settingsOverlay.classList.add('show');
+  });
+  document.getElementById('btn-close-settings').addEventListener('click', function(){
+    settingsOverlay.classList.remove('show');
+  });
+  swDark.addEventListener('click', function(){
+    settings.dark = !settings.dark;
+    swDark.classList.toggle('on', settings.dark);
+    document.body.classList.toggle('dark', settings.dark);
+  });
+  swSound.addEventListener('click', function(){
+    settings.sound = !settings.sound;
+    swSound.classList.toggle('on', settings.sound);
+  });
+  slCols.addEventListener('input', function(){ valCols.textContent = slCols.value; });
+  slRows.addEventListener('input', function(){ valRows.textContent = slRows.value; });
+  document.getElementById('btn-regen').addEventListener('click', function(){
+    settings.cols = parseInt(slCols.value, 10);
+    settings.rows = parseInt(slRows.value, 10);
+    settings.difficulty = selDiff.value;
+    settingsOverlay.classList.remove('show');
+    newGame();
+    toast(settings.cols+' × '+settings.rows+' board — '+settings.difficulty+' difficulty');
+  });
+  newGame();
+})();
+</script>
 </body>
 </html>
