@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#F6F3EC" />
+<title>Paracetamol Solubility · Reference Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F3EC;
+    --panel:#FBF9F4;
+    --panel-line:#E4DEC9;
+    --ink:#1B2333;
+    --ink-soft:#5B6172;
+    --ink-faint:#8B8F9C;
+    --teal:#1E7C72;
+    --teal-deep:#12463F;
+    --amber:#B9812C;
+    --amber-soft:#F3E4C4;
+    --red:#A8412C;
+    --grid-line:rgba(27,35,51,.09);
+    --radius:3px;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--paper);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size:28px 28px;
+    color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,sans-serif;
+    display:flex;
+    justify-content:center;
+    padding:22px 14px 60px;
+  }
+
+  @media (prefers-reduced-motion:no-preference){
+    .app{animation:rise .5s ease both}
+  }
+  @keyframes rise{
+    from{opacity:0;transform:translateY(10px)}
+    to{opacity:1;transform:none}
+  }
+
+  .app{
+    width:100%;
+    max-width:600px;
+  }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--ink);
+    border-radius:var(--radius);
+    box-shadow:5px 5px 0 rgba(27,35,51,.08);
+    overflow:hidden;
+  }
+
+  /* ---------- Header ---------- */
+  .hero{
+    padding:26px 26px 22px;
+    border-bottom:1px solid var(--ink);
+    position:relative;
+  }
+  .eyebrow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+    color:var(--teal-deep);
+    font-weight:600;
+    margin-bottom:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:9px;height:9px;
+    border-radius:50%;
+    background:var(--teal);
+    box-shadow:0 0 0 3px rgba(30,124,114,.15);
+    flex:none;
+  }
+  h1{
+    margin:0;
+    font-family:"Fraunces",serif;
+    font-weight:600;
+    font-optical-sizing:auto;
+    font-size:clamp(28px,7.2vw,40px);
+    line-height:1.04;
+    letter-spacing:-.01em;
+    color:var(--ink);
+  }
+  h1 em{
+    font-style:italic;
+    font-weight:400;
+    color:var(--teal-deep);
+  }
+  .hero p{
+    margin:10px 0 0;
+    color:var(--ink-soft);
+    font-size:13.5px;
+    max-width:38ch;
+    line-height:1.5;
+  }
+
+  /* ---------- Shared section chrome ---------- */
+  section.field{
+    padding:18px 26px;
+    border-bottom:1px solid var(--panel-line);
+  }
+  .field-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:12px;
+    margin-bottom:12px;
+  }
+  .field-label{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    font-weight:500;
+  }
+  .field-value{
+    font-family:"IBM Plex Mono",monospace;
+    font-weight:600;
+    font-size:clamp(20px,5.6vw,26px);
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+  }
+  .field-value .unit{
+    font-size:.55em;
+    color:var(--ink-faint);
+    font-weight:500;
+    margin-left:2px;
+  }
+
+  /* ---------- Sliders ---------- */
+  input[type=range]{
+    -webkit-appearance:none;
+    appearance:none;
+    width:100%;
+    height:28px;
+    background:transparent;
+    outline:none;
+    touch-action:pan-y;
+  }
+  input[type=range]::-webkit-slider-runnable-track{
+    height:6px;
+    border-radius:3px;
+    background:linear-gradient(to right, var(--teal) 0%, var(--teal) var(--fill,50%), var(--panel-line) var(--fill,50%), var(--panel-line) 100%);
+  }
+  input[type=range]::-moz-range-track{
+    height:6px;
+    border-radius:3px;
+    background:var(--panel-line);
+  }
+  input[type=range]::-moz-range-progress{
+    height:6px;
+    border-radius:3px;
+    background:var(--teal);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:22px;height:22px;
+    margin-top:-8px;
+    border-radius:50%;
+    background:var(--panel);
+    border:3px solid var(--teal);
+    box-shadow:0 1px 3px rgba(0,0,0,.25);
+    cursor:pointer;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:16px;height:16px;
+    border-radius:50%;
+    background:var(--panel);
+    border:3px solid var(--teal);
+    box-shadow:0 1px 3px rgba(0,0,0,.25);
+    cursor:pointer;
+  }
+  input[type=range]:focus-visible::-webkit-slider-thumb{
+    box-shadow:0 0 0 4px rgba(30,124,114,.25);
+  }
+  input[type=range]:focus-visible::-moz-range-thumb{
+    box-shadow:0 0 0 4px rgba(30,124,114,.25);
+  }
+  .tick-row{
+    display:flex;
+    justify-content:space-between;
+    margin-top:4px;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10px;
+    color:var(--ink-faint);
+  }
+
+  /* ---------- Chart ---------- */
+  .chart-section{
+    padding:22px 26px 20px;
+    border-bottom:1px solid var(--ink);
+    background:
+      repeating-linear-gradient(rgba(27,35,51,.05) 0 1px, transparent 1px 24px),
+      repeating-linear-gradient(90deg, rgba(27,35,51,.05) 0 1px, transparent 1px 24px),
+      var(--panel);
+  }
+  .chart-heading{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:12px;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .chart-heading .field-label{margin:0}
+  .chart-heading .formula-tag{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11px;
+    color:var(--teal-deep);
+    background:rgba(30,124,114,.09);
+    border:1px solid rgba(30,124,114,.25);
+    border-radius:2px;
+    padding:2px 7px;
+  }
+  .chart-box{
+    position:relative;
+    width:100%;
+    aspect-ratio:4/3;
+    max-height:420px;
+    border:1px solid var(--ink);
+    border-radius:2px;
+    background:var(--panel);
+    overflow:hidden;
+  }
+  canvas{display:block;width:100%;height:100%}
+  .readout{
+    position:absolute;
+    top:10px;
+    left:12px;
+    right:12px;
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    pointer-events:none;
+    font-family:"IBM Plex Mono",monospace;
+  }
+  .readout .tag{
+    background:var(--panel);
+    border:1px solid var(--ink);
+    border-radius:2px;
+    padding:3px 8px;
+    font-size:11px;
+    font-weight:600;
+  }
+  .readout .tag.temp{color:var(--amber);border-color:var(--amber)}
+  .readout .tag.sol{color:var(--teal-deep);border-color:var(--teal)}
+
+  /* ---------- Calculator ---------- */
+  .calculator{
+    padding:22px 26px 24px;
+  }
+  .capacity-line{
+    text-align:center;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin:0 0 16px;
+  }
+  .capacity-line b{
+    font-family:"IBM Plex Mono",monospace;
+    color:var(--ink);
+    font-weight:600;
+  }
+
+  .input-row{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    gap:8px;
+    background:var(--panel);
+    border:1.5px solid var(--ink);
+    border-radius:2px;
+    padding:14px 14px;
+  }
+  .input-block{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .input-block small{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:9.5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+  .mg-input{
+    min-width:0;
+    width:100%;
+    border:0;
+    border-bottom:2.5px solid var(--teal);
+    background:transparent;
+    color:var(--ink);
+    padding:2px 2px 4px;
+    font:600 26px/1.1 "IBM Plex Mono",monospace;
+    text-align:left;
+    outline:none;
+  }
+  .mg-input:focus-visible{
+    border-bottom-color:var(--amber);
+  }
+  .output-value{
+    border-bottom:2.5px solid var(--panel-line);
+    color:var(--ink);
+    font:600 26px/1.1 "IBM Plex Mono",monospace;
+    padding:2px 2px 4px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .arrow{
+    color:var(--ink-faint);
+    font-size:18px;
+    padding-top:14px;
+  }
+
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin:14px 0 0;
+  }
+  .stat{
+    background:var(--panel);
+    border:1px solid var(--panel-line);
+    border-radius:2px;
+    padding:10px 8px;
+    text-align:center;
+  }
+  .stat small{
+    display:block;
+    font-family:"IBM Plex Mono",monospace;
+    color:var(--ink-faint);
+    font-size:9.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .stat b{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:14.5px;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+  }
+  .stat.alert b{color:var(--red)}
+
+  .formula-block{
+    margin:18px 0 0;
+    padding:12px 14px;
+    background:rgba(30,124,114,.06);
+    border:1px solid rgba(30,124,114,.22);
+    border-radius:2px;
+    font-family:"IBM Plex Mono",monospace;
+    color:var(--teal-deep);
+    font-size:11.5px;
+    line-height:1.6;
+  }
+
+  .warning{
+    margin:14px 0 0;
+    padding:12px 14px;
+    background:var(--amber-soft);
+    border:1px solid rgba(185,129,44,.4);
+    border-left:4px solid var(--amber);
+    border-radius:2px;
+    color:#6B4C17;
+    font-size:11.5px;
+    line-height:1.55;
+  }
+  .warning b{color:#513509}
+
+  footer{
+    text-align:center;
+    margin-top:16px;
+    color:var(--ink-faint);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10.5px;
+    letter-spacing:.05em;
+  }
+
+  @media (max-width:420px){
+    body{padding:14px 10px 44px}
+    .hero{padding:22px 18px 18px}
+    section.field{padding:16px 18px}
+    .chart-section{padding:18px 16px 16px}
+    .calculator{padding:18px 18px 20px}
+    .input-row{grid-template-columns:1fr auto 1fr;padding:12px 10px;gap:4px}
+    .mg-input,.output-value{font-size:21px}
+    .arrow{font-size:15px;padding-top:12px}
+    .stats{grid-template-columns:1fr 1fr}
+    .stats .stat:last-child{grid-column:span 2}
+  }
+</style>
+</head>
+<body>
+<main class="app">
+  <div class="card">
+
+    <header class="hero">
+      <div class="eyebrow">C₈H₉NO₂ · Acetaminophen</div>
+      <h1>Paracetamol<br><em>solubility</em> in water</h1>
+      <p>Estimate how much paracetamol dissolves in a given volume of water at a chosen temperature.</p>
+    </header>
+
+    <section class="field">
+      <div class="field-row">
+        <span class="field-label">Water volume</span>
+        <span class="field-value"><span id="waterLabel">250</span><span class="unit">mL</span></span>
+      </div>
+      <label for="water" style="display:block">
+        <input id="water" type="range" min="1" max="1000" value="250" step="1" aria-label="Water amount in millilitres">
+      </label>
+      <div class="tick-row"><span>1 mL</span><span>1000 mL</span></div>
+    </section>
+
+    <section class="field">
+      <div class="field-row">
+        <span class="field-label">Water temperature</span>
+        <span class="field-value"><span id="tempLabel">20.0</span><span class="unit">°C</span></span>
+      </div>
+      <label for="temp" style="display:block">
+        <input id="temp" type="range" min="1" max="30" value="20" step="0.1" aria-label="Water temperature in Celsius">
+      </label>
+      <div class="tick-row"><span>1 °C</span><span>30 °C</span></div>
+    </section>
+
+    <section class="chart-section">
+      <div class="chart-heading">
+        <span class="field-label">Solubility curve</span>
+        <span class="formula-tag">S(T) vs. T</span>
+      </div>
+      <div class="chart-box" id="chartBox">
+        <canvas id="chart"></canvas>
+        <div class="readout">
+          <span class="tag temp" id="tempOverlay">20.0°C</span>
+          <span class="tag sol" id="solOverlay">1.280%</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="calculator">
+      <p class="capacity-line">Saturation capacity at this volume &amp; temperature: <b id="capacity">3199 mg</b></p>
+
+      <div class="input-row">
+        <div class="input-block">
+          <small>Paracetamol added</small>
+          <input id="amount" class="mg-input" type="number" min="0" step="1" value="1000" inputmode="decimal" aria-label="Paracetamol amount in milligrams">
+        </div>
+        <div class="arrow">→</div>
+        <div class="input-block">
+          <small>Dissolved</small>
+          <div class="output-value"><span id="dissolved">1000</span> mg</div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <small>Solubility</small>
+          <b id="mgml">12.80 mg/mL</b>
+        </div>
+        <div class="stat">
+          <small>Concentration</small>
+          <b id="percent">1.280 %</b>
+        </div>
+        <div class="stat alert">
+          <small>Undissolved</small>
+          <b id="undissolved">0 mg</b>
+        </div>
+      </div>
+
+      <div class="formula-block">
+        S(T) = 7.23524 + 0.159571·T + 0.00593333·T² mg/mL water<br>
+        Dissolved = min(paracetamol added, water mL × S(T))
+      </div>
+
+      <div class="warning">
+        <b>Model range:</b> valid for 1–30 °C and 1–1000 mL water. Estimates equilibrium solubility of pure paracetamol in water — tablets, excipients, and real mixtures can behave differently.
+      </div>
+    </section>
+
+  </div>
+  <footer>Reference model · not for clinical dosing decisions</footer>
+</main>
+
+<script>
+(() => {
+  const water = document.getElementById('water');
+  const temp = document.getElementById('temp');
+  const amount = document.getElementById('amount');
+
+  const waterLabel = document.getElementById('waterLabel');
+  const tempLabel = document.getElementById('tempLabel');
+  const tempOverlay = document.getElementById('tempOverlay');
+  const solOverlay = document.getElementById('solOverlay');
+  const capacityEl = document.getElementById('capacity');
+  const dissolvedEl = document.getElementById('dissolved');
+  const mgmlEl = document.getElementById('mgml');
+  const percentEl = document.getElementById('percent');
+  const undissolvedEl = document.getElementById('undissolved');
+
+  const canvas = document.getElementById('chart');
+  const box = document.getElementById('chartBox');
+  const ctx = canvas.getContext('2d');
+
+  function S(T){
+    return 7.23524 + 0.159571*T + 0.00593333*T*T; // mg/mL water
+  }
+
+  function fmtMg(x){
+    if (!Number.isFinite(x)) return '0';
+    if (x >= 1000) return Math.round(x).toLocaleString();
+    if (x >= 100) return x.toFixed(1).replace(/\.0$/,'');
+    return x.toFixed(2).replace(/0+$/,'').replace(/\.$/,'');
+  }
+
+  function updateFill(el){
+    const min = Number(el.min), max = Number(el.max), val = Number(el.value);
+    const pct = ((val-min)/(max-min))*100;
+    el.style.setProperty('--fill', pct + '%');
+  }
+
+  function resizeCanvas(){
+    const rect = box.getBoundingClientRect();
+    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function drawChart(currentT){
+    const w = box.clientWidth;
+    const h = box.clientHeight;
+    ctx.clearRect(0,0,w,h);
+
+    const pad = {l:38,r:16,t:16,b:28};
+    const xMin = 0.70, xMax = 1.80;  // % w/v
+    const yMin = 1, yMax = 30;
+
+    const X = p => pad.l + ((p-xMin)/(xMax-xMin))*(w-pad.l-pad.r);
+    const Y = t => h-pad.b - ((t-yMin)/(yMax-yMin))*(h-pad.t-pad.b);
+
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(27,35,51,.12)';
+    ctx.fillStyle = 'rgba(27,35,51,.55)';
+    ctx.font = '10px "IBM Plex Mono", monospace';
+
+    [1,5,10,15,20,25,30].forEach(t=>{
+      const y = Y(t);
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(w-pad.r,y); ctx.stroke();
+      ctx.fillText(String(t), 8, y+3);
+    });
+
+    [0.8,1.0,1.2,1.4,1.6,1.8].forEach(p=>{
+      const x = X(p);
+      ctx.beginPath(); ctx.moveTo(x,pad.t); ctx.lineTo(x,h-pad.b); ctx.stroke();
+      ctx.fillText(p.toFixed(1), x-11, h-9);
+    });
+
+    // axis titles
+    ctx.fillStyle = 'rgba(27,35,51,.7)';
+    ctx.font = '600 10px "IBM Plex Mono", monospace';
+    ctx.save();
+    ctx.translate(12, pad.t + 4);
+    ctx.textAlign = 'left';
+    ctx.fillText('°C', 0, 0);
+    ctx.restore();
+    ctx.fillText('% w/v', w - pad.r - 30, h - 9 + 15 > h ? h-2 : h-2);
+
+    // fitted solubility curve
+    ctx.strokeStyle = '#1E7C72';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for(let t=1;t<=30;t+=0.15){
+      const p = S(t)/10;
+      const x = X(p), y = Y(t);
+      if(t===1) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+
+    // current guides
+    const curP = S(currentT)/10;
+    const cx = X(curP), cy = Y(currentT);
+
+    ctx.setLineDash([5,5]);
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(185,129,44,.85)';
+    ctx.beginPath();
+    ctx.moveTo(pad.l,cy); ctx.lineTo(cx,cy);
+    ctx.lineTo(cx,h-pad.b);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // current marker
+    ctx.fillStyle = '#B9812C';
+    ctx.strokeStyle = '#1B2333';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx,cy,6,0,Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  function update(){
+    const V = Math.max(1, Math.min(1000, Number(water.value) || 1));
+    const T = Math.max(1, Math.min(30, Number(temp.value) || 1));
+    const M = Math.max(0, Number(amount.value) || 0);
+
+    const mgPerMl = S(T);
+    const pct = mgPerMl / 10;
+    const capacity = V * mgPerMl;
+    const dissolved = Math.min(M, capacity);
+    const undissolved = Math.max(0, M - dissolved);
+
+    waterLabel.textContent = Math.round(V);
+    tempLabel.textContent = T.toFixed(1);
+    tempOverlay.textContent = `${T.toFixed(1)}°C`;
+    solOverlay.textContent = `${pct.toFixed(3)}%`;
+
+    capacityEl.textContent = `${fmtMg(capacity)} mg`;
+    dissolvedEl.textContent = fmtMg(dissolved);
+    mgmlEl.textContent = `${mgPerMl.toFixed(2)} mg/mL`;
+    percentEl.textContent = `${pct.toFixed(3)} %`;
+    undissolvedEl.textContent = `${fmtMg(undissolved)} mg`;
+
+    updateFill(water);
+    updateFill(temp);
+
+    drawChart(T);
+  }
+
+  [water,temp,amount].forEach(el => el.addEventListener('input', update));
+  window.addEventListener('resize', () => { resizeCanvas(); update(); });
+
+  resizeCanvas();
+  update();
+})();
+</script>
+</body>
+</html>
