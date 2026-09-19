@@ -1,16 +1,11 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MyLibrary</title>
-
 <style>
-    * {
-        box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
         margin: 0;
         padding: 30px;
@@ -18,31 +13,11 @@
         color: #c9d1d9;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-
-    .container {
-        max-width: 1000px;
-        margin: auto;
-    }
-
-    h1 {
-        margin-bottom: 8px;
-        color: #f0f6fc;
-    }
-
-    .subtitle {
-        color: #8b949e;
-        margin-bottom: 25px;
-    }
-
-    .tree {
-        font-family: Consolas, "Courier New", monospace;
-        font-size: 15px;
-    }
-
-    details {
-        margin: 3px 0;
-    }
-
+    .container { max-width: 1100px; margin: auto; }
+    h1 { margin-bottom: 8px; color: #f0f6fc; }
+    .subtitle { color: #8b949e; margin-bottom: 25px; }
+    .tree { font-family: Consolas, "Courier New", monospace; font-size: 15px; }
+    details { margin: 3px 0; }
     summary {
         cursor: pointer;
         padding: 5px 8px;
@@ -50,11 +25,7 @@
         list-style: none;
         user-select: none;
     }
-
-    summary::-webkit-details-marker {
-        display: none;
-    }
-
+    summary::-webkit-details-marker { display: none; }
     summary::before {
         content: "▶";
         display: inline-block;
@@ -62,30 +33,14 @@
         font-size: 11px;
         transition: transform 0.15s;
     }
-
-    details[open] > summary::before {
-        transform: rotate(90deg);
-    }
-
-    summary:hover {
-        background: #161b22;
-    }
-
-    .folder {
-        color: #58a6ff;
-        font-weight: 600;
-    }
-
-    .folder::after {
-        content: " 📁";
-    }
-
+    details[open] > summary::before { transform: rotate(90deg); }
+    summary:hover, .file:hover { background: #161b22; }
+    .folder { color: #58a6ff; font-weight: 600; }
     .files {
         margin-left: 20px;
         border-left: 1px solid #30363d;
         padding-left: 15px;
     }
-
     .file {
         display: block;
         padding: 5px 8px;
@@ -93,28 +48,8 @@
         color: #c9d1d9;
         text-decoration: none;
     }
-
-    .file:hover {
-        background: #161b22;
-        color: #58a6ff;
-    }
-
-    .html::before {
-        content: "🌐 ";
-    }
-
-    .md::before {
-        content: "📝 ";
-    }
-
-    .txt::before {
-        content: "📄 ";
-    }
-
-    .png::before {
-        content: "🖼️ ";
-    }
-
+    .file:hover { color: #58a6ff; }
+    .icon { display: inline-block; width: 2em; text-align: center; }
     .info {
         margin-top: 30px;
         padding: 12px 15px;
@@ -123,207 +58,109 @@
         color: #8b949e;
         font-size: 14px;
     }
+    .error { color: #f85149; }
 </style>
-
 </head>
-
 <body>
-
 <div class="container">
-
-```
-<h1>MyLibrary</h1>
-<div class="subtitle">Personal research library</div>
-
-<div class="tree">
-
-    <!-- Other -->
-    <details>
-        <summary class="folder">Other</summary>
-        <div class="files">
-
-            <details>
-                <summary class="folder">Templates</summary>
-                <div class="files">
-                    <a class="file html" href="Other/Templates/clean-nootropics-library-1.1.3-2.html">
-                        clean-nootropics-library-1.1.3-2.html
-                    </a>
-                    <a class="file html" href="Other/Templates/clean-nootropics-library-1_2_0-1.html">
-                        clean-nootropics-library-1_2_0-1.html
-                    </a>
-                    <a class="file html" href="Other/Templates/clean-nootropics-library-1_2_0.html">
-                        clean-nootropics-library-1_2_0.html
-                    </a>
-                    <a class="file html" href="Other/Templates/substance_wiki_template.html">
-                        substance_wiki_template.html
-                    </a>
-                    <a class="file" href="Other/Templates/.info">
-                        .info
-                    </a>
-                </div>
-            </details>
-
-            <a class="file txt" href="Other/Target-List-ALL.txt">
-                Target-List-ALL.txt
-            </a>
-
-            <a class="file txt" href="Other/Target-List-COMMON.txt">
-                Target-List-COMMON.txt
-            </a>
-
-            <a class="file html" href="Other/rune-reader-1.html">
-                rune-reader-1.html
-            </a>
-
-            <a class="file html" href="Other/snapchat-penetration-map-2.html">
-                snapchat-penetration-map-2.html
-            </a>
-
-        </div>
-    </details>
-
-
-    <!-- Pharma - Antipsychotics -->
-    <details>
-        <summary class="folder">Pharma - Antipsychotics</summary>
-        <div class="files">
-
-            <a class="file html" href="Pharma%20-%20Antipsychotics/antipsychotics-4way-comparison.html">
-                antipsychotics-4way-comparison.html
-            </a>
-
-            <a class="file html" href="Pharma%20-%20Antipsychotics/cariprazine-vs-aripiprazole.html">
-                cariprazine-vs-aripiprazole.html
-            </a>
-
-        </div>
-    </details>
-
-
-    <!-- Pharma - Cannabinoids -->
-    <details>
-        <summary class="folder">Pharma - Cannabinoids</summary>
-        <div class="files">
-
-            <a class="file html" href="Pharma%20-%20Cannabinoids/cannabinoid_T9HC_THCX_HCT_HPC_research.html">
-                cannabinoid_T9HC_THCX_HCT_HPC_research.html
-            </a>
-
-            <a class="file html" href="Pharma%20-%20Cannabinoids/cannabinoid_pharmacology_wiki-5.html">
-                cannabinoid_pharmacology_wiki-5.html
-            </a>
-
-        </div>
-    </details>
-
-
-    <!-- Pharma - Other -->
-    <details>
-        <summary class="folder">Pharma - Other</summary>
-        <div class="files">
-
-            <a class="file png" href="Pharma%20-%20Other/bupropion-analogs.png">
-                bupropion-analogs.png
-            </a>
-
-            <a class="file html" href="Pharma%20-%20Other/caffeine-absorption-1.html">
-                caffeine-absorption-1.html
-            </a>
-
-            <a class="file html" href="Pharma%20-%20Other/inhalation-terpenes-wiki.html">
-                inhalation-terpenes-wiki.html
-            </a>
-
-            <a class="file html" href="Pharma%20-%20Other/nootropics-library-1.1.3-2.html">
-                nootropics-library-1.1.3-2.html
-            </a>
-
-            <a class="file html" href="Pharma%20-%20Other/paracetamol_solubility_calculator.html">
-                paracetamol_solubility_calculator.html
-            </a>
-
-        </div>
-    </details>
-
-
-    <!-- Pharma - Plants -->
-    <details>
-        <summary class="folder">Pharma - Plants</summary>
-        <div class="files">
-
-            <a class="file html" href="Pharma%20-%20Plants/Gaia-Materia-Medica-Wiki-1.html">
-                Gaia-Materia-Medica-Wiki-1.html
-            </a>
-
-            <a class="file html" href="Pharma%20-%20Plants/materia-medica-wiki-2-1.html">
-                materia-medica-wiki-2-1.html
-            </a>
-
-            <a class="file html" href="Pharma%20-%20Plants/myricistin-elemecin-wiki.html">
-                myricistin-elemecin-wiki.html
-            </a>
-
-            <a class="file html" href="Pharma%20-%20Plants/nutmeg-metabolic-gridlock-1.html">
-                nutmeg-metabolic-gridlock-1.html
-            </a>
-
-            <a class="file html" href="Pharma%20-%20Plants/plant-library.html">
-                plant-library.html
-            </a>
-
-            <a class="file html" href="Pharma%20-%20Plants/saffron-pharmacology.html">
-                saffron-pharmacology.html
-            </a>
-
-        </div>
-    </details>
-
-
-    <!-- Pharma - Receptors -->
-    <details>
-        <summary class="folder">Pharma - Receptors</summary>
-        <div class="files">
-
-            <a class="file html" href="Pharma%20-%20Receptors/binding-profile-index-1.html">
-                binding-profile-index-1.html
-            </a>
-
-            <a class="file md" href="Pharma%20-%20Receptors/binding-profile-index.md">
-                binding-profile-index.md
-            </a>
-
-            <a class="file html" href="Pharma%20-%20Receptors/gaba-receptors-wiki.html">
-                gaba-receptors-wiki.html
-            </a>
-
-            <a class="file html" href="Pharma%20-%20Receptors/neuro-targets-wiki-1-2.html">
-                neuro-targets-wiki-1-2.html
-            </a>
-
-            <a class="file html" href="Pharma%20-%20Receptors/nicotinic-receptors-wiki.html">
-                nicotinic-receptors-wiki.html
-            </a>
-
-        </div>
-    </details>
-
-
-    <!-- PsychoWiki -->
-    <details>
-        <summary class="folder">PsychoWiki</summary>
-        <div class="files">
-            <!-- Add PsychoWiki files here -->
-        </div>
-    </details>
-
+    <h1>MyLibrary</h1>
+    <div class="subtitle">Personal research library</div>
+    <div id="tree" class="tree" aria-live="polite">Loading files…</div>
+    <div id="info" class="info">File icons are loaded from <code>.icons.csv</code>.</div>
 </div>
+<script>
+(async () => {
+    const owner = "RummEst";
+    const repo = "MyLibrary";
+    const branch = "main";
+    const tree = document.getElementById("tree");
+    const info = document.getElementById("info");
 
-<div class="info">
-    Select a folder to expand it. Select a file to open it.
-</div>
-```
+    const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+    }[character]));
 
-</div>
+    const encodePath = path => path.split("/").map(encodeURIComponent).join("/");
 
+    function parseCsv(text) {
+        const icons = new Map();
+        text.trim().split(/\r?\n/).slice(1).forEach(line => {
+            const comma = line.indexOf(",");
+            if (comma === -1) return;
+            const filename = line.slice(0, comma).trim();
+            const icon = line.slice(comma + 1).trim();
+            if (filename && icon) icons.set(filename, icon);
+        });
+        return icons;
+    }
+
+    function makeFolder(name, children) {
+        const element = document.createElement("details");
+        const summary = document.createElement("summary");
+        summary.className = "folder";
+        summary.textContent = name;
+        element.append(summary, children);
+        return element;
+    }
+
+    function makeFile(path, icons) {
+        const name = path.split("/").pop();
+        const link = document.createElement("a");
+        link.className = "file";
+        link.href = encodePath(path);
+        link.innerHTML = `<span class="icon">${escapeHtml(icons.get(name) || "")}</span>${escapeHtml(name)}`;
+        link.title = path;
+        return link;
+    }
+
+    function renderTree(paths, icons) {
+        const root = { folders: new Map(), files: [] };
+        paths.forEach(path => {
+            const parts = path.split("/");
+            let node = root;
+            parts.forEach((part, index) => {
+                if (index === parts.length - 1) node.files.push({ name: part, path });
+                else {
+                    if (!node.folders.has(part)) node.folders.set(part, { folders: new Map(), files: [] });
+                    node = node.folders.get(part);
+                }
+            });
+        });
+
+        function build(node) {
+            const contents = document.createElement("div");
+            contents.className = "files";
+            [...node.folders.entries()].sort(([a], [b]) => a.localeCompare(b)).forEach(([name, child]) => {
+                contents.appendChild(makeFolder(name, build(child)));
+            });
+            node.files.sort((a, b) => a.name.localeCompare(b.name)).forEach(file => {
+                contents.appendChild(makeFile(file.path, icons));
+            });
+            return contents;
+        }
+
+        tree.replaceChildren(build(root));
+        info.textContent = `${paths.length} current repository files listed. File icons are loaded from .icons.csv.`;
+    }
+
+    try {
+        const apiBase = `https://api.github.com/repos/${owner}/${repo}`;
+        const [treeResponse, iconsResponse] = await Promise.all([
+            fetch(`${apiBase}/git/trees/${branch}?recursive=1`),
+            fetch(`.icons.csv?${Date.now()}`)
+        ]);
+        if (!treeResponse.ok) throw new Error("Could not load the repository file list.");
+        const repositoryTree = await treeResponse.json();
+        const icons = iconsResponse.ok ? parseCsv(await iconsResponse.text()) : new Map();
+        const paths = (repositoryTree.tree || [])
+            .filter(entry => entry.type === "blob" && entry.path !== "index.html")
+            .map(entry => entry.path);
+        renderTree(paths, icons);
+    } catch (error) {
+        tree.innerHTML = `<p class="error">${escapeHtml(error.message)}</p>`;
+        info.textContent = "The file list could not be loaded. Please try again later.";
+    }
+})();
+</script>
 </body>
 </html>
