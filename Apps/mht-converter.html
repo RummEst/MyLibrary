@@ -4,8 +4,582 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>MHT → HTML Converter</title>
+<style>
+  :root{
+    --bg:#0f1115; --bg2:#161922; --card:#1b1f28; --border:#2a2f3a;
+    --text:#e6e8eb; --muted:#8b93a1; --accent:#4fd1c5; --accent2:#8b5cf6;
+    --editor-bg:#1e1e1e; --editor-text:#d4d4d4; --gutter:#6a737d;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#0f1115; } }
+  :root[data-theme="dark"]{ --bg:#0f1115; }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .hidden{display:none !important;}
+  #app{max-width:640px;margin:0 auto;padding:28px 18px 60px;min-height:100vh;}
+  h1{font-size:1.5rem;margin:6px 0 4px;background:linear-gradient(90deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .subtitle{color:var(--muted);font-size:.92rem;margin:0 0 24px;}
+  .drop-zone{border:2px dashed var(--border);border-radius:16px;padding:40px 20px;text-align:center;
+    cursor:pointer;background:var(--bg2);transition:.15s;}
+  .drop-zone.drag,.drop-zone:hover{border-color:var(--accent);background:#1a2028;}
+  .drop-icon{font-size:2.4rem;margin-bottom:8px;}
+  .drop-sub{color:var(--muted);font-size:.82rem;margin-top:4px;}
+  .info-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;}
+  .info-row{display:flex;align-items:center;gap:12px;}
+  .info-icon{font-size:1.6rem;}
+  .info-name{font-weight:600;word-break:break-all;font-size:.95rem;}
+  .info-meta{color:var(--muted);font-size:.8rem;margin-top:2px;}
+  .chip-btn{margin-left:auto;background:transparent;border:1px solid var(--border);color:var(--muted);
+    border-radius:20px;padding:6px 12px;font-size:.78rem;cursor:pointer;flex-shrink:0;}
+  .btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;}
+  .action-btn{flex:1 1 auto;min-width:120px;min-height:44px;border:1px solid var(--border);
+    background:#232834;color:var(--text);border-radius:12px;font-size:.88rem;font-weight:500;
+    cursor:pointer;padding:10px 12px;}
+  .action-btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));border:none;color:#0f1115;font-weight:700;}
+  .action-btn:active{transform:scale(.97);}
+
+  /* ---- Overlays ---- */
+  .overlay{position:fixed;inset:0;background:var(--editor-bg);z-index:1000;display:flex;flex-direction:column;}
+  #gotoOverlay{z-index:1100;background:#181818;}
+  .viewer-top{background:#242424;border-bottom:1px solid #333;flex-shrink:0;}
+  .vt-row1{display:flex;align-items:center;gap:6px;padding:8px 8px;flex-wrap:wrap;}
+  .vt-title{font-weight:600;font-size:.92rem;margin-right:auto;color:#fff;}
+  .vt-actions{display:flex;gap:4px;margin-left:auto;}
+  .icon-btn{min-width:38px;min-height:38px;background:#2f2f2f;border:1px solid #3c3c3c;color:#ddd;
+    border-radius:9px;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0 8px;}
+  .icon-btn.active{background:var(--accent);color:#0f1115;border-color:var(--accent);}
+  .icon-btn:active{transform:scale(.94);}
+  .vt-row2{padding:2px 12px 8px;color:var(--gutter);font-size:.74rem;word-break:break-all;}
+  .vt-search{display:flex;align-items:center;gap:6px;padding:8px;border-top:1px solid #333;}
+  .vt-search input{flex:1;min-height:36px;background:#141414;border:1px solid #3c3c3c;color:#eee;
+    border-radius:8px;padding:0 10px;font-size:.85rem;}
+  #searchCount{color:var(--gutter);font-size:.78rem;min-width:44px;text-align:center;}
+
+  .viewer-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;}
+  .viewer-scroll::-webkit-scrollbar{width:11px;height:11px;}
+  .viewer-scroll::-webkit-scrollbar-track{background:#1a1a1a;}
+  .viewer-scroll::-webkit-scrollbar-thumb{background:#4a4a4a;border-radius:6px;}
+  .viewer-scroll::-webkit-scrollbar-thumb:hover{background:#666;}
+  .viewer-scroll{scrollbar-width:thin;scrollbar-color:#4a4a4a #1a1a1a;}
+
+  .linesTable{display:table;width:100%;border-collapse:collapse;font:13px/1.55 "SF Mono",Menlo,Consolas,monospace;}
+  .cl{display:table-row;}
+  .cl:hover{background:rgba(255,255,255,0.03);}
+  .cc{display:table-cell;white-space:pre;color:var(--editor-text);padding:0 10px 0 14px;}
+  .cg{display:table-cell;white-space:nowrap;text-align:right;color:var(--gutter);
+    padding:0 10px;border-left:1px solid #303030;min-width:2.6em;user-select:none;}
+  .cl.match{background:rgba(255,215,0,.10);}
+  .cl.match-current{background:rgba(255,215,0,.30);}
+  @keyframes flashRow{from{background:rgba(79,209,197,.45);}to{background:transparent;}}
+  .cl.flash{animation:flashRow 1.1s ease;}
+  .tk-tg{color:#569cd6;} .tk-at{color:#9cdcfe;} .tk-sv{color:#ce9178;}
+  .tk-pu{color:#808080;} .tk-cm{color:#6a9955;font-style:italic;} .tk-dt{color:#c586c0;}
+  .tk-tx{color:var(--editor-text);} .tk-js,.tk-css{color:#dcdcaa;}
+
+  /* ---- Goto tree ---- */
+  .goto-top{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;
+    background:#222;color:#fff;font-weight:600;font-size:.9rem;border-bottom:1px solid #333;}
+  .goto-body{flex:1;overflow:auto;padding:10px 14px 30px;font:13px/1.7 "SF Mono",Menlo,Consolas,monospace;color:#ddd;}
+  .goto-body details{margin:0;}
+  .goto-body summary{cursor:pointer;list-style-position:outside;padding:2px 0;}
+  .goto-body summary::marker{color:#666;}
+  .gt-children{margin-left:14px;border-left:1px dotted #3a3a3a;padding-left:4px;}
+  .gt-leaf{padding:2px 0 2px 18px;}
+  .gt-label{cursor:pointer;color:#569cd6;}
+  .gt-label:hover{text-decoration:underline;}
+  .gt-extra{color:#ce9178;}
+  .gt-line{color:#666;font-size:.78em;margin-left:6px;}
+  .gt-empty{color:#777;}
+
+  @media (max-width:480px){
+    .action-btn{min-width:100%;}
+    .vt-title{font-size:.85rem;}
+  }
+</style>
 </head>
 <body>
-<p>placeholder — full file next</p>
+
+<div id="app">
+  <h1>MHT → HTML Converter</h1>
+  <p class="subtitle">Convert a Chrome-saved .mht / .mhtml webpage archive to a single self-contained .html file, then view it Full or Clean.</p>
+
+  <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()"
+       ondragover="event.preventDefault();this.classList.add('drag')"
+       ondragleave="this.classList.remove('drag')"
+       ondrop="event.preventDefault();this.classList.remove('drag');handleFiles(event.dataTransfer.files)">
+    <div class="drop-icon">📄</div>
+    <div>Tap to choose a .mht file</div>
+    <div class="drop-sub">or drag & drop (.mht, .mhtml, .htm, .html)</div>
+  </div>
+  <input type="file" id="fileInput" accept=".mht,.mhtml,.htm,.html,text/html,application/x-mimearchive,message/rfc822" class="hidden" onchange="handleFiles(this.files)">
+
+  <div id="infoCard" class="info-card hidden">
+    <div class="info-row">
+      <div class="info-icon">✅</div>
+      <div style="min-width:0;">
+        <div id="infoName" class="info-name"></div>
+        <div id="infoMeta" class="info-meta"></div>
+      </div>
+      <button class="chip-btn" onclick="resetApp()">Change</button>
+    </div>
+    <div class="btn-row">
+      <button class="action-btn primary" onclick="downloadMain()">⬇ Download .html</button>
+      <button class="action-btn" onclick="openViewer('full')">🔍 View Full</button>
+      <button class="action-btn" onclick="openViewer('clean')">🧹 View Clean</button>
+    </div>
+  </div>
+</div>
+
+<!-- Viewer overlay -->
+<div id="viewerOverlay" class="overlay hidden">
+  <div class="viewer-top">
+    <div class="vt-row1">
+      <button class="icon-btn" onclick="closeViewer()">✕</button>
+      <span class="vt-title" id="viewerTitle">Full HTML</span>
+      <div class="vt-actions">
+        <button class="icon-btn" onclick="toggleSearch()" title="Search">🔍</button>
+        <button class="icon-btn" onclick="openGoto()" title="Go To">🧭</button>
+        <button class="icon-btn" id="rawBtn" onclick="toggleRaw()" title="Raw">{ }</button>
+        <button class="icon-btn" onclick="downloadCurrent()" title="Download">⬇</button>
+      </div>
+    </div>
+    <div class="vt-row2" id="viewerMeta"></div>
+    <div class="vt-search hidden" id="searchBar">
+      <input type="text" id="searchInput" placeholder="Search…" oninput="doSearch()">
+      <span id="searchCount">0/0</span>
+      <button class="icon-btn" onclick="prevMatch()">↑</button>
+      <button class="icon-btn" onclick="nextMatch()">↓</button>
+      <button class="icon-btn" onclick="closeSearchBar()">✕</button>
+    </div>
+  </div>
+  <div class="viewer-scroll" id="viewerScroll">
+    <div class="linesTable" id="viewerContent"></div>
+  </div>
+</div>
+
+<!-- Goto overlay -->
+<div id="gotoOverlay" class="overlay hidden">
+  <div class="goto-top">
+    <span>Elements</span>
+    <button class="icon-btn" onclick="closeGoto()">✕</button>
+  </div>
+  <div class="goto-body" id="gotoBody"></div>
+</div>
+
+<script>
+let originalFile=null, originalText='', fileMeta={}, cleanTextCache=null;
+let tokenCache={}, currentMode='full', rawMode=false;
+let searchMatches=[], searchIndex=-1;
+
+/* ---------- File handling ---------- */
+function handleFiles(files){
+  const file = files && files[0];
+  if(!file) return;
+  originalFile=file; cleanTextCache=null; tokenCache={};
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const raw = e.target.result;
+    let finalHtml = raw, parseInfo = null;
+    try{
+      const parsed = parseMHTML(raw);
+      if(parsed){ finalHtml = parsed.html.replace(/\s+$/,''); parseInfo = parsed; }
+    } catch(err){
+      console.error('MHTML parse failed, falling back to raw content', err);
+    }
+    originalText = finalHtml;
+    fileMeta = { name: file.name, size: file.size, dateStr: new Date(file.lastModified).toLocaleString(),
+      parseInfo: parseInfo };
+    showInfo();
+  };
+  reader.readAsText(file);
+}
+function showInfo(){
+  document.getElementById('dropZone').classList.add('hidden');
+  document.getElementById('infoCard').classList.remove('hidden');
+  document.getElementById('infoName').textContent = fileMeta.name;
+  let meta = formatSize(fileMeta.size)+' • '+fileMeta.dateStr;
+  if(fileMeta.parseInfo) meta += ' • MHTML archive, '+fileMeta.parseInfo.resourceCount+' resource'+(fileMeta.parseInfo.resourceCount===1?'':'s')+' inlined';
+  else meta += ' • plain HTML (no archive detected)';
+  document.getElementById('infoMeta').textContent = meta;
+}
+function resetApp(){
+  originalFile=null; originalText=''; cleanTextCache=null; tokenCache={};
+  document.getElementById('infoCard').classList.add('hidden');
+  document.getElementById('dropZone').classList.remove('hidden');
+  document.getElementById('fileInput').value='';
+}
+function formatSize(b){
+  if(b<1024) return b+' B';
+  if(b<1024*1024) return (b/1024).toFixed(1)+' KB';
+  return (b/1024/1024).toFixed(2)+' MB';
+}
+function baseName(){ return (fileMeta.name||'converted').replace(/\.[^.]+$/, ''); }
+
+function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+function qpDecodeToBytes(str){
+  str = str.replace(/=\r\n|=\n|=\r/g, '');
+  const bytes = [];
+  for(let i=0;i<str.length;i++){
+    if(str[i]==='=' && /^[0-9A-Fa-f]{2}$/.test(str.substr(i+1,2))){
+      bytes.push(parseInt(str.substr(i+1,2),16)); i+=2;
+    } else bytes.push(str.charCodeAt(i) & 0xff);
+  }
+  return new Uint8Array(bytes);
+}
+function base64FromBytes(bytes){
+  let binary=''; const chunk=0x8000;
+  for(let i=0;i<bytes.length;i+=chunk) binary += String.fromCharCode.apply(null, bytes.subarray(i,i+chunk));
+  return btoa(binary);
+}
+function bytesFromBase64(b64){
+  const bin = atob(b64.replace(/[\r\n\s]+/g,''));
+  const bytes = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+  return bytes;
+}
+function parseMimeHeaders(block){
+  const unfolded = block.replace(/\r?\n[ \t]+/g, ' ');
+  const headers = {};
+  unfolded.split(/\r?\n/).forEach(line=>{
+    const idx = line.indexOf(':');
+    if(idx===-1) return;
+    headers[line.slice(0,idx).trim().toLowerCase()] = line.slice(idx+1).trim();
+  });
+  return headers;
+}
+function splitHeaderBody(text){
+  const m = /\r?\n\r?\n/.exec(text);
+  if(!m) return { headers:{}, body:text };
+  return { headers: parseMimeHeaders(text.slice(0,m.index)), body: text.slice(m.index+m[0].length) };
+}
+function splitByBoundary(text, boundary){
+  const marker = '--'+boundary;
+  const parts = [];
+  let idx = text.indexOf(marker);
+  while(idx !== -1){
+    let start = idx + marker.length;
+    if(text.substr(start,2)==='--') break;
+    if(text[start]==='\r') start++;
+    if(text[start]==='\n') start++;
+    const nextIdx = text.indexOf(marker, start);
+    parts.push(nextIdx===-1 ? text.slice(start) : text.slice(start, nextIdx));
+    idx = nextIdx;
+  }
+  return parts;
+}
+function replaceRefs(text, map){
+  const keys = Object.keys(map).sort((a,b)=>b.length-a.length);
+  if(!keys.length) return text;
+  const pattern = new RegExp(keys.map(escapeRegExp).join('|'), 'g');
+  return text.replace(pattern, m=>map[m]);
+}
+function isTextContentType(ct){ return /^text\//i.test(ct) || /xml|svg|json/i.test(ct); }
+
+function parseMHTML(raw){
+  const top = splitHeaderBody(raw);
+  const topCt = top.headers['content-type'] || '';
+  if(!/multipart\//i.test(topCt)) return null;
+  const bm = /boundary\s*=\s*"([^"]+)"|boundary\s*=\s*([^;\r\n]+)/i.exec(topCt);
+  const boundary = bm ? (bm[1]||bm[2]).trim() : null;
+  if(!boundary) return null;
+  const rawParts = splitByBoundary(raw, boundary);
+  if(!rawParts.length) return null;
+
+  const parts = rawParts.map(pt=>{
+    const { headers, body } = splitHeaderBody(pt);
+    const contentType = (headers['content-type']||'text/plain').split(';')[0].trim();
+    const enc = (headers['content-transfer-encoding']||'8bit').toLowerCase();
+    const location = headers['content-location']||'';
+    const cid = headers['content-id'] ? headers['content-id'].replace(/[<>]/g,'').trim() : '';
+    let bytes;
+    if(enc==='base64') bytes = bytesFromBase64(body);
+    else if(enc==='quoted-printable') bytes = qpDecodeToBytes(body);
+    else bytes = new TextEncoder().encode(body);
+    const isText = isTextContentType(contentType);
+    let text = null;
+    if(isText){ try{ text = new TextDecoder('utf-8').decode(bytes); }catch(e){ text = body; } }
+    return { contentType, location, cid, isText, text, bytes };
+  });
+
+  let mainIdx = parts.findIndex(p=>/^text\/html/i.test(p.contentType));
+  if(mainIdx===-1) mainIdx = 0;
+  const mainPart = parts[mainIdx];
+  const resourceParts = parts.filter((p,i)=>i!==mainIdx && (p.location||p.cid));
+
+  const map = {};
+  resourceParts.filter(p=>!p.isText).forEach(p=>{
+    const uri = 'data:'+p.contentType+';base64,'+base64FromBytes(p.bytes);
+    if(p.location) map[p.location]=uri;
+    if(p.cid) map['cid:'+p.cid]=uri;
+  });
+  resourceParts.filter(p=>p.isText).forEach(p=>{
+    const resolved = replaceRefs(p.text, map);
+    const uri = 'data:'+p.contentType+';charset=utf-8;base64,'+base64FromBytes(new TextEncoder().encode(resolved));
+    if(p.location) map[p.location]=uri;
+    if(p.cid) map['cid:'+p.cid]=uri;
+  });
+
+  const mainText = mainPart.isText ? mainPart.text : new TextDecoder('utf-8').decode(mainPart.bytes);
+  const finalHtml = replaceRefs(mainText, map);
+  return { html: finalHtml, resourceCount: resourceParts.length };
+}
+
+function stripToClean(html){
+  return html
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, '')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style\s*>/gi, '')
+    .replace(/<link\b[^>]*rel\s*=\s*["']?stylesheet["']?[^>]*>/gi, '')
+    .replace(/\s(on\w+)\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/\sstyle\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+}
+function getCleanText(){
+  if(cleanTextCache===null) cleanTextCache = stripToClean(originalText);
+  return cleanTextCache;
+}
+
+function downloadBlob(text, filename){
+  const blob = new Blob([text], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=filename; document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url); a.remove();}, 400);
+}
+function downloadMain(){ downloadBlob(originalText, baseName()+'.html'); }
+function downloadCurrent(){
+  const text = currentMode==='full' ? originalText : getCleanText();
+  downloadBlob(text, baseName()+(currentMode==='clean'?'.clean.html':'.html'));
+}
+
+function escapeHtml(s){ return s.replace(/[&<>]/g, c=>({'&':'&','<':'<','>':'>'}[c])); }
+
+const RAWTEXT = {script:1, style:1, textarea:1, title:1};
+const VOID = {area:1,base:1,br:1,col:1,embed:1,hr:1,img:1,input:1,link:1,meta:1,param:1,source:1,track:1,wbr:1};
+
+function tokenize(src){
+  const n = src.length;
+  let i = 0, line = 1;
+  const lineChunks = [[]];
+  function pushChunk(cls, text){
+    if(text==='') return;
+    const parts = text.split('\n');
+    for(let p=0; p<parts.length; p++){
+      if(parts[p].length) lineChunks[line-1].push({cls, text:parts[p]});
+      if(p < parts.length-1){ line++; lineChunks.push([]); }
+    }
+  }
+  function pushTagChunks(fullTag){
+    const m = /^(<\/?)([a-zA-Z][a-zA-Z0-9:-]*)([\s\S]*?)(\/?\s*>)$/.exec(fullTag);
+    if(!m){ pushChunk('tx', fullTag); return; }
+    pushChunk('pu', m[1]);
+    pushChunk('tg', m[2]);
+    const attrsStr = m[3];
+    const re = /(\s+)([^\s=\/>]+)(\s*=\s*)?("[^"]*"|'[^']*'|[^\s"'=<>`]+)?/g;
+    let idx = 0, am;
+    while((am = re.exec(attrsStr))){
+      if(am.index > idx) pushChunk('tx', attrsStr.slice(idx, am.index));
+      pushChunk('tx', am[1]);
+      pushChunk('at', am[2]);
+      if(am[3]) pushChunk('tx', am[3]);
+      if(am[4]) pushChunk('sv', am[4]);
+      idx = re.lastIndex;
+    }
+    if(idx < attrsStr.length) pushChunk('tx', attrsStr.slice(idx));
+    pushChunk('pu', m[4]);
+  }
+
+  const root = []; const stack = [];
+  function currentChildren(){ return stack.length ? stack[stack.length-1].children : root; }
+
+  while(i < n){
+    const c = src[i];
+    if(c === '<'){
+      if(src.startsWith('<!--', i)){
+        let end = src.indexOf('-->', i+4);
+        end = end===-1 ? n : end+3;
+        pushChunk('cm', src.slice(i, end));
+        i = end; continue;
+      }
+      if(/^<!doctype/i.test(src.slice(i, i+9))){
+        let end = src.indexOf('>', i);
+        end = end===-1 ? n : end+1;
+        pushChunk('dt', src.slice(i, end));
+        i = end; continue;
+      }
+      const tagMatch = /^<\/?[a-zA-Z][a-zA-Z0-9:-]*/.exec(src.slice(i, i+60));
+      if(tagMatch){
+        let j = i + tagMatch[0].length;
+        let quote = null;
+        while(j < n){
+          const ch = src[j];
+          if(quote){ if(ch===quote) quote=null; }
+          else if(ch==='"' || ch==="'") quote=ch;
+          else if(ch==='>') break;
+          j++;
+        }
+        const tagEnd = Math.min(j, n-1);
+        const fullTag = src.slice(i, tagEnd+1);
+        const isClosing = tagMatch[0][1] === '/';
+        const name = tagMatch[0].replace(/^<\/?/, '').toLowerCase();
+        const selfClose = /\/\s*>$/.test(fullTag);
+        const tagStartLine = line;
+        pushTagChunks(fullTag);
+        if(isClosing){
+          for(let k=stack.length-1; k>=0; k--){
+            if(stack[k].tag === name){ stack.length = k; break; }
+          }
+          i = tagEnd+1; continue;
+        }
+        if(RAWTEXT[name] && !selfClose){
+          const node = {tag:name, attrs:fullTag, line:tagStartLine, children:[]};
+          currentChildren().push(node);
+          const closeRe = new RegExp('</'+name+'\\s*>', 'i');
+          const rest = src.slice(tagEnd+1);
+          const mm = closeRe.exec(rest);
+          let rawEnd, closeEnd;
+          if(mm){ rawEnd = tagEnd+1+mm.index; closeEnd = rawEnd+mm[0].length; }
+          else { rawEnd = n; closeEnd = n; }
+          pushChunk(name==='style'?'css':(name==='script'?'js':'tx'), src.slice(tagEnd+1, rawEnd));
+          if(mm) pushTagChunks(src.slice(rawEnd, closeEnd));
+          i = closeEnd; continue;
+        }
+        const node = {tag:name, attrs:fullTag, line:tagStartLine, children:[]};
+        currentChildren().push(node);
+        if(!selfClose && !VOID[name]) stack.push(node);
+        i = tagEnd+1; continue;
+      }
+      pushChunk('tx', '<'); i++; continue;
+    } else {
+      let j = src.indexOf('<', i);
+      if(j === -1) j = n;
+      pushChunk('tx', src.slice(i, j));
+      i = j; continue;
+    }
+  }
+  return { lineChunks, root };
+}
+function getTokenized(mode){
+  if(!tokenCache[mode]){
+    const src = mode==='full' ? originalText : getCleanText();
+    tokenCache[mode] = tokenize(src);
+  }
+  return tokenCache[mode];
+}
+
+function openViewer(mode){
+  currentMode = mode; rawMode = false;
+  document.getElementById('rawBtn').classList.remove('active');
+  document.getElementById('viewerTitle').textContent = mode==='full' ? 'Full HTML' : 'Clean HTML';
+  updateMeta(mode);
+  renderViewerContent();
+  document.getElementById('viewerOverlay').classList.remove('hidden');
+  closeSearchBar();
+}
+function closeViewer(){ document.getElementById('viewerOverlay').classList.add('hidden'); }
+function updateMeta(mode){
+  const text = mode==='full' ? originalText : getCleanText();
+  const bytes = new Blob([text]).size;
+  let meta = fileMeta.name+' • '+formatSize(bytes)+' • '+fileMeta.dateStr;
+  if(fileMeta.parseInfo) meta += ' • '+fileMeta.parseInfo.resourceCount+' res inlined';
+  document.getElementById('viewerMeta').textContent = meta;
+}
+function renderViewerContent(){
+  const data = getTokenized(currentMode);
+  let html = '';
+  for(let ln=1; ln<=data.lineChunks.length; ln++){
+    const chunks = data.lineChunks[ln-1];
+    let codeHtml;
+    if(rawMode){
+      codeHtml = escapeHtml(chunks.map(c=>c.text).join(''));
+    } else {
+      codeHtml = chunks.map(c=>'<span class="tk-'+c.cls+'">'+escapeHtml(c.text)+'</span>').join('');
+    }
+    if(codeHtml === '') codeHtml = '&nbsp;';
+    html += '<div class="cl" id="L'+ln+'"><span class="cc">'+codeHtml+'</span><span class="cg">'+ln+'</span></div>';
+  }
+  document.getElementById('viewerContent').innerHTML = html;
+}
+function toggleRaw(){
+  rawMode = !rawMode;
+  document.getElementById('rawBtn').classList.toggle('active', rawMode);
+  renderViewerContent();
+}
+
+function toggleSearch(){
+  const bar = document.getElementById('searchBar');
+  bar.classList.toggle('hidden');
+  if(!bar.classList.contains('hidden')) document.getElementById('searchInput').focus();
+  else closeSearchBar();
+}
+function closeSearchBar(){
+  document.getElementById('searchBar').classList.add('hidden');
+  document.getElementById('searchInput').value='';
+  clearMatches();
+}
+function clearMatches(){
+  document.querySelectorAll('.cl.match,.cl.match-current').forEach(el=>el.classList.remove('match','match-current'));
+  searchMatches=[]; searchIndex=-1;
+  document.getElementById('searchCount').textContent='0/0';
+}
+function doSearch(){
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  clearMatches();
+  if(!q) return;
+  const data = getTokenized(currentMode);
+  const matches=[];
+  data.lineChunks.forEach((chunks, idx)=>{
+    const lineText = chunks.map(c=>c.text).join('').toLowerCase();
+    if(lineText.includes(q)) matches.push(idx+1);
+  });
+  searchMatches = matches;
+  matches.forEach(ln=>{ const el=document.getElementById('L'+ln); if(el) el.classList.add('match'); });
+  document.getElementById('searchCount').textContent = (matches.length?1:0)+'/'+matches.length;
+  if(matches.length){ searchIndex=0; focusMatch(); }
+}
+function focusMatch(){
+  document.querySelectorAll('.cl.match-current').forEach(el=>el.classList.remove('match-current'));
+  const ln = searchMatches[searchIndex];
+  const el = document.getElementById('L'+ln);
+  if(el){ el.classList.add('match-current'); el.scrollIntoView({block:'center'}); }
+  document.getElementById('searchCount').textContent = (searchIndex+1)+'/'+searchMatches.length;
+}
+function nextMatch(){ if(!searchMatches.length) return; searchIndex=(searchIndex+1)%searchMatches.length; focusMatch(); }
+function prevMatch(){ if(!searchMatches.length) return; searchIndex=(searchIndex-1+searchMatches.length)%searchMatches.length; focusMatch(); }
+
+function tagLabel(node){
+  const attrs = node.attrs || '';
+  const idm = /\bid\s*=\s*["']([^"']+)["']/i.exec(attrs);
+  const clm = /\bclass\s*=\s*["']([^"']+)["']/i.exec(attrs);
+  let extra = '';
+  if(idm) extra += '#'+idm[1];
+  if(clm) extra += '.'+clm[1].trim().split(/\s+/).slice(0,3).join('.');
+  return '<'+node.tag+'>'+(extra?'<span class="gt-extra"> '+escapeHtml(extra)+'</span>':'')+'<span class="gt-line">L'+node.line+'</span>';
+}
+function buildTreeHtml(nodes, depth){
+  return nodes.map(node=>{
+    const label = tagLabel(node);
+    if(node.children && node.children.length){
+      const openAttr = depth < 1 ? ' open' : '';
+      return '<details'+openAttr+'><summary><span class="gt-label" onclick="event.preventDefault();event.stopPropagation();gotoLine('+node.line+')">'+label+'</span></summary><div class="gt-children">'+buildTreeHtml(node.children, depth+1)+'</div></details>';
+    }
+    return '<div class="gt-leaf"><span class="gt-label" onclick="gotoLine('+node.line+')">'+label+'</span></div>';
+  }).join('');
+}
+function openGoto(){
+  const data = getTokenized(currentMode);
+  document.getElementById('gotoBody').innerHTML = buildTreeHtml(data.root, 0) || '<p class="gt-empty">No elements found.</p>';
+  document.getElementById('gotoOverlay').classList.remove('hidden');
+}
+function closeGoto(){ document.getElementById('gotoOverlay').classList.add('hidden'); }
+function gotoLine(n){
+  closeGoto();
+  const el = document.getElementById('L'+n);
+  if(!el) return;
+  el.scrollIntoView({block:'center'});
+  el.classList.remove('flash');
+  void el.offsetWidth;
+  el.classList.add('flash');
+}
+</script>
 </body>
 </html>
