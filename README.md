@@ -1,7 +1,24 @@
 # MyLibrary
 
+```
 MyLibrary/
-├── .icons
+├── .icons.csv
+├── Apps/
+│   ├── cut-table-standalone.html
+│   ├── cut-table-v2.html
+│   ├── mht-converter.html
+│   ├── number-match-v2.html
+│   └── paracetamol_solubility_calculator.html
+├── Files/
+│   ├── .info
+│   ├── THC_products_analysis-1.xlsx
+│   ├── THC_products_analysis.xlsx
+│   ├── _thcprice-1.csv
+│   ├── _thcprice-2.csv
+│   ├── _thcprice.csv
+│   ├── cannabinoids_table1.csv
+│   ├── thc_products.csv
+│   └── thc_products_withLinks.csv
 ├── Other/
 │   ├── Target-List-ALL.txt
 │   ├── Target-List-COMMON.txt
@@ -18,7 +35,9 @@ MyLibrary/
 │   │   │   ├── Medica-Wiki-Template-FULL.html
 │   │   │   └── Medica-Wiki-Template-SIMPLE.html
 │   │   └── substance_wiki_template.html
+│   ├── cut-table-standalone.html
 │   ├── my-library-8.1.html
+│   ├── my-library-v8.5.2.html
 │   ├── rune-reader-1.html
 │   └── snapchat-penetration-map-2.html
 ├── Pharma - Antipsychotics/
@@ -30,11 +49,12 @@ MyLibrary/
 ├── Pharma - Other/
 │   ├── bupropion-analogs.png
 │   ├── caffeine-absorption-1.html
+│   ├── dxm-cyp2d6-diagrams.html
 │   ├── inhalation-terpenes-wiki.html
-│   ├── nootropics-library-v1.1.3.2.html
-│   └── paracetamol_solubility_calculator.html
+│   └── nootropics-library-v1.1.3.2.html
 ├── Pharma - Plants/
 │   ├── Gaia-Materia-Medica-Wiki-1.html
+│   ├── ashwagandha_pharmacology_adhd-v1.html
 │   ├── materia-medica-wiki-2-1.html
 │   ├── myricistin-elemecin-wiki.html
 │   ├── nutmeg-metabolic-gridlock-1.html
@@ -57,3 +77,4 @@ MyLibrary/
 │   └── safranal_wiki-v1.3.html
 ├── README.md
 └── index.html
+```
