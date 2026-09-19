@@ -5,8 +5,334 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f172a">
 <title>Ashwagandha Pharmacology — Evidence Map</title>
+<style>
+:root{
+  --bg:#f5f7fa;--card:#fff;--ink:#172033;--muted:#5f6b7a;--line:#dfe5ec;
+  --accent:#3157d5;--good:#137a54;--plaus:#9a6500;--prop:#8a3d8f;--soft:#eef3ff;
+  --max:900px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:18px;line-height:1.68;
+  overflow-x:hidden;
+}
+main{
+  width:min(100%,var(--max));margin:auto;
+  padding:16px max(13px,env(safe-area-inset-left)) 56px max(13px,env(safe-area-inset-right));
+}
+header{padding:22px 3px 14px}
+h1{font-size:clamp(30px,9vw,48px);line-height:1.05;margin:0 0 12px;letter-spacing:-.035em}
+h2{font-size:clamp(25px,7vw,34px);line-height:1.13;margin:34px 0 14px;letter-spacing:-.02em}
+h3{font-size:21px;line-height:1.25;margin:23px 0 8px}
+p{margin:9px 0 16px}
+.lead{font-size:19px;line-height:1.55;color:var(--muted)}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:17px;margin:14px 0;box-shadow:0 2px 12px rgba(20,30,50,.04);
+}
+.callout{
+  border-left:4px solid var(--accent);background:var(--soft);
+  padding:14px 15px;border-radius:11px;margin:17px 0;
+}
+.badges{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.badge{font-size:13px;line-height:1.2;font-weight:750;border-radius:999px;padding:6px 9px;background:#edf0f5}
+.confirmed{background:#e6f6ef;color:var(--good)}
+.plausible{background:#fff4d8;color:var(--plaus)}
+.proposed{background:#f7e9f8;color:var(--prop)}
+.small,.note{font-size:14px;line-height:1.5;color:var(--muted)}
+nav{
+  position:sticky;top:0;z-index:5;
+  background:rgba(245,247,250,.96);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  padding:7px 0;
+}
+nav .inner{
+  width:min(100%,var(--max));margin:auto;
+  padding:0 12px;display:flex;gap:7px;overflow-x:auto;
+  scrollbar-width:none;
+}
+nav .inner::-webkit-scrollbar{display:none}
+nav a{
+  flex:0 0 auto;white-space:nowrap;text-decoration:none;color:var(--accent);
+  font-size:13px;font-weight:750;padding:6px 9px;border-radius:9px;
+  background:#fff;border:1px solid var(--line);
+}
+table{
+  width:100%;border-collapse:separate;border-spacing:0;
+  font-size:15px;line-height:1.5;
+}
+.table-scroll{
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  margin:0 -2px;
+}
+th,td{text-align:left;vertical-align:top;padding:10px 9px;border-bottom:1px solid var(--line)}
+th{background:#f1f4f8;font-weight:800}
+tr:last-child td{border-bottom:0}
+.flow{
+  display:flex;flex-direction:column;align-items:stretch;
+  gap:7px;margin:17px 0;
+}
+.flow .box{
+  padding:11px 12px;border:1px solid var(--line);border-radius:11px;
+  background:#fff;font-weight:700;text-align:center;
+}
+.flow .arrow{font-size:20px;line-height:1;text-align:center;color:var(--accent);transform:rotate(90deg)}
+.meter{height:10px;background:#e9edf3;border-radius:99px;overflow:hidden;margin:5px 0 13px}
+.meter span{display:block;height:100%;border-radius:99px;background:var(--accent)}
+footer{border-top:1px solid var(--line);margin-top:36px;padding-top:17px}
+
+@media (orientation:portrait) and (width <= 700px){
+  main{padding-top:13px}
+  header{padding-top:17px}
+  .card{padding:15px}
+  h2{margin-top:29px}
+  .flow{gap:5px}
+  .flow .box{font-size:16px}
+  .flow .arrow{transform:rotate(90deg)}
+}
+
+@media (pointer:coarse) and (width <= 700px){
+  nav a{min-height:40px;display:flex;align-items:center}
+  a{overflow-wrap:anywhere}
+}
+
+@media (width >= 701px){
+  body{font-size:17px;line-height:1.62}
+  main{padding:26px 20px 70px}
+  .flow{flex-direction:row;align-items:center;justify-content:center}
+  .flow .arrow{transform:none}
+}
+
+@media (width >= 1000px){
+  .card{padding:19px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+}
+</style>
 </head>
 <body>
-<p>See attached source; full page commit follows if write access works.</p>
+<nav><div class="inner">
+<a href="#summary">Summary</a><a href="#confirmed">Confirmed</a><a href="#plausible">Plausible</a>
+<a href="#proposed">Proposed</a><a href="#table1">Table 1</a><a href="#table2">Table 2</a>
+</div></nav>
+
+<main>
+<header id="summary">
+<h1>Ashwagandha Pharmacology</h1>
+<p class="lead"><strong>Evidence map:</strong> confirmed, plausible and proposed mechanisms, with constituent-level tables and a KSM-66 comparison.</p>
+<div class="badges">
+<span class="badge confirmed">Confirmed = directly demonstrated</span>
+<span class="badge plausible">Plausible = meaningful preclinical support</span>
+<span class="badge proposed">Proposed = limited / indirect evidence</span>
+</div>
+<div class="callout">
+<strong>Key takeaway:</strong> the strongest direct CNS receptor evidence is <strong>GABAergic</strong>. Serotonergic and 5-HT2-family effects are scientifically interesting but much less established. Direct psychedelic 5-HT2A agonism by KSM-66 has <strong>not</strong> been demonstrated.
+</div>
+</header>
+
+<section class="card">
+<h2>Evidence hierarchy</h2>
+<div class="flow">
+<div class="box">Ashwagandha extract<br><span class="small">many constituents</span></div>
+<div class="arrow">→</div>
+<div class="box">Receptors / enzymes<br><span class="small">direct or indirect</span></div>
+<div class="arrow">→</div>
+<div class="box">Cell & animal effects</div>
+<div class="arrow">→</div>
+<div class="box">Human effects<br><span class="small">more uncertain</span></div>
+</div>
+<p class="small">A mechanism can be real in a cell or animal model without being the mechanism responsible for a human supplement effect. Extract composition also varies strongly with plant part, cultivar, solvent and standardization.</p>
+</section>
+
+<section id="confirmed">
+<h2>1. Confirmed pharmacology</h2>
+
+<div class="card">
+<h3>GABAergic system — strongest direct CNS evidence</h3>
+<p>Aqueous <em>Withania somnifera</em> root extract directly activated GABA-A receptors in electrophysiological experiments, with particularly strong activity at <strong>GABA-ρ1</strong>. GABA-ρ1 was reported to be about 27× more sensitive to the extract than conventional GABA-A receptors, and the extract could generate currents approaching those produced by GABA itself.</p>
+<p>Importantly, <strong>withaferin A and withanolide A did not account for this activity</strong> in the tested system. The active constituent(s) remain unresolved.</p>
+</div>
+
+<div class="card">
+<h3>Specific withanolides can modulate GABA-A</h3>
+<p>Separate experiments have reported <strong>positive GABA-A modulation</strong> by withanolide B and docosanyl ferulate, while withanolide A has shown inhibitory effects in some isolated-compound experiments.</p>
+<p><strong>Therefore:</strong> “ashwagandha = GABA agonist” is an oversimplification. The extract contains constituents with potentially opposing actions.</p>
+</div>
+
+<div class="card">
+<h3>NF-κB / inflammatory signaling</h3>
+<p><strong>Withaferin A</strong> has substantial experimental evidence for inhibition of inflammatory signaling, including IKKβ/NF-κB pathways, with downstream effects on inflammatory mediators such as TNF-α, IL-1β, COX-2 and iNOS.</p>
+</div>
+
+<div class="card">
+<h3>Antioxidant / cytoprotective signaling</h3>
+<p>Ashwagandha extracts and individual constituents affect ROS, lipid peroxidation, antioxidant defenses, mitochondrial function and cytoprotective signaling in experimental models.</p>
+<p class="small">This is established as experimental pharmacology, but it should not automatically be assumed to explain acute subjective CNS effects.</p>
+</div>
+
+<div class="card">
+<h3>HPA-axis / stress physiology</h3>
+<p>Human clinical studies of standardized root extracts support effects on stress-related outcomes, including cortisol. The exact molecular target producing these effects remains uncertain.</p>
+</div>
+</section>
+
+<section id="plausible">
+<h2>2. Plausible pharmacology</h2>
+
+<div class="card">
+<h3>Serotonergic modulation</h3>
+<p>Evidence includes altered serotonin-related signaling in animal models, changes in serotonin receptor/transport-related measures, interactions of withanolide A with serotonin-system proteins, and older animal data showing altered <strong>5-HT2 sensitivity</strong> after chronic ashwagandha.</p>
+<p><strong>Classification: plausible</strong> rather than confirmed human receptor pharmacology.</p>
+</div>
+
+<div class="card">
+<h3>5-HT2 / 5-HT2A</h3>
+<p>Chronic ashwagandha increased functional 5-HT2 sensitivity in rats. Computational studies also predict interactions between some withanolides and 5-HT2A.</p>
+<p>However, there is no convincing demonstration that KSM-66 directly activates human 5-HT2A receptors.</p>
+<p><strong>5-HT2 modulation: plausible.</strong> <strong>Direct 5-HT2A agonism: proposed.</strong></p>
+</div>
+
+<div class="card">
+<h3>Cholinergic / acetylcholinesterase</h3>
+<p>Withanolide A has shown acetylcholinesterase-inhibitory activity in computational and preclinical work. Human relevance remains uncertain.</p>
+</div>
+
+<div class="card">
+<h3>NMDA / glutamatergic signaling</h3>
+<p>Withanolide A has been reported to reduce NMDA receptor expression in experimental epilepsy models. This is different from demonstrating direct NMDA antagonism.</p>
+</div>
+
+<div class="card">
+<h3>Neurotrophic / BDNF signaling</h3>
+<p>Animal and cellular studies suggest effects on BDNF, neurogenesis, neuronal survival and synaptic plasticity.</p>
+</div>
+
+<div class="card">
+<h3>HSP90 / proteostasis</h3>
+<p>Withaferin A and related withanolides interact with cellular stress and protein-homeostasis pathways, including HSP90-associated signaling. Relevance to ordinary oral supplementation remains uncertain.</p>
+</div>
+</section>
+
+<section id="proposed">
+<h2>3. Proposed / weaker pharmacology</h2>
+
+<div class="card">
+<h3>Direct psychedelic 5-HT2A agonism</h3>
+<p><strong>Not demonstrated.</strong> The hypothesis is supported only indirectly by computational binding, animal 5-HT2 sensitivity findings and a recent human hallucination case report.</p>
+<p>There is no convincing receptor-functional experiment showing <strong>KSM-66 → 5-HT2A agonism → psychedelic signaling</strong>.</p>
+</div>
+
+<div class="card">
+<h3>Dopamine modulation</h3>
+<p>Animal and cellular findings involve dopamine-related signaling, but evidence for clinically meaningful direct dopamine-receptor activity is weak.</p>
+</div>
+
+<div class="card">
+<h3>Opioid-system modulation</h3>
+<p>Standardized <em>Withania</em> extracts can alter opioid receptor gene expression in experimental systems, but this does not establish opioid receptor agonism.</p>
+</div>
+
+<div class="card">
+<h3>PPAR signaling</h3>
+<p>Experimental metabolic effects could involve PPAR pathways, but this is not established as a primary pharmacological target of ordinary oral ashwagandha.</p>
+</div>
+</section>
+
+<section id="table1">
+<h2>Table 1 — active substances and pharmacology</h2>
+<div class="card"><div class="table-scroll">
+<table>
+<thead><tr><th>Active substance</th><th>Confirmed + plausible pharmacology</th></tr></thead>
+<tbody>
+<tr><td><strong>Withaferin A</strong></td><td>NF-κB/IKKβ inhibition; anti-inflammatory signaling; cytoprotective/oxidative-stress pathways; HSP90/protein-homeostasis effects; possible serotonergic/cholinergic effects.</td></tr>
+<tr><td><strong>Withanolide A</strong></td><td>GABA-A modulation in isolated-compound experiments; cholinesterase inhibition; NMDA-expression modulation; serotonergic receptor/transport interactions; neurotrophic signaling.</td></tr>
+<tr><td><strong>Withanolide B</strong></td><td>Positive GABA-A modulation; anti-inflammatory/cytoprotective activity.</td></tr>
+<tr><td><strong>Withanone</strong></td><td>Antioxidant/cytoprotective effects; apoptosis and cell-signaling modulation; possible neuroprotective effects.</td></tr>
+<tr><td><strong>12-Deoxy-withastramonolide</strong></td><td>Antioxidant/cytoprotective and anti-inflammatory potential.</td></tr>
+<tr><td><strong>Withanoside IV</strong></td><td>Neuroprotective/neuronal signaling effects; glycoside likely more peripheral than corresponding aglycones.</td></tr>
+<tr><td><strong>Withanoside V</strong></td><td>Neuroprotective/neuronal signaling effects; glycoside likely more peripheral than corresponding aglycones.</td></tr>
+<tr><td><strong>Sitoindosides VII–X</strong></td><td>Stress/adaptogenic and neuroprotective effects; possible GABA/stress-axis modulation.</td></tr>
+<tr><td><strong>Docosanyl ferulate</strong></td><td>Positive GABA-A modulation demonstrated experimentally.</td></tr>
+<tr><td><strong>Tropane alkaloids</strong><br><span class="small">anaferine, isopelletierine, anahygrine, cuscohygrine</span></td><td>Neuroactive alkaloid class; plausible CNS/autonomic effects, but individual human pharmacology is poorly characterized.</td></tr>
+<tr><td><strong>Other withanolides</strong></td><td>Broad anti-inflammatory, antioxidant, cytoprotective and signaling effects; individual CNS pharmacology often poorly characterized.</td></tr>
+</tbody>
+</table>
+</div></div>
+</section>
+
+<section id="table2">
+<h2>Table 2 — approximate constituent concentrations</h2>
+<div class="callout"><strong>Important:</strong> these are literature ranges / representative measured values, not guaranteed composition for every product. Root powder, aqueous extract, hydroalcoholic extract, leaf extract and KSM-66 can have very different profiles.</div>
+<div class="card"><div class="table-scroll">
+<table>
+<thead><tr><th>Active substance</th><th>Typical reported ordinary/root extract % range</th><th>KSM-66 % range</th></tr></thead>
+<tbody>
+<tr><td><strong>Total withanolides</strong></td><td>~0.2–5.7%</td><td><strong>≥5%; measured ~5.3%</strong></td></tr>
+<tr><td><strong>Withaferin A</strong></td><td>~0.02–0.97%; can be much higher in leaf-derived material</td><td><strong><0.1%</strong></td></tr>
+<tr><td><strong>Withanolide A</strong></td><td>~0.03–0.64%</td><td>NR</td></tr>
+<tr><td><strong>Withanolide B</strong></td><td>trace–~0.2%</td><td>NR</td></tr>
+<tr><td><strong>Withanone</strong></td><td>trace–~1.3%</td><td>NR</td></tr>
+<tr><td><strong>12-Deoxy-withastramonolide</strong></td><td>~0.07–0.30% in measured extracts</td><td>NR</td></tr>
+<tr><td><strong>Withanoside IV</strong></td><td>~0.04–0.88%</td><td>Present; exact % NR</td></tr>
+<tr><td><strong>Withanoside V</strong></td><td>~0.017–0.91%</td><td>Present; exact % NR</td></tr>
+<tr><td><strong>Sitoindosides VII–X</strong></td><td>Generally <0.20%</td><td>NR</td></tr>
+<tr><td><strong>Tropane alkaloids</strong></td><td>Root typically ~0.13–0.31%; occasionally reported higher</td><td>NR</td></tr>
+</tbody>
+</table>
+</div>
+<p class="note">NR = not reported in the cited KSM-66 composition data. “Total withanolides” is a mixture, not a single active substance.</p>
+</section>
+
+<section>
+<h2>KSM-66: the important distinction</h2>
+<div class="card">
+<p>KSM-66 is <strong>not simply “5% withaferin A.”</strong> Published KSM-66 material is standardized to roughly 5%+ total withanolides while withaferin A is reported below 0.1%.</p>
+<p>Reported principal markers include <strong>withastramonolide A, withanoside IV, withanolide A and withanone</strong>.</p>
+<div class="flow">
+<div class="box">KSM-66</div><div class="arrow">→</div>
+<div class="box">~5–5.3% total withanolides</div><div class="arrow">→</div>
+<div class="box">mixture of several compounds</div>
+</div>
+<p>If an EcoSh capsule contains <strong>150 mg KSM-66</strong>, that corresponds to roughly <strong>7.5–8 mg total withanolides</strong> if the extract is ~5–5.3%. That is the combined amount, not 7.5–8 mg of a single psychedelic compound.</p>
+</div>
+</section>
+
+<section>
+<h2>Overall pharmacological map</h2>
+<div class="card">
+<p><strong>Relative evidence strength — qualitative, not quantitative:</strong></p>
+<p>GABAergic activity <strong>★★★★☆</strong></p><div class="meter"><span style="width:80%"></span></div>
+<p>HPA/stress-axis modulation <strong>★★★★☆</strong></p><div class="meter"><span style="width:80%"></span></div>
+<p>Anti-inflammatory / NF-κB <strong>★★★★☆</strong></p><div class="meter"><span style="width:80%"></span></div>
+<p>Antioxidant / cytoprotective <strong>★★★★☆</strong></p><div class="meter"><span style="width:80%"></span></div>
+<p>Serotonergic modulation <strong>★★★☆☆</strong></p><div class="meter"><span style="width:60%"></span></div>
+<p>Neurotrophic / BDNF <strong>★★★☆☆</strong></p><div class="meter"><span style="width:60%"></span></div>
+<p>Cholinergic / AChE <strong>★★☆☆☆</strong></p><div class="meter"><span style="width:40%"></span></div>
+<p>Glutamatergic / NMDA modulation <strong>★★☆☆☆</strong></p><div class="meter"><span style="width:40%"></span></div>
+<p>5-HT2 / 5-HT2A modulation <strong>★★☆☆☆</strong></p><div class="meter"><span style="width:40%"></span></div>
+<p>Direct psychedelic 5-HT2A agonism <strong>★☆☆☆☆</strong></p><div class="meter"><span style="width:20%"></span></div>
+<p class="small">These stars are an evidence-strength visualization, not potency, clinical efficacy or a quantitative probability.</p>
+</div>
+</section>
+
+<section>
+<h2>Why the GABA finding matters</h2>
+<div class="card">
+<p>The whole-extract GABA activity is <strong>not explained by the best-known major withanolides tested individually</strong>. This leaves open the possibility that less-characterized constituents contribute substantially to acute CNS effects.</p>
+<p>That is one of the more important unresolved questions in ashwagandha pharmacology.</p>
+</div>
+</section>
+
+<footer>
+<p><strong>Evidence note</strong></p>
+<p class="small">This document summarizes the research discussed in the preceding analysis. It is a pharmacology overview, not a recommendation to use high doses. Mechanistic evidence from docking, cells or animals should not be treated as proof of human effects.</p>
+<p class="small">Key literature discussed: electrophysiological GABA-A/GABA-ρ1 work; ashwagandha 5-HT2 sensitivity experiments; withanolide receptor-interaction studies; withaferin A NF-κB/IKKβ work; clinical stress/HPA studies; and analytical KSM-66 composition studies.</p>
+</footer>
+</main>
 </body>
 </html>
