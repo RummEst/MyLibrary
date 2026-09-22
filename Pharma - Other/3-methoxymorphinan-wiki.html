@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3-Methoxymorphinan — Pharmacology &amp; DXM–CYP3A4 Interactions</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #21262d;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --warning: #d29922;
+    --code-bg: #0d1117;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 0;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  h1 { font-size: 2rem; font-weight: 600; letter-spacing: -0.02em; }
+  .subtitle { color: var(--text-muted); font-size: 1.05rem; margin-top: 0.35rem; }
+  .meta { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted); }
+  .meta span { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .badge {
+    display: inline-block;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 2rem;
+    padding: 0.15rem 0.65rem;
+    font-size: 0.75rem;
+    color: var(--accent);
+  }
+  h2 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin: 2.25rem 0 0.85rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--accent);
+  }
+  h3 { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 0.6rem; color: var(--text); }
+  p { margin: 0.75rem 0; }
+  ul, ol { margin: 0.6rem 0 0.6rem 1.4rem; }
+  li { margin: 0.3rem 0; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem 1.4rem;
+    margin: 1.25rem 0;
+  }
+  .card.warning { border-left: 3px solid var(--warning); }
+  .card.info { border-left: 3px solid var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.9rem;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 0.55rem 0.75rem;
+    text-align: left;
+  }
+  th {
+    background: var(--bg3);
+    color: var(--text);
+    font-weight: 600;
+  }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .img-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    margin: 1.25rem 0;
+  }
+  .img-wrap img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    background: #fff;
+  }
+  .img-caption {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.6rem;
+  }
+  .diagram {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    overflow-x: auto;
+    white-space: pre;
+    color: #c9d1d9;
+    margin: 1.25rem 0;
+  }
+  .label-3mm { color: var(--accent2); font-weight: 600; }
+  .label-cyp { color: var(--accent3); }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .toc {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+  }
+  .toc ol { margin-left: 1.2rem; }
+  .toc a { color: var(--text); }
+  code {
+    background: var(--bg3);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    font-size: 0.88em;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>3-Methoxymorphinan</h1>
+  <p class="subtitle">Pharmacology, local-anesthetic activity, and effects of CYP3A4 induction on the DXM → 3MM pathway</p>
+  <div class="meta">
+    <span class="badge">CAS 1531-25-5</span>
+    <span>Secondary amine morphinan</span>
+    <span>Minor metabolite of dextromethorphan</span>
+    <span>Wiki entry · MyLibrary style</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#identity">Identity &amp; structure</a></li>
+    <li><a href="#pharmacodynamics">Pharmacodynamics</a></li>
+    <li><a href="#affinity">Quantitative receptor / channel data (Ki / IC<sub>50</sub>)</a></li>
+    <li><a href="#local-anesthetic">Local-anesthetic potency &amp; duration</a></li>
+    <li><a href="#metabolism">Pharmacokinetics &amp; metabolism</a></li>
+    <li><a href="#cyp3a4">Effects of CYP3A4 inducers on DXM → 3MM</a></li>
+    <li><a href="#pm-em">CYP2D6 phenotype interaction (PM vs EM)</a></li>
+    <li><a href="#downstream">Downstream metabolite 3-hydroxymorphinan</a></li>
+    <li><a href="#clinical">Net clinical picture under induction</a></li>
+    <li><a href="#synthesis">Synthetic &amp; analytical utility</a></li>
+    <li><a href="#references">Key sources</a></li>
+  </ol>
+</nav>
+
+<!-- ===================== IDENTITY ===================== -->
+<h2 id="identity">1. Identity &amp; structure</h2>
+
+<p><strong>3-Methoxymorphinan</strong> (3MM; CAS 1531-25-5; PubChem CID 5484286) is a secondary-amine morphinan. It is generated in vivo by CYP3A4-mediated N-demethylation of dextromethorphan (DXM) and of the unmarketed opioid levomethorphan. Because the N-methyl group required for high-affinity classical opioid binding is absent, 3MM possesses a pharmacological profile distinct from both DXM and levorphanol-type opioids.</p>
+
+<div class="img-wrap">
+  <img src="https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid=5484286&amp;t=l" alt="2D structure of 3-methoxymorphinan (PubChem CID 5484286)" width="320" height="320">
+  <p class="img-caption">PubChem 2D depiction (CID 5484286). Aromatic A-ring with 3-methoxy substituent; secondary amine at the nitrogen bridge of the morphinan cage.</p>
+</div>
+
+<div class="img-wrap">
+  <img src="https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid=5484286&amp;t=3d" alt="3D conformer of 3-methoxymorphinan" width="360" height="280">
+  <p class="img-caption">PubChem 3D conformer. The rigid tetracyclic morphinan cage and the free secondary amine are the structural features that drive sodium-channel block and α3β4 nAChR interaction while abolishing classical µ-opioid affinity.</p>
+</div>
+
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  <tr><td>Molecular formula</td><td>C<sub>17</sub>H<sub>23</sub>NO</td></tr>
+  <tr><td>Molar mass</td><td>257.37 g·mol<sup>−1</sup></td></tr>
+  <tr><td>IUPAC (stereochemical)</td><td>(9α,13α,14α)-3-Methoxymorphinan (common designation)</td></tr>
+  <tr><td>Key structural difference from DXM</td><td>Absence of N-methyl → secondary amine</td></tr>
+  <tr><td>Further metabolism</td><td>O-demethylation by CYP2D6 → 3-hydroxymorphinan</td></tr>
+</table>
+
+<!-- ===================== PHARMACODYNAMICS ===================== -->
+<h2 id="pharmacodynamics">2. Pharmacodynamics</h2>
+
+<ul>
+  <li><strong>Opioid receptors</strong> — Essentially inactive. Binding affinity is negligible (roughly 30- to &gt;100-fold lower than corresponding 3-hydroxy or N-methyl morphinans). No clinically relevant µ-, κ- or δ-mediated analgesia, euphoria or respiratory depression is expected.</li>
+  <li><strong>Local anesthesia</strong> — Primary quantifiable effect: peripheral voltage-gated sodium-channel blockade producing motor, proprioceptive and nociceptive block.</li>
+  <li><strong>α3β4 nAChR</strong> — Non-competitive inhibitor; used as an SAR probe in laboratory studies of neuronal nicotinic receptors.</li>
+  <li><strong>Other channels</strong> — Related morphinans interact with NMDA and 5-HT<sub>3</sub> receptors; 3MM itself shows weaker or absent activity at some of these sites compared with DXM or certain synthetic analogs.</li>
+</ul>
+
+<!-- ===================== AFFINITY TABLES ===================== -->
+<h2 id="affinity">3. Quantitative receptor / channel data (Ki / IC<sub>50</sub>)</h2>
+
+<p>Values below are taken from the primary literature located in the prior research trail (Lee et al. 2006/2007 series on dextrorotatory morphinans, structure-affinity morphinan series, and related papers). “HM” in the original papers denotes 3-methoxymorphinan.</p>
+
+<h3>α3β4 nicotinic acetylcholine receptor (non-competitive inhibition)</h3>
+<table>
+  <tr>
+    <th>Compound</th>
+    <th>IC<sub>50</sub> (µM)</th>
+    <th>Notes</th>
+  </tr>
+  <tr>
+    <td>Dextromethorphan (DM)</td>
+    <td>19.5 ± 5.2</td>
+    <td>Reference parent</td>
+  </tr>
+  <tr>
+    <td>3-Methoxymorphinan (HM / 3MM)</td>
+    <td><strong>13.5 ± 4.0</strong></td>
+    <td>Slightly more potent than DM; voltage-independent, reversible, non-competitive</td>
+  </tr>
+  <tr>
+    <td>3-Methyl-17-methylmorphinan (DF)</td>
+    <td>15.8 ± 4.5</td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>3-Allyloxy-17-methoxymorphinan (AM)</td>
+    <td>16.3 ± 1.7</td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td>3-Cyclopropylmethoxy-17-methoxymorphinan (CM)</td>
+    <td>10.1 ± 2.8</td>
+    <td>Most potent of the series</td>
+  </tr>
+</table>
+<p style="font-size:0.85rem;color:var(--text-muted);">Source: Lee et al., Eur. J. Pharmacol. 2006 (α3β4 expressed in Xenopus oocytes). Order of potency: CM &gt; HM (3MM) &gt; DF ≈ AM &gt; DM.</p>
+
+<h3>Voltage-gated Na<sup>+</sup> channels (Nav1.2)</h3>
+<table>
+  <tr>
+    <th>Compound</th>
+    <th>IC<sub>50</sub> (peak I<sub>Na</sub>, µM)</th>
+    <th>Notes</th>
+  </tr>
+  <tr>
+    <td>Dextromethorphan</td>
+    <td>116.7 ± 14.9</td>
+    <td>Tonic + use-dependent block</td>
+  </tr>
+  <tr>
+    <td>3-Methoxymorphinan (HM)</td>
+    <td><strong>No significant inhibition</strong></td>
+    <td>Did not induce measurable tonic or use-dependent block under the tested conditions</td>
+  </tr>
+  <tr>
+    <td>AM / CM analogs</td>
+    <td>≈ 39–43</td>
+    <td>More potent open-state blockers</td>
+  </tr>
+</table>
+<p style="font-size:0.85rem;color:var(--text-muted);">Source: Lee et al., Eur. J. Pharmacol. 2007. Note the dissociation: 3MM is active as a local anesthetic in vivo (sciatic block) yet showed little effect on the particular Nav1.2 preparation used; peripheral nerve Na channels or additional mechanisms may contribute to the in-vivo block.</p>
+
+<h3>Opioid receptors</h3>
+<table>
+  <tr>
+    <th>Receptor</th>
+    <th>Affinity of 3MM / related 3-substituted morphinans</th>
+    <th>Comment</th>
+  </tr>
+  <tr>
+    <td>µ (MOR)</td>
+    <td>Negligible (high-nM to low-µM range; ≥30–100× weaker than 3-OH or N-methyl congeners)</td>
+    <td>Loss of N-methyl is decisive</td>
+  </tr>
+  <tr>
+    <td>κ / δ</td>
+    <td>Similarly low</td>
+    <td>Structure-affinity series of 3-substituted morphinans</td>
+  </tr>
+</table>
+<p style="font-size:0.85rem;color:var(--text-muted);">Consistent with the original summary: 3MM does not produce classical opioid effects.</p>
+
+<h3>5-HT<sub>3</sub>A receptor</h3>
+<table>
+  <tr>
+    <th>Compound</th>
+    <th>IC<sub>50</sub> (µM)</th>
+  </tr>
+  <tr><td>Dextromethorphan</td><td>181.3 ± 23.5</td></tr>
+  <tr><td>3-Methoxymorphinan (HM)</td><td>191.3 ± 31.5</td></tr>
+  <tr><td>AM / CM analogs</td><td>≈ 21–25 (more potent)</td></tr>
+</table>
+<p style="font-size:0.85rem;color:var(--text-muted);">Competitive inhibition via the N-terminal domain (Lee et al. series).</p>
+
+<!-- ===================== LOCAL ANESTHETIC ===================== -->
+<h2 id="local-anesthetic">4. Local-anesthetic potency &amp; duration (Hou 2006 &amp; related)</h2>
+
+<p>Primary data: Hou et al., Eur. J. Pharmacol. 2006 — sciatic-nerve blockade in rats (motor function, proprioception, nociception). Lidocaine as active control. Follow-on spinal and infiltrative studies confirm the same rank order and the longer duration of the secondary-amine metabolites.</p>
+
+<h3>Potency rank (sciatic nerve, ED<sub>50</sub> basis)</h3>
+<table>
+  <tr>
+    <th>Rank</th>
+    <th>Compound</th>
+    <th>Relative potency</th>
+  </tr>
+  <tr><td>1 (most potent)</td><td>Lidocaine</td><td>Reference</td></tr>
+  <tr><td>2</td><td>Dextromethorphan</td><td>Lower than lidocaine</td></tr>
+  <tr><td>3</td><td><strong>3-Methoxymorphinan</strong></td><td>Lower than DXM</td></tr>
+  <tr><td>4 (least potent)</td><td>Dextrorphan</td><td>Lowest of the four</td></tr>
+</table>
+<p>Statistical significance of pairwise differences: <em>P</em> &lt; 0.01 for each comparison (Hou 2006).</p>
+
+<h3>Duration on an equipotent basis</h3>
+<table>
+  <tr>
+    <th>Compound</th>
+    <th>Duration vs lidocaine (equipotent doses)</th>
+    <th>Notes</th>
+  </tr>
+  <tr>
+    <td>Lidocaine</td>
+    <td>Reference</td>
+    <td>Shorter</td>
+  </tr>
+  <tr>
+    <td>Dextromethorphan</td>
+    <td>Comparable or modestly longer</td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td><strong>3-Methoxymorphinan</strong></td>
+    <td><strong>Statistically longer</strong> (<em>P</em> &lt; 0.05)</td>
+    <td>Motor, proprioceptive and nociceptive recovery delayed relative to lidocaine</td>
+  </tr>
+  <tr>
+    <td>Dextrorphan</td>
+    <td><strong>Statistically longer</strong> (<em>P</em> &lt; 0.05)</td>
+    <td>Similar to 3MM</td>
+  </tr>
+</table>
+
+<div class="card info">
+  <strong>Spinal anesthesia (Chen et al., 2007)</strong><br>
+  Rank order on ED<sub>50</sub> basis shifted slightly: bupivacaine &gt; dextrorphan &gt; 3-methoxymorphinan &gt; dextromethorphan. On an equipotent basis, dextrorphan and bupivacaine produced longer nociceptive blockades than DXM or 3MM. Motor-block durations were more similar across agents.
+</div>
+
+<p>Co-administration of 3MM (or DXM / DXO) with lidocaine produced additive, not synergistic, blockade of the sciatic nerve.</p>
+
+<!-- ===================== METABOLISM ===================== -->
+<h2 id="metabolism">5. Pharmacokinetics &amp; metabolism</h2>
+
+<div class="diagram">
+                    DXM (parent)
+                   /             \
+          CYP2D6  /               \  CYP3A4
+                 /                 \
+            Dextrorphan      <span class="label-3mm">3-Methoxymorphinan</span>
+              (DXO)                 (3MM)
+                 \                 /
+                  \   CYP3A4 or   /  CYP2D6
+                   \  CYP2D6     /
+                    \           /
+                 3-Hydroxymorphinan
+                      (3HM)
+                        |
+                   conjugation
+                        |
+                 urinary excretion
+</div>
+
+<table>
+  <tr>
+    <th>Step</th>
+    <th>Enzyme</th>
+    <th>Product</th>
+    <th>Normal contribution</th>
+  </tr>
+  <tr>
+    <td>O-demethylation</td>
+    <td>CYP2D6</td>
+    <td>Dextrorphan</td>
+    <td>Dominant first-pass route</td>
+  </tr>
+  <tr>
+    <td>N-demethylation</td>
+    <td><span class="label-cyp">CYP3A4</span></td>
+    <td><strong>3-Methoxymorphinan</strong></td>
+    <td>Minor under basal conditions</td>
+  </tr>
+  <tr>
+    <td>Sequential</td>
+    <td>CYP2D6 / CYP3A4</td>
+    <td>3-Hydroxymorphinan</td>
+    <td>Downstream of both pathways</td>
+  </tr>
+</table>
+
+<p>Because formation of 3MM is almost exclusively CYP3A4-dependent, the urinary (or plasma) metabolic ratio DXM / 3MM has been validated as a non-invasive probe of CYP3A4 activity (Min et al., 1999 and subsequent single-point methods).</p>
+
+<!-- ===================== CYP3A4 INDUCTION ===================== -->
+<h2 id="cyp3a4">6. Effects of CYP3A4 inducers on the DXM → 3MM axis</h2>
+
+<p>Strong CYP3A4 induction does not merely accelerate total DXM clearance; it <strong>re-routes</strong> a larger fraction of the dose into the N-demethylation pathway.</p>
+
+<table>
+  <tr>
+    <th>Inducer</th>
+    <th>Typical exposure</th>
+    <th>DXM AUC / C<sub>max</sub></th>
+    <th>DXM / 3MM ratio</th>
+    <th>Absolute 3MM formation</th>
+    <th>DXO formation</th>
+  </tr>
+  <tr>
+    <td>Rifampin (potent)</td>
+    <td>600 mg QD × 5–10 d</td>
+    <td>↓ 70–90 %</td>
+    <td>↓ (more 3MM relative to parent)</td>
+    <td>Can rise (higher fractional conversion)</td>
+    <td>↓ (substrate diversion)</td>
+  </tr>
+  <tr>
+    <td>Carbamazepine</td>
+    <td>Chronic therapeutic</td>
+    <td>↓ 40–70 %</td>
+    <td>↓</td>
+    <td>Modest increase possible</td>
+    <td>Moderate ↓</td>
+  </tr>
+  <tr>
+    <td>St. John’s wort / moderate inducers</td>
+    <td>Variable</td>
+    <td>↓ 20–50 %</td>
+    <td>Modest ↓</td>
+    <td>Intermediate</td>
+    <td>Modest ↓</td>
+  </tr>
+</table>
+
+<div class="card warning">
+  <strong>Key kinetic point</strong><br>
+  Even though parent DXM exposure falls sharply, the absolute amount of 3MM formed can increase because the fractional contribution of the CYP3A4 pathway rises markedly. Downstream 3-hydroxymorphinan also increases. The classic DXM/DXO ratio (CYP2D6 probe) becomes unreliable; the DXM/3MM ratio becomes a sensitive marker of the induced state.
+</div>
+
+<!-- ===================== CYP2D6 PHENOTYPE ===================== -->
+<h2 id="pm-em">7. CYP2D6 phenotype interaction (PM vs EM)</h2>
+
+<p>Because 3MM is itself a substrate of CYP2D6 (O-demethylation → 3-hydroxymorphinan), CYP2D6 genotype/phenotype strongly modulates circulating and urinary 3MM levels independently of CYP3A4 induction.</p>
+
+<table>
+  <tr>
+    <th>Phenotype</th>
+    <th>Effect on 3MM</th>
+    <th>Consequence</th>
+  </tr>
+  <tr>
+    <td>Extensive metabolizer (EM)</td>
+    <td>Rapid conversion of 3MM → 3HM; plasma 3MM often near or below quantification limit after ordinary DXM doses</td>
+    <td>N-demethylation pathway is “hidden” by fast secondary metabolism</td>
+  </tr>
+  <tr>
+    <td>Poor metabolizer (PM)</td>
+    <td>Impaired O-demethylation; AUC and urinary recovery of 3MM rise markedly</td>
+    <td>3MM becomes a more prominent circulating metabolite; contributes to the overall antitussive profile in PMs</td>
+  </tr>
+</table>
+
+<p>In Japanese and French population studies, the percentage of conjugated metabolites (glucuronides of DXO and 3HM) reached 86–99 %. Conjugation itself is not rate-limiting. In PMs the urinary metabolic ratios involving 3MM therefore become especially sensitive read-outs of residual CYP3A4 activity.</p>
+
+<div class="card info">
+  <strong>Kinetic parameters (rat liver microsomes, illustrative)</strong><br>
+  O-demethylation of 3MM → 3HM shows large strain differences that model human CYP2D6 polymorphism:<br>
+  Sprague-Dawley (high activity): K<sub>m</sub> ≈ 1.8 µM, V<sub>max</sub> ≈ 36 nmol/mg/h, CL<sub>int</sub> ≈ 21 ml/h/mg<br>
+  Dark Agouti (low activity): K<sub>m</sub> ≈ 109 µM, V<sub>max</sub> ≈ 11.5 nmol/mg/h, CL<sub>int</sub> ≈ 0.11 ml/h/mg<br>
+  (~180-fold difference in intrinsic clearance).
+</div>
+
+<!-- ===================== DOWNSTREAM METABOLITE ===================== -->
+<h2 id="downstream">8. Downstream metabolite: 3-hydroxymorphinan</h2>
+
+<p>3-Hydroxymorphinan (3HM) is formed from both DXO (by CYP3A4 N-demethylation) and from 3MM (by CYP2D6 O-demethylation). Unlike its precursors it has attracted independent interest as a potential neuroprotective agent.</p>
+
+<ul>
+  <li>Potent neurotrophic / neuroprotective effects on LTS- and MPTP-treated dopaminergic neurons of the nigrostriatal pathway.</li>
+  <li>Does <strong>not</strong> produce the neuropsychotoxic side-effects (dissociation, hallucinations) characteristic of DXO or high-dose DXM.</li>
+  <li>Lacks significant NMDA-receptor binding and anticonvulsant activity; neuroprotection appears to involve suppression of presynaptic voltage-dependent Ca<sup>2+</sup> entry and protein-kinase-C activity, reducing glutamate release.</li>
+  <li>Oral bioavailability is low (~18 %); a prodrug (GCC1290K) has been developed and has received FDA NDA clearance for further development as a potential antiparkinsonian agent.</li>
+</ul>
+
+<p>Thus, under conditions that elevate 3MM (CYP3A4 induction + CYP2D6 PM status), a larger fraction of the DXM dose is ultimately converted into a metabolite with a distinctly different therapeutic profile from either parent or primary O-demethylated product.</p>
+
+<!-- ===================== CLINICAL (renumbered) ===================== -->
+<h2 id="clinical">9. Net clinical picture when DXM is taken with a strong CYP3A4 inducer</h2>
+
+<ul>
+  <li>Classic DXM- and DXO-mediated central effects (σ<sub>1</sub>/NMDA-linked dissociation, cough suppression, etc.) are attenuated because parent and primary O-demethylated metabolite concentrations fall.</li>
+  <li>Any residual or novel effects shift toward the 3MM profile:
+    <ul>
+      <li>longer-lasting peripheral sodium-channel block (if local concentrations become relevant),</li>
+      <li>modest α3β4 nAChR non-competitive inhibition (IC<sub>50</sub> ≈ 13.5 µM),</li>
+      <li>negligible opioid activity,</li>
+      <li>possible contribution of elevated downstream 3HM with its own neuroprotective but non-psychotomimetic pharmacology.</li>
+    </ul>
+  </li>
+  <li>Systemic local-anesthetic toxicity risk remains low; absolute plasma levels of 3MM are still modest under ordinary oral DXM doses.</li>
+  <li>Urinary recovery of 3MM (and 3HM) rises; the DXM/3MM metabolic ratio falls and can be used to confirm induction.</li>
+  <li><strong>Quantitative induction magnitude</strong>: rifampin (300 mg b.i.d. × 7 d) reduced the 0–72 h DXM/3MM urinary metabolic ratio consistent with an approximately <strong>830 % (±1808 %)</strong> increase in CYP3A activity (Jones et al., 1996). The effect was independent of CYP2D6 phenotype and visible even in shorter (24–48 h) collections.</li>
+</ul>
+
+<div class="card warning">
+  <strong>Practical implication</strong><br>
+  Co-administration of a potent CYP3A4 inducer (rifampin, carbamazepine, chronic St John’s wort, etc.) with DXM will blunt the usual psychoactive and antitussive profile of DXM while simultaneously increasing the fractional formation of 3MM and 3HM. In a CYP2D6 poor metabolizer the accumulation of 3MM is amplified further. Clinical monitoring of expected DXM effects (or of CYP3A substrates co-prescribed with the inducer) is warranted.
+</div>
+
+<!-- ===================== SYNTHESIS & ANALYTICAL ===================== -->
+<h2 id="synthesis">10. Synthetic intermediate &amp; analytical utility</h2>
+
+<ul>
+  <li><strong>Industrial synthesis</strong> — 3MM is a key intermediate in the manufacture of levorphanol and related morphinans. The secondary amine allows selective N-alkylation or other functionalization that is blocked by the N-methyl group of methorphan.</li>
+  <li><strong>CYP3A4 phenotyping probe</strong> — The urinary (or single-point plasma) ratio DXM / 3MM remains one of the few non-invasive markers that specifically interrogates the N-demethylation route. It is complementary to the classic DXM/DXO ratio (CYP2D6) and to midazolam or cortisol-based CYP3A probes.</li>
+  <li><strong>Bioanalytical methods</strong> — Validated LC-MS/MS assays exist for quantification of (+)-3-methoxymorphinan in human plasma at the low-ng/mL level, supporting both phenotyping studies and forensic/toxicological work.</li>
+</ul>
+
+<!-- ===================== REFERENCES ===================== -->
+<h2 id="references">11. Key sources (expanded research trail)</h2>
+<ul>
+  <li>Hou CH et al. Dextromethorphan, 3-methoxymorphinan, and dextrorphan have local anaesthetic effect on sciatic nerve blockade in rats. <em>Eur J Pharmacol</em> 2006;544:10–16.</li>
+  <li>Chen YW et al. The spinal anaesthetic effect of dextromethorphan, dextrorphan, and 3-methoxymorphinan. <em>Eur J Pharmacol</em> 2007.</li>
+  <li>Lee JH et al. Effects of dextrorotatory morphinans on α3β4 nicotinic acetylcholine receptors \ldots <em>Eur J Pharmacol</em> 2006 (IC<sub>50</sub> values for HM = 3MM).</li>
+  <li>Lee JH et al. Effects of dextrorotatory morphinans on brain Na<sup>+</sup> channels \ldots <em>Eur J Pharmacol</em> 2007.</li>
+  <li>Jones DR et al. Determination of cytochrome P450 3A4/5 activity in vivo with dextromethorphan N-demethylation. <em>Clin Pharmacol Ther</em> 1996 (rifampin induction ≈ 830 %).</li>
+  <li>Min DI et al. A urine metabolic ratio of dextromethorphan and 3-methoxymorphinan as a probe for CYP3A activity \ldots <em>Pharmacotherapy</em> 1999.</li>
+  <li>Nagai et al. / Kerry et al. — CYP2D6 PM vs EM differences in 3MM recovery and microsomal kinetics of 3MM O-demethylation.</li>
+  <li>Literature on 3-hydroxymorphinan neuroprotection (nigrostriatal models, prodrug GCC1290K).</li>
+  <li>Structure-affinity studies of 3-substituted morphinans confirming negligible opioid affinity of secondary-amine 3-methoxy analogs.</li>
+  <li>PubChem CID 5484286; ChemSpider; DrugBank metabolite entry; HMDB0014045.</li>
+</ul>
+
+<footer>
+  <p>Continuation and deep expansion of the Claude conversation on 3-methoxymorphinan pharmacology and DXM–CYP3A4 interactions. New material added beyond the original research trail includes quantitative rifampin induction magnitude, CYP2D6 PM/EM divergence in 3MM exposure, rat microsomal kinetics, and the distinct neuroprotective profile of the downstream metabolite 3-hydroxymorphinan. Structure images from PubChem. All quantitative values drawn from primary literature.</p>
+</footer>
+
+</div>
+</body>
+</html>
